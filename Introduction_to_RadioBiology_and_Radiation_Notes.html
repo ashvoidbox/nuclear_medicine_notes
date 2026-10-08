@@ -85,7 +85,7 @@
     .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
     .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
     .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
-    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 0 40px; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
     nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
     nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
     nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
