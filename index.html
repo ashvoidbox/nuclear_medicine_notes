@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuclear Medicine Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: #f0f2f5;
+      color: #1f2328;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a56a6;
+      color: white;
+      padding: 32px 24px 28px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.01em; }
+    header p  { font-size: 0.9rem; opacity: 0.8; margin-top: 6px; }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 24px 60px;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 14px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 20px 22px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-tap-highlight-color: rgba(26,86,166,0.1);
+    }
+    .card:hover, .card:active {
+      border-color: #1a56a6;
+      box-shadow: 0 2px 12px rgba(26,86,166,0.12);
+    }
+
+    .card-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1f2328;
+      line-height: 1.3;
+    }
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .card-meta {
+      margin-top: 4px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card-meta .badge {
+      background: #eff6ff;
+      color: #1a56a6;
+      border-radius: 9999px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .card-arrow {
+      margin-top: auto;
+      padding-top: 10px;
+      font-size: 0.8rem;
+      color: #1a56a6;
+      font-weight: 600;
+    }
+
+    .coming-soon {
+      opacity: 0.45;
+      pointer-events: none;
+      cursor: default;
+    }
+    .coming-soon .badge {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Nuclear Medicine Notes</h1>
+  <p>RadioBiology Study Notes · ashvoidbox</p>
+</header>
+
+<div class="container">
+
+  <p class="section-label">RadioBiology</p>
+  <div class="cards">
+
+    <a class="card" href="Interaction_of_Radiation_with_Matter_Notes.html">
+      <div class="card-icon">⚛️</div>
+      <div class="card-title">Interaction of Radiation with Matter</div>
+      <div class="card-subtitle">SI, LET, Range · Photoelectric · Compton · Pair Production · RBE · Weighting Factors</div>
+      <div class="card-meta">
+        <span class="badge">15 sections</span>
+        · Last updated Oct 2024
+      </div>
+      <div class="card-arrow">Open notes →</div>
+    </a>
+
+    <div class="card coming-soon">
+      <div class="card-icon">🧬</div>
+      <div class="card-title">Cell Biology</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="card-icon">🔬</div>
+      <div class="card-title">Attenuation of Radiation</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="card-icon">🧪</div>
+      <div class="card-title">Radiation Genetics</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Biologic Response to Radiation</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="card-icon">💊</div>
+      <div class="card-title">Internal Radiation Dosimetry</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+    <div class="card coming-soon">
+      <div class="card-icon">🏥</div>
+      <div class="card-title">RadioTherapy</div>
+      <div class="card-subtitle">Coming soon</div>
+      <div class="card-meta"><span class="badge">Coming soon</span></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>Nuclear Medicine Notes · hosted on GitHub Pages</footer>
+
+</body>
+</html>
