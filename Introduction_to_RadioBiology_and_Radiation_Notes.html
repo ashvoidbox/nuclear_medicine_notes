@@ -1157,7 +1157,7 @@ function textNodesUnder(root) {
 }
 var originalNodes = [], marks = [], currentIdx = -1;
 function clearHighlights() {
-  originalNodes.forEach(function(o) { if (o.node && o.node.parentNode) o.node.parentNode.replaceChild(document.createTextNode(o.original), o.node); });
+  originalNodes.forEach(function(o) { if (o.span && o.span.parentNode) o.span.parentNode.replaceChild(document.createTextNode(o.original), o.span); });
   originalNodes = []; marks = []; currentIdx = -1;
 }
 function escapeRegex(s) { return s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'); }
@@ -1167,15 +1167,16 @@ function doSearch(term) {
   var re = new RegExp(escapeRegex(term), 'gi');
   textNodesUnder(mainEl).forEach(function(node) {
     var text = node.nodeValue; if (!re.test(text)) return; re.lastIndex = 0;
-    var frag = document.createDocumentFragment(), last = 0, m;
+    var span = document.createElement('span'); span.className = 'hl-wrap';
+    var last = 0, m;
     while ((m = re.exec(text)) !== null) {
-      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      if (m.index > last) span.appendChild(document.createTextNode(text.slice(last, m.index)));
       var mk = document.createElement('mark'); mk.className = 'hl'; mk.textContent = m[0];
-      frag.appendChild(mk); marks.push(mk); last = re.lastIndex;
+      span.appendChild(mk); marks.push(mk); last = re.lastIndex;
     }
-    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
-    originalNodes.push({ node: frag.firstChild, original: text });
-    node.parentNode.replaceChild(frag, node);
+    if (last < text.length) span.appendChild(document.createTextNode(text.slice(last)));
+    originalNodes.push({ span: span, original: text });
+    node.parentNode.replaceChild(span, node);
   });
   if (marks.length === 0) { noResults.style.display = 'block'; setNavActive(false); searchCount.textContent = '0 found'; return; }
   currentIdx = 0; highlightCurrent(); setNavActive(true); searchCount.textContent = (currentIdx + 1) + ' / ' + marks.length;

@@ -961,32 +961,37 @@ function setNavActive(on) {
   if (!on) { countEl.textContent = '\u2014 / \u2014'; }
 }
 
+var hlSpans = [];
+
 function clearMarks() {
-  document.querySelectorAll('mark.hl').forEach(function(m) {
-    var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+  hlSpans.forEach(function(s) {
+    if (s && s.parentNode) s.parentNode.replaceChild(document.createTextNode(s.dataset.orig), s);
   });
-  marks = []; cur = -1;
+  hlSpans = []; marks = []; cur = -1;
 }
 
 function doSearch(q) {
   clearMarks(); noResults.style.display = 'none';
   if (!q) { setNavActive(false); return; }
-  var re; try { re = new RegExp(q, 'gi'); } catch(e) { return; }
+  var re; try { re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); } catch(e) { return; }
   var walker = document.createTreeWalker(mainEl3, NodeFilter.SHOW_TEXT, null, false);
   var nodes = []; var node;
   while ((node = walker.nextNode())) {
-    if (['SCRIPT','STYLE','MARK'].indexOf(node.parentNode.nodeName) === -1 && re.test(node.nodeValue)) nodes.push(node);
+    if (['SCRIPT','STYLE','MARK','SPAN'].indexOf(node.parentNode.nodeName) === -1 && re.test(node.nodeValue)) nodes.push(node);
   }
   nodes.forEach(function(n) {
     re.lastIndex = 0;
-    var frag = document.createDocumentFragment(); var last = 0; var m;
-    while ((m = re.exec(n.nodeValue)) !== null) {
-      frag.appendChild(document.createTextNode(n.nodeValue.slice(last, m.index)));
-      var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[0]; frag.appendChild(mark); marks.push(mark);
+    var orig = n.nodeValue;
+    var span = document.createElement('span'); span.className = 'hl-wrap'; span.dataset.orig = orig;
+    var last = 0; var m;
+    while ((m = re.exec(orig)) !== null) {
+      if (m.index > last) span.appendChild(document.createTextNode(orig.slice(last, m.index)));
+      var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[0]; span.appendChild(mark); marks.push(mark);
       last = m.index + m[0].length;
     }
-    frag.appendChild(document.createTextNode(n.nodeValue.slice(last)));
-    n.parentNode.replaceChild(frag, n);
+    if (last < orig.length) span.appendChild(document.createTextNode(orig.slice(last)));
+    hlSpans.push(span);
+    n.parentNode.replaceChild(span, n);
   });
   if (marks.length === 0) { noResults.style.display = 'block'; setNavActive(false); countEl.textContent = '0 found'; return; }
   setNavActive(true); cur = 0; goTo(0);
