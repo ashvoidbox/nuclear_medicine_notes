@@ -1053,9 +1053,8 @@ var QUIZ_BANK = [
       e.preventDefault();
       var t = document.getElementById(a.dataset.target);
       if (!t) return;
-      // Clear all active immediately so the scroll listener is the sole source of truth
-      tocLinks.forEach(function(l) { l.classList.remove('active'); });
-      t.scrollIntoView({behavior:'smooth'});
+      mainEl4.scrollTop += t.getBoundingClientRect().top - mainEl4.getBoundingClientRect().top;
+      updateTocActive();
     });
   });
 
