@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Nuclear Physics Section III — Notes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
-    header { background: #1a56a6; color: white; padding: 10px 32px; position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; top: env(safe-area-inset-top, 0px); z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
     header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
     .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
     .home-btn:hover { background: rgba(255,255,255,0.25); }
