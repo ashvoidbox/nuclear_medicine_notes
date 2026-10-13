@@ -1121,10 +1121,10 @@ var navLinks = document.querySelectorAll('nav#toc a[data-target]');
 var mainEl2  = document.querySelector('main');
 
 function updateTocActive() {
-  var scrollTop = mainEl2.scrollTop;
+  var mainRect = mainEl2.getBoundingClientRect();
   var best = null, bestTop = -Infinity;
   Array.from(sections).forEach(function(s) {
-    var top = s.offsetTop - scrollTop;
+    var top = s.getBoundingClientRect().top - mainRect.top;
     if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
   });
   if (!best && sections.length) best = sections[0].id;
@@ -1140,8 +1140,8 @@ navLinks.forEach(function(link) {
     e.preventDefault();
     var target = document.getElementById(this.getAttribute('data-target'));
     if (!target) return;
-    var y = target.getBoundingClientRect().top - mainEl2.getBoundingClientRect().top + mainEl2.scrollTop - 8;
-    mainEl2.scrollTop = y;
+    Array.from(navLinks).forEach(function(l) { l.classList.remove('active'); });
+    target.scrollIntoView({behavior:'smooth'});
   });
 });
 

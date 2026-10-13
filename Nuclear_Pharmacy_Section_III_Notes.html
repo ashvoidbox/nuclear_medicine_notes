@@ -1034,10 +1034,10 @@ var QUIZ_BANK = [
   });
 
   function updateTocActive() {
-    var scrollTop = mainEl4.scrollTop;
+    var mainRect = mainEl4.getBoundingClientRect();
     var best = null, bestTop = -Infinity;
     sectionEls.forEach(function(s) {
-      var top = s.offsetTop - scrollTop;
+      var top = s.getBoundingClientRect().top - mainRect.top;
       if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
     });
     if (!best && sectionEls.length) best = sectionEls[0].id;
@@ -1052,7 +1052,10 @@ var QUIZ_BANK = [
     a.addEventListener('click', function(e) {
       e.preventDefault();
       var t = document.getElementById(a.dataset.target);
-      if (t) t.scrollIntoView({behavior:'smooth'});
+      if (!t) return;
+      // Clear all active immediately so the scroll listener is the sole source of truth
+      tocLinks.forEach(function(l) { l.classList.remove('active'); });
+      t.scrollIntoView({behavior:'smooth'});
     });
   });
 

@@ -938,10 +938,10 @@ var navLinks = document.querySelectorAll('nav#toc a[data-target]');
 var sectionEls3 = Array.from(document.querySelectorAll('.section'));
 
 function updateTocActive3() {
-  var scrollTop = mainEl3.scrollTop;
+  var mainRect = mainEl3.getBoundingClientRect();
   var best = null, bestTop = -Infinity;
   sectionEls3.forEach(function(s) {
-    var top = s.offsetTop - scrollTop;
+    var top = s.getBoundingClientRect().top - mainRect.top;
     if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
   });
   if (!best && sectionEls3.length) best = sectionEls3[0].id;
@@ -955,9 +955,9 @@ updateTocActive3();
 navLinks.forEach(function(link) {
   link.addEventListener('click', function() {
     var target = document.getElementById(this.dataset.target);
-    if (target) {
-      mainEl3.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
-    }
+    if (!target) return;
+    Array.from(navLinks).forEach(function(l) { l.classList.remove('active'); });
+    target.scrollIntoView({behavior:'smooth'});
   });
 });
 
