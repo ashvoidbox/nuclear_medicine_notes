@@ -13,7 +13,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
-    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; top: env(safe-area-inset-top, 0px); z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
     header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
     .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
     .home-btn:hover { background: rgba(255,255,255,0.25); }
@@ -92,7 +92,7 @@
       .header-bot-row { width: 100%; justify-content: space-between; }
       .search-input-wrap input { width: 130px; }
     }
-    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px); height: calc(-webkit-fill-available - 52px); overflow: hidden; }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px - env(safe-area-inset-top, 0px)); height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); overflow: hidden; }
     .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
     .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
     .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
@@ -935,33 +935,31 @@
 // ── TOC navigation & active highlight ────────────────────────────────────────
 var mainEl3 = document.querySelector('main');
 var navLinks = document.querySelectorAll('nav#toc a[data-target]');
-var tocScrolling = false;
+var sectionEls3 = Array.from(document.querySelectorAll('.section'));
+
+function updateTocActive3() {
+  var scrollTop = mainEl3.scrollTop;
+  var best = null, bestTop = -Infinity;
+  sectionEls3.forEach(function(s) {
+    var top = s.offsetTop - scrollTop;
+    if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+  });
+  if (!best && sectionEls3.length) best = sectionEls3[0].id;
+  navLinks.forEach(function(a) {
+    a.classList.toggle('active', a.dataset.target === best);
+  });
+}
+mainEl3.addEventListener('scroll', updateTocActive3, {passive: true});
+updateTocActive3();
 
 navLinks.forEach(function(link) {
   link.addEventListener('click', function() {
-    navLinks.forEach(function(l){l.classList.remove('active');});
-    link.classList.add('active');
-    tocScrolling = true;
     var target = document.getElementById(this.dataset.target);
     if (target) {
       mainEl3.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
     }
-    setTimeout(function(){tocScrolling = false;}, 800);
   });
 });
-
-var observer = new IntersectionObserver(function(entries) {
-  if (tocScrolling) return;
-  entries.forEach(function(entry) {
-    if (entry.isIntersecting) {
-      navLinks.forEach(function(l) { l.classList.remove('active'); });
-      var active = document.querySelector('nav#toc a[data-target="' + entry.target.id + '"]');
-      if (active) { active.classList.add('active'); }
-    }
-  });
-}, { root: mainEl3, threshold: 0.15 });
-
-document.querySelectorAll('.section').forEach(function(s) { observer.observe(s); });
 
 // ── Search ────────────────────────────────────────────────────────────────────
 var searchInput = document.getElementById('searchInput');
