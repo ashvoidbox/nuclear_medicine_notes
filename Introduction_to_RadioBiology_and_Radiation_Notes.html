@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <title>Introduction to RadioBiology and Radiation — Notes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1113,6 +1119,7 @@
 var sections = document.querySelectorAll('.section');
 var navLinks = document.querySelectorAll('nav#toc a[data-target]');
 var mainEl2  = document.querySelector('main');
+var tocScrolling = false;
 
 function scrollToSection(id) {
   var target = document.getElementById(id);
@@ -1121,10 +1128,18 @@ function scrollToSection(id) {
   mainEl2.scrollTop = y;
 }
 navLinks.forEach(function(link) {
-  link.addEventListener('click', function(e) { e.preventDefault(); scrollToSection(this.getAttribute('data-target')); });
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    navLinks.forEach(function(l){l.classList.remove('active');});
+    link.classList.add('active');
+    tocScrolling = true;
+    scrollToSection(this.getAttribute('data-target'));
+    setTimeout(function(){tocScrolling = false;}, 800);
+  });
 });
 if ('IntersectionObserver' in window) {
   var tocObserver = new IntersectionObserver(function(entries) {
+    if (tocScrolling) return;
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
         navLinks.forEach(function(l) { l.classList.remove('active'); });

@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <title>Nuclear Pharmacy Section III &mdash; Notes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1027,7 +1033,9 @@ var QUIZ_BANK = [
     if (!allMatches.length) return; currentMatch = (currentMatch + 1) % allMatches.length; highlightCurrent();
   });
 
+  var tocScrolling = false;
   var observer = new IntersectionObserver(function(entries) {
+    if (tocScrolling) return;
     entries.forEach(function(e) {
       if (e.isIntersecting) { var id = e.target.id;
         tocLinks.forEach(function(a){a.classList.toggle('active', a.dataset.target === id);});
@@ -1037,7 +1045,13 @@ var QUIZ_BANK = [
   sectionEls.forEach(function(s){observer.observe(s);});
   tocLinks.forEach(function(a) {
     a.addEventListener('click', function(e) {
-      e.preventDefault(); var t = document.getElementById(a.dataset.target); if (t) t.scrollIntoView({behavior:'smooth'});
+      e.preventDefault();
+      tocLinks.forEach(function(l){l.classList.remove('active');});
+      a.classList.add('active');
+      tocScrolling = true;
+      var t = document.getElementById(a.dataset.target);
+      if (t) t.scrollIntoView({behavior:'smooth'});
+      setTimeout(function(){tocScrolling = false;}, 800);
     });
   });
 

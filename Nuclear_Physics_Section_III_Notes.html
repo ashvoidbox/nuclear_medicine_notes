@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <title>Nuclear Physics Section III — Notes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -929,17 +935,23 @@
 // ── TOC navigation & active highlight ────────────────────────────────────────
 var mainEl3 = document.querySelector('main');
 var navLinks = document.querySelectorAll('nav#toc a[data-target]');
+var tocScrolling = false;
 
 navLinks.forEach(function(link) {
   link.addEventListener('click', function() {
+    navLinks.forEach(function(l){l.classList.remove('active');});
+    link.classList.add('active');
+    tocScrolling = true;
     var target = document.getElementById(this.dataset.target);
     if (target) {
       mainEl3.scrollTo({ top: target.offsetTop - 8, behavior: 'smooth' });
     }
+    setTimeout(function(){tocScrolling = false;}, 800);
   });
 });
 
 var observer = new IntersectionObserver(function(entries) {
+  if (tocScrolling) return;
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
       navLinks.forEach(function(l) { l.classList.remove('active'); });
