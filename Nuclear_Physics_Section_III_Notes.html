@@ -36,6 +36,12 @@
     .section.study-crit .section-header { background: #b91c1c; }
     .section.study-warn > .section-body { background: #fefce8; }
     .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
     .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
     .quiz-overlay.open { display: flex; }
     .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
@@ -1182,10 +1188,12 @@ function applyHighlights() {
     document.querySelectorAll('.section').forEach(function(sec) {
       sec.classList.remove('study-warn','study-crit');
       var id = sec.id;
+      var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+      if (link) link.classList.remove('study-warn','study-crit');
       if (!stats[id]) return;
       var pct = stats[id].total ? Math.round(stats[id].correct / stats[id].total * 100) : 100;
-      if (pct < 50) sec.classList.add('study-crit');
-      else if (pct <= 85) sec.classList.add('study-warn');
+      var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+      if (cls) { sec.classList.add(cls); if (link) link.classList.add(cls); }
     });
   } catch(e) {}
 }
@@ -1194,6 +1202,7 @@ function clearHighlights() {
   document.querySelectorAll('.section').forEach(function(sec) {
     sec.classList.remove('study-warn','study-crit');
   });
+  document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
 }
 
 highlightBtn.addEventListener('click', function() {

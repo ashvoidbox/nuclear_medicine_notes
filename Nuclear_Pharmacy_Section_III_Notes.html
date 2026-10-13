@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuclear Pharmacy Section III &mdash; Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px); height: calc(-webkit-fill-available - 52px); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; }
+    .section-body { padding: 20px 24px; }
+    .sc-content ul, .sc-content ol { padding-left: 22px; margin: 8px 0; }
+    .sc-content ul ul, .sc-content ul ol, .sc-content ol ul { margin: 2px 0; }
+    .sc-content li { margin-bottom: 3px; }
+    .sc-content p { margin-bottom: 8px; }
+    .sc-content p:last-child { margin-bottom: 0; }
+    .sc-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 10px auto; display: block; }
+    .sc-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    .sc-content th { background: #1a56a6; color: white; padding: 8px 12px; text-align: left; }
+    .sc-content td { padding: 7px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .sc-content tr:nth-child(even) td { background: #f9fafb; }
+    .sc-content h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content strong { font-weight: 700; }
+    .sc-content em { font-style: italic; }
+    .sc-content a { color: #1a56a6; text-decoration: none; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html { height: 100%; height: -webkit-fill-available; overflow: hidden; }
+    body { height: 100%; min-height: -webkit-fill-available; overflow: hidden; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+</style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Nuclear Pharmacy Section III</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&hellip;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Nuclear Pharmacy III Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions drawn from the full course content.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: &mdash;</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">Introduction to Generators</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">Introduction to Generators Con't</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">Generator Characteristics</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Common Generators</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Types of Generators</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">Generator Parts and Function</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">Generator Function</span></a>
+      <a href="javascript:void(0)" data-target="s8"><span class="toc-num">8</span><span class="toc-label">Generator Elution</span></a>
+      <a href="javascript:void(0)" data-target="s9"><span class="toc-num">9</span><span class="toc-label">Generator Equilibrium</span></a>
+      <a href="javascript:void(0)" data-target="s10"><span class="toc-num">10</span><span class="toc-label">Moly Efficiency & Generator Size</span></a>
+      <a href="javascript:void(0)" data-target="s11"><span class="toc-num">11</span><span class="toc-label">Technetium-99m</span></a>
+      <a href="javascript:void(0)" data-target="s12"><span class="toc-num">12</span><span class="toc-label">Decreased Yield</span></a>
+      <a href="javascript:void(0)" data-target="s13"><span class="toc-num">13</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main>
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Introduction to Generators</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Pharmacy Section III: Introduction to Generators</p>
+<p><strong>Objectives:</strong></p>
+<ul>
+<li>Characteristics of a Generator</li>
+<li>Types of Generators</li>
+<li>Components and parts of a generator</li>
+<li>Function of a Generator</li>
+<li>Eluting a Generator</li>
+<li>Generator Equilibrium</li>
+<li>Moly/Tech Generator
+  <ul>
+    <li>Advantages and Disadvantages</li>
+    <li>Contents of a <sup>99m</sup>Tc Elution</li>
+    <li>Reasons for Decreased yield of the generator</li>
+  </ul>
+</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Introduction to Generators Con't</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Radionuclides have been used for many years to produce Radiopharmaceuticals</p>
+<ul>
+<li>Short Lived Radionuclides have become common:
+  <ul><li>Does <sup>99m</sup>Tc sound Familiar?</li></ul>
+</li>
+</ul>
+<p>Our previous lesson showed how Radionuclides are produced:</p>
+<ul>
+<li>Obviously, hospitals are not able to have a Nuclear Reactor or a Particle Accelerator on hand</li>
+<li>To bring short-lived Radionuclides to the hospitals, Nuclear Medicine Generators were introduced</li>
+</ul>
+<p>This is a basic idea of how a generator works:</p>
+<ul>
+<li>A parent Radionuclide decays</li>
+<li>The decay results in a new radionuclide (daughter)</li>
+</ul>
+<p>This is just a basic introduction; we will get more involved later</p>
+<p>With Nuclear Medicine Generators:</p>
+<ul>
+<li>No worries about short lived radionuclides</li>
+<li>No worries about having to have reactors or accelerators</li>
+</ul>
+<p>In general, a generator:</p>
+<ul>
+<li>Weighs about 45 lbs</li>
+<li>Is about 18 inches high and 6 inches wide</li>
+<li>Is cylindrical shaped</li>
+<li>Is housed inside lead</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Generator Characteristics</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Certain Characteristics are required for an Ideal Generator:</p>
+<ol>
+<li>Parent Radionuclide should be longer lived (longer T<sub>1/2</sub>) than daughter Radionuclide
+  <ul>
+    <li>Causes an equilibrium between Parent &amp; Daughter</li>
+    <li>We'll talk more about equilibrium later</li>
+  </ul>
+</li>
+<li>Parent has long enough T<sub>1/2</sub> for good generator life
+  <ul>
+    <li>If the parent has a short T<sub>1/2</sub>, the generator may only last a day or two</li>
+    <li>A week is a good length for generator life</li>
+  </ul>
+</li>
+<li>Allow separation of daughter and parent
+  <ul>
+    <li>When the daughter radionuclide is produced it has to be easily separated from the remaining parent radionuclide</li>
+    <li>Easy separation also means cheap</li>
+  </ul>
+</li>
+<li>Daughter must be a different element than the Parent
+  <ul>
+    <li>This makes the daughter Carrier Free</li>
+    <li>This also makes for separation from the parent easier</li>
+  </ul>
+</li>
+<li>The generator should be sterile and pyrogen free
+  <ul>
+    <li>A radionuclide that is not sterile or pyrogen free can cause adverse reactions</li>
+  </ul>
+</li>
+<li>Can elute the generator with a Physiologic pH solution
+  <ul>
+    <li>Physiologic pH is the pH of blood</li>
+    <li>If our solution is at physiologic pH it can mix with blood easily</li>
+  </ul>
+</li>
+<li>The generator should be easy to elute
+  <ul><li>Easy here also means quick</li></ul>
+</li>
+<li>Stable or very long T<sub>1/2</sub> of granddaughter
+  <ul>
+    <li>When the Daughter decays, its product should be stable or very long-lived</li>
+    <li>This keeps patient exposure down since the patient is only receiving radiation from one radionuclide</li>
+  </ul>
+</li>
+<li>T<sub>1/2</sub> of Parent permits good regrowth
+  <ul>
+    <li>The generator should decay to the daughter quick enough to allow you to elute your generator often</li>
+    <li>Being able to elute once per day means you have a good T<sub>1/2</sub> for regrowth</li>
+  </ul>
+</li>
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Common Generators</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>These generators are listed as: <strong>Parent &rarr; Daughter &rarr; Granddaughter</strong></p>
+<ol>
+<li><strong><sup>99</sup>Mo &rarr; <sup>99m</sup>Tc &rarr; <sup>99</sup>Tc</strong>
+  <ul>
+    <li><sup>99</sup>Mo has a half-life of 67 hours</li>
+    <li><sup>99m</sup>Tc has a half-life of 6 hours</li>
+    <li><sup>99</sup>Tc has a half-life of 210,000 years</li>
+  </ul>
+</li>
+<li><strong><sup>113</sup>Sn &rarr; <sup>113m</sup>In &rarr; <sup>113</sup>In</strong>
+  <ul>
+    <li><sup>113</sup>Sn has a half-life of 115 days</li>
+    <li><sup>113m</sup>In has a half-life of 1.7 hours</li>
+    <li><sup>113</sup>In is stable</li>
+  </ul>
+</li>
+<li><strong><sup>81</sup>Rb &rarr; <sup>81m</sup>Kr &rarr; <sup>81</sup>Kr</strong>
+  <ul>
+    <li><sup>81</sup>Rb has a half-life of 4.7 hours</li>
+    <li><sup>81m</sup>Kr has a half-life of 13 seconds</li>
+    <li><sup>81</sup>Kr is stable</li>
+  </ul>
+</li>
+</ol>
+<p>What do these generators have in common?</p>
+<ul>
+<li>A Parent Radionuclide &mdash; What is loaded into the generator</li>
+<li>A Daughter Radionuclide &mdash; What the parent decays to
+  <ul><li>This is the result of the generator that we take and use</li></ul>
+</li>
+<li>A Granddaughter &mdash; What the daughter decays to &mdash; Is either stable or very long-lived</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Types of Generators</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>There are 2 main types of Generators:</p>
+<ul>
+<li>The type of generator depends on the physical state of the parent
+  <ol>
+    <li><strong>Liquid Column Generator</strong>
+      <ul>
+        <li>The parent is loaded into the generator in a liquid form</li>
+        <li>Advantages &mdash; Cheap</li>
+        <li>Disadvantages &mdash; Requires more extensive separation methods
+          <ul><li>More difficult to separate the daughter from the parent</li></ul>
+        </li>
+        <li>Not used in Nuclear Medicine Anymore</li>
+      </ul>
+    </li>
+    <li><strong>Solid Column Generator</strong>
+      <ul>
+        <li>The parent is loaded into the generator in a solid form</li>
+        <li>Advantages &mdash; Easy separation of the parent and daughter</li>
+        <li>Disadvantages &mdash; More expensive</li>
+        <li>Main type of generator used in Nuclear Medicine Today</li>
+      </ul>
+    </li>
+  </ol>
+</li>
+</ul>
+<p>From here on out we will focus on a Solid Column Generator</p>
+      </div>
+    </div>
+
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Generator Parts and Function</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Parts of a Generator:</p>
+<img src="data:image/gif;base64,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" alt="Parts of a Generator diagram">
+<p>The whole generator system is in vacuum</p>
+<p>Each individual part within this vacuum has its own function:</p>
+<ol>
+<li><strong>Eluting Solvent</strong>
+  <ul>
+    <li>A physiologic pH solution</li>
+    <ul>
+      <li>Normal saline, 0.9% NaCl, Isotonic Saline &mdash; 3 different names for the same solution</li>
+      <li>Contained in a large glass vial</li>
+      <li>A normal size generator uses 135 mL vials</li>
+      <li>The vial is fastened to the generator</li>
+      <li>Tubing is attached to the vial</li>
+      <li>The tubing takes the Eluting solvent to wash over the column</li>
+    </ul>
+  </ul>
+</li>
+<li><strong>Column</strong>
+  <ul>
+    <li>A glass cylinder positioned close to the center of the generator</li>
+  </ul>
+</li>
+<li><strong>Absorbent Material</strong>
+  <ul>
+    <li>Stored inside the column</li>
+    <li>Alumina is the most common absorbent material used in a generator</li>
+    <li>The term Absorbent means to hold or take up</li>
+    <ul><li>Absorbent material will hold or take up another material</li></ul>
+    <li>Alumina will hold the parent radionuclide</li>
+  </ul>
+</li>
+<li><strong>Filter</strong>
+  <ul>
+    <li>The filter is a Glass Fritted Disk</li>
+    <li>Filters the solution leaving the column</li>
+    <li>The alumina is primarily the only thing that needs to be filtered</li>
+  </ul>
+</li>
+<li><strong>Lead</strong>
+  <ul>
+    <li>The entire column is shielded by lead</li>
+    <li>The generator itself is shielded by lead as well</li>
+  </ul>
+</li>
+<li><strong>Elution</strong>
+  <ul>
+    <li>Your final product</li>
+    <li>Contains the daughter radionuclide + some of the eluting solvent</li>
+    <li>The elution is stored in a glass vial</li>
+  </ul>
+</li>
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Generator Function</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>In order to get a generator to work it must be filled:</p>
+<ul>
+<li>The generator is filled with the parent radionuclide
+  <ul><li>We'll concentrate on the <sup>99</sup>Mo/<sup>99m</sup>Tc generator from here on out</li></ul>
+</li>
+<li><sup>99</sup>Mo (the parent radionuclide) is loaded into the generator
+  <ul>
+    <li>Remember where the parent radionuclide goes in the generator</li>
+    <li><sup>99</sup>Mo gets adsorbed onto the alumina
+      <ul><li>Remember the alumina is stored inside the column</li></ul>
+    </li>
+  </ul>
+</li>
+<li><sup>99</sup>Mo decays to <sup>99m</sup>Tc
+  <ul>
+    <li>When Mo-99 decays, it is replaced by Tc-99m in a generator</li>
+    <ul><li>Our goal is to extract the Tc-99m</li></ul>
+  </ul>
+</li>
+</ul>
+<p>Our first task is to get the generator started:</p>
+<ul>
+<li>Our elution is stored in an evacuated vial
+  <ul>
+    <li>An evacuated vial means air has been sucked out of it</li>
+    <ul><li>A 10cc(ml) evacuated vial has had 10cc of air sucked out of it</li></ul>
+  </ul>
+</li>
+<li>Remember that our generator system is in a closed system in vacuum
+  <ul><li>So, there is no air in our generator system</li></ul>
+</li>
+</ul>
+<p>To start the generator:</p>
+<ul>
+<li>Insert the elution vial (which is the evacuated vial) onto the needle of the generator system</li>
+<li>The elution vial will immediately start to suck in
+  <ul><li>A 10cc evacuated vial will try to suck in 10cc of solution</li></ul>
+</li>
+</ul>
+<p>What happens inside the column?</p>
+<ul>
+<li>We have <sup>99</sup>Mo</li>
+<li><sup>99</sup>Mo decays to <sup>99m</sup>Tc</li>
+<li>Our goal is to extract the <sup>99m</sup>Tc and leave the <sup>99</sup>Mo inside the column</li>
+</ul>
+<p>How do we extract the <sup>99m</sup>Tc and leave the <sup>99</sup>Mo inside the column?</p>
+<ul>
+<li><sup>99</sup>Mo is bound to the alumina by <strong>strong bonds</strong></li>
+<li><sup>99m</sup>Tc on the other hand is bound to the alumina by a <strong>weak bond</strong></li>
+</ul>
+<p>This makes it easy to extract the <sup>99m</sup>Tc and preserve the <sup>99</sup>Mo</p>
+<p>Once the saline reaches the column it spreads out and travels throughout the column:</p>
+<ul>
+<li>Saline is made up of Sodium (Na) and Chloride (Cl)</li>
+<li>The sodium will grab hold of the weakly bound <sup>99m</sup>Tc</li>
+<li>The Cl will replace the spot where the <sup>99m</sup>Tc was</li>
+<li>Throughout this process the <sup>99</sup>Mo should remain bound to the alumina</li>
+</ul>
+<p>Our final product after the solution leaves the column is:</p>
+<ul>
+<li>Sodium Pertechnetate</li>
+<li>Na<sup>99m</sup>TcO<sub>4</sub> travels through the filter (filters out the alumina)</li>
+<li>Na<sup>99m</sup>TcO<sub>4</sub> travels through the tubing</li>
+<li>Na<sup>99m</sup>TcO<sub>4</sub> then fills up the elution vial</li>
+</ul>
+<p>The generator functions by:</p>
+<ol>
+<li>Insert the elution vial onto the generator</li>
+<li>NaCl is the eluting solvent</li>
+<li>NaCl washes over the column</li>
+<li>Inside the column Moly decays to Tech</li>
+<li>Na grabs the <sup>99m</sup>Tc</li>
+<li>Cl replaces where the <sup>99m</sup>Tc ion was</li>
+<li><sup>99</sup>Mo remains bound to the alumina</li>
+<li>Na<sup>99m</sup>TcO<sub>4</sub> flows through the tubing and fills up the elution vial</li>
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Generator Elution</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>When should you elute the Moly/Tech generator?</p>
+<ul>
+<li><sup>99</sup>Mo constantly decays to <sup>99m</sup>Tc</li>
+<li><sup>99m</sup>Tc also constantly decays to <sup>99</sup>Tc</li>
+<li>When you elute a generator you get both <sup>99m</sup>Tc and <sup>99</sup>Tc
+  <ul><li>That's why it's important to elute your generator at certain intervals</li></ul>
+</li>
+<li>After you elute the generator:
+  <ul>
+    <li>All of the <sup>99m</sup>Tc is washed out of the generator</li>
+    <li><sup>99</sup>Mo begins to decay to <sup>99m</sup>Tc again</li>
+    <li>It takes 23 hours for the generator to build up the maximum amount of <sup>99m</sup>Tc</li>
+  </ul>
+</li>
+<li>At 23 hours you have the maximum amount of <sup>99m</sup>Tc</li>
+<li>After the 23 hours you don't accumulate more <sup>99m</sup>Tc:
+  <ul>
+    <li><sup>99</sup>Mo is still decaying to <sup>99m</sup>Tc</li>
+    <li>However, <sup>99m</sup>Tc is also still decaying to <sup>99</sup>Tc</li>
+  </ul>
+</li>
+<li>That's why it's important to elute your generator every 23 hours
+  <ul>
+    <li>Most hospitals elute their generator once a day
+      <ul><li>Usually ends up being every 24 hours to keep it consistent</li></ul>
+    </li>
+  </ul>
+</li>
+<li>Another important factor to remember is that Eluted Na<sup>99m</sup>TcO<sub>4</sub> expires in 12 hours after elution</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Generator Equilibrium</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Generator Equilibrium occurs when the Parent T<sub>1/2</sub> is greater than Daughter T<sub>1/2</sub></p>
+<ul>
+<li>After a certain amount of time</li>
+<li>The activity of the parent and daughter will be equal or close to being equal</li>
+<li>The ratio of the parent to daughter becomes equal</li>
+<li>The daughter's activity appears to be following the T<sub>1/2</sub> of the parent
+  <ul><li>This is due to the rate that the daughter is being produced</li></ul>
+</li>
+</ul>
+<p>There are 2 types of Generator Equilibrium:</p>
+<ul>
+<li>The type depends on the T<sub>1/2</sub> difference between the parent and daughter</li>
+</ul>
+<ol>
+<li><strong>Secular Equilibrium</strong> &mdash; Parent's T<sub>1/2</sub> is <em>much larger</em> than the daughter
+  <ul>
+    <li>Parent's T<sub>1/2</sub> is usually 100 times larger or more than the daughters</li>
+    <li><sup>81</sup>Rb/<sup>81m</sup>Kr and <sup>113</sup>Sn/<sup>113m</sup>In are examples of this generator</li>
+  </ul>
+</li>
+<li><strong>Transient Equilibrium</strong> &mdash; Parent's T<sub>1/2</sub> is <em>not much larger</em> than the daughter
+  <ul>
+    <li>Parent's T<sub>1/2</sub> is usually 10&ndash;50 times larger than the daughters</li>
+    <li><sup>99</sup>Mo/<sup>99m</sup>Tc is an example of this generator
+      <ul><li>It takes approximately 24 hours for a <sup>99</sup>Mo/<sup>99m</sup>Tc generator to reach equilibrium</li></ul>
+    </li>
+  </ul>
+</li>
+</ol>
+<h3>Equilibrium Time Activity Curve</h3>
+<table>
+<tbody>
+<tr>
+<td style="width:55%;vertical-align:top">
+<img src="data:image/gif;base64,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" alt="Time activity curve of Mo-99/Tc-99m generator">
+</td>
+<td style="vertical-align:top;padding-left:16px">
+<ul>
+<li>At initial activity and after each elution, the <sup>99m</sup>Tc activity is approximately 0.</li>
+<li>From the time of elution, it takes 1 day (24 hours) to reach equilibrium</li>
+<li>Equilibrium can be identified on the curve as the area where <sup>99</sup>Mo and <sup>99m</sup>Tc appear to be decaying at the same rate</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Concerning <sup>99</sup>Mo/<sup>99m</sup>Tc equilibrium:</p>
+<ul>
+<li>At initial activity and after every elution, the <sup>99m</sup>Tc activity is approximately 0 mCi</li>
+<li>It took about 24 hours to reach equilibrium</li>
+<li>At Equilibrium:
+  <ul>
+    <li>The activity of the <sup>99</sup>Mo &amp; <sup>99m</sup>Tc are almost equal</li>
+    <li><sup>99</sup>Mo &amp; <sup>99m</sup>Tc appear to be decaying at the same rate</li>
+  </ul>
+</li>
+</ul>
+<p>With all this, we also say that when a generator reaches equilibrium it has reached maximum activity!</p>
+      </div>
+    </div>
+
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>Moly Efficiency &amp; Generator Size</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Moly Efficiency</h3>
+<p><sup>99</sup>Mo has an efficiency in a <sup>99</sup>Mo/<sup>99m</sup>Tc generator:</p>
+<ul>
+<li>The <sup>99</sup>Mo efficiency formula:
+  <ul><li><img src="data:image/gif;base64,R0lGODdhZQEzAPMAAP///wAAAF9fX6KiotTU1BwcHC0tLYGBgcPDw05OTgAAAAAAAAAAAAAAAAAAAAAAACwAAAAAZQEzAAAE/xDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bd90oE96gP9AT4+3CxqPSJNP4lsCnMlozdnkSa/YK/VpzXpb2+13TJaFrbs0tMy+nJntuJz05j6b1bm+vtb7/xQ9S4Jwdn2AY4R3RYiNbUNdkYOFWodKlhWQKmuYjmSdWJOUlKKcgow3oCOqoimcbpaonj+yMKobUKi6hbuGQLchrCy6mIe1szZ5M8AYzB2lvy7CRrXHyFNcaneZjN1MeIPW332Kw7CxeETb49x26+6LgcTwFuXf75Da4hnK2fX7106USkfljBh/B/9FCvTC1Kh27tLg61JEWTherS7igpVNjD4RFv9HeQsoDY62iAxRmuSlIVe9hi9xeXRJceFBcjUfuuFoc1vFYKTo0SS54pQvlTkjZuSXKSaYphxoDl3ZkyXUnwub7cyap9UHaPBeES2KxmpYijezptRJbxPUjUGrFkyJVd5QgG3P5vQqhKpetmPpyGOZcaC/lf3WVoP5NpakxobRHj56FK8xyJXzMr33cG5gFPmwEst10vM+TW+Loo7XDDW50ayHdIPNbnVqtZoiC6lrz3aSY7Z9f24ZypGz4auCp1OHd3hiJMe1aEYOBqdItdQHV4oepXn2CwIsEDjAUx3n2d/Tq9czwAAFAgUIlOe8Dv36+/i/tJcAX/58fBq9k9//gAQa0R4C8fHj0HmmneLggxBGKOGEFFZo4YUYZqjhhhx26OGHIHKIwQEBINDSgvV5VuCKLNIA3wHuKQhRiua1aOONKvQHwH6tOXUXjkAGOYKOEvCoUDvzeCfkkkAmSMEACXBjD2t2MWmlH7kpeeWWXMI1GXddhsklH2KWaSZxfoF55po2ksnmm2YqMmWXWnohHFF1RnXLnavchtyDAjXCl3MlwaWmU2xZk6d0lG212W99BgpYXNE85aUrpD2qHSBgaeoodCC5Emql5lxKy2vIGDPbXAkNRtByRKh4UWiv1dqJRLGOI1tBtALIEXqrIlkjacS6eqIsJ8X2aqgu1brH/4xpTRRTRQQN+2VZrY7kJ10aRTvSTa2ax6q0hkwyE0ZxWfartB8B5dGmh6aC6FKUKnYPb3Q91mlVazkabkJuJgUtfXoB/Fhj9Wp15HWlAYWSWJNmAbFVP6YGVraU4ttvW8Xk66PHGGsm1cb9VGxdXdNhN9Vhg0ZFMclyTPwufdbVZ5bJ0Qq18aSm+ctQzn59fF1SvaDMjiTTWAxyxAqHxC8bNf/UVR3oZlYYuiFVcVfNW2lr7pcGhdVxwj0LOKtKM6uLqFJWgyArZo+s5lo4y1XTboBUxsMb3kevLSWADfZL7baxrpz3rnQDXmVtp33at27P7E0bnPIyqjAi8VIe2BhzQXCOXRyea17gog3dSjp0mYuu+ur3RQAAOwAAAAAAAAAAAA==" alt="Moly efficiency formula" style="vertical-align:middle;border:0;max-width:400px;display:inline;margin:4px 0;"></li></ul>
+</li>
+<li><sup>99</sup>Mo efficiency is <strong>88%</strong>
+  <ul>
+    <li>88% of <sup>99</sup>Mo decays to <sup>99m</sup>Tc</li>
+    <li>12% of <sup>99</sup>Mo decays to <sup>99</sup>Tc</li>
+  </ul>
+</li>
+<li>Both <sup>99m</sup>Tc &amp; <sup>99</sup>Tc are eluted in a generator
+  <ul><li>Remember the longer you wait to elute your generator the more <sup>99m</sup>Tc has decayed to <sup>99</sup>Tc</li></ul>
+</li>
+</ul>
+<h3>Generator Efficiency</h3>
+<p>The <sup>99</sup>Mo/<sup>99m</sup>Tc generator has an efficiency as well:</p>
+<ul>
+<li>It's also referred to as the yield of the generator</li>
+<li>The <sup>99</sup>Mo/<sup>99m</sup>Tc generator efficiency formula:
+  <ul><li><img src="data:image/gif;base64,R0lGODdhUAEzAPMAAP///wAAAF9fX6KiotTU1BwcHC0tLYGBgcPDw05OTgAAAAAAAAAAAAAAAAAAAAAAACwAAAAAUAEzAAAE/xDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bW9BPuXB7f/AoHAI60l6RkCSyGw6n9BXErmLWq/YLHaqrOq+S614TC6HuFwlkmpuu99mnlF+rHfh+LzexruE03NSYSQ6OIVFg3ttiU+BFX9Vd39yhyKMljh2MZeKYpWbI4mVo3akkoSZHpx3UpFjq29sM7AWtJinqBq2q7a5rJ6dFFRgao+Hx0drc59qg3RFfszJgNRTo7K1fcJrO4XEzNrL26LPzcnm3eLHbNroxdJWjt/dXqxo9sauwjKTmvT4sqhpEqcrWhdk77C5GnbuV7FSjg5KivgFYiSE78gEIobv4kJczv/2PeJXq2CpjwM9+vNjUB83byXryNP3i6LMkxZRdsypkc7MlTYbpqEZEpRIDAR3AhJ6FClLoiCfPpRXFKQ1nBhrqtyqsR4urTyHQqK5ssVYpJ8EQlxy1eRIl1ilVsvQrl1Kd/7aft35attJilQl3sSmlyyLqogHn2O49CFdqQPZ3dwXULDDy40lZg5rGWaZcJ6vseXYFhy8Xpbs4h33r483a7BXNyVbl2frf7KbjRYbGyjp3mVTSFOd2w3qYI+3+EU+zhk3evD6HmdOWctZ6g2PsjXcEzuh6T8owRFggcCBlrhf4/bOvr2WAQYoEChAAH129dnd69/vBL6E+fXZ5xj/fo7xZ+CBP8CHAH109SNUaZREKOGEFFZo4YUYZqjhhhx26OGHIIYooogYHBAAAro4OFVhCLbo4gvzHRBfg/k8uN6LOOZYAoAA+IdWTGBdpuOQRGrAowQ+ZqPkNQUW6eSTEzBIwQAJGFPONNmAB6UJdUW35ZdgquKVkGGWaSaQlZ2p5pofofGSlmzGid09FlUk5506PqMnTnj2SWMexDnUGJwqeFmCoX7qFigIhBIREVRxNbeoWdAkatKjQDrVBHjkLIfVdnsdxh0KjZb5U3KoOnoLpaGKGpxwlnZADnB2klnRN5Popc5rzvVaaqrpoHWVauHkF6hdyN6X0IDKmFqjzVLKxqRercikqRlRQ83G6m3P3pMYO5iGJlZnixFm2ZZVfTUumuXexSedmAY5KqxvafoXUF4FRZtI65KWb5jXRaUTXAIL6q5nBmv7K7CcjIXwQj+llam6Kj36MLr1dqQrmhETPJFO14lCkrZNravdRcNl2m/HA0OJ2EYfT4ZyXIDVCdC5LJJZKLv1ImxuZdbeVZpg/hI95pNX4sXrillmFDOWwfqcVLCQmUXsaaY0KTXVVrLW2jxP5xwrcwuPbTYeCp2ttoGIru3223DbEAEAOwAAAAAAAAAAAA==" alt="Generator efficiency formula" style="vertical-align:middle;border:0;max-width:400px;display:inline;margin:4px 0;"></li></ul>
+</li>
+<li><sup>99</sup>Mo/<sup>99m</sup>Tc generator efficiency is <strong>85&ndash;95%</strong>
+  <ul>
+    <li>85&ndash;95% of <sup>99m</sup>Tc in the column is eluted</li>
+    <li>5&ndash;15% of the <sup>99m</sup>Tc remains on the column</li>
+  </ul>
+</li>
+</ul>
+<p>Now that you know all about a generator, who uses them?</p>
+<ul>
+<li>Any hospital can use a <sup>99</sup>Mo/<sup>99m</sup>Tc generator:
+  <ul>
+    <li>Today they are usually only seen in the larger hospitals</li>
+    <li>Smaller hospitals tend to use "Unit Doses" supplied by a Nuclear Pharmacy</li>
+  </ul>
+</li>
+<li>A Nuclear Pharmacy can use a <sup>99</sup>Mo/<sup>99m</sup>Tc generator:
+  <ul>
+    <li>A Nuclear Pharmacy is a centralized pharmacy that can supply <sup>99m</sup>Tc and other radiopharmaceuticals to hospitals</li>
+    <li>The Nuclear Pharmacy supplies the "Unit Doses"</li>
+  </ul>
+</li>
+</ul>
+<h3>Generator Size</h3>
+<p>When we refer to the size of a <sup>99</sup>Mo/<sup>99m</sup>Tc generator:</p>
+<ul>
+<li>The amount of <sup>99</sup>Mo loaded into the column of a generator
+  <ul>
+    <li>Hospitals use generator sizes of 0.22&ndash;3 Ci of <sup>99</sup>Mo</li>
+    <li>Pharmacies use generator sizes of 8.3&ndash;16.6 Ci of <sup>99</sup>Mo</li>
+  </ul>
+</li>
+<li>The amount of <sup>99</sup>Mo in a generator is recorded at calibration
+  <ul><li>Calibration is the day of shipping of the generator from the manufacturer</li></ul>
+</li>
+</ul>
+<h3>Generator Information</h3>
+<p>Certain information is required to be listed on a <sup>99</sup>Mo/<sup>99m</sup>Tc generator:</p>
+<ul>
+<li>Amount of <sup>99</sup>Mo in the generator at calibration</li>
+<li>Date and time of calibration</li>
+<li>When the generator expires</li>
+</ul>
+<table>
+<thead><tr><th>Advantages of <sup>99</sup>Mo/<sup>99m</sup>Tc Generator</th><th>Disadvantages of <sup>99</sup>Mo/<sup>99m</sup>Tc Generator</th></tr></thead>
+<tbody>
+<tr>
+<td><ol>
+<li>Provides Tc<sup>99m</sup> &mdash; 140 keV is good for resolution</li>
+<li>No particle emission from Tc<sup>99m</sup></li>
+</ol></td>
+<td><ol>
+<li>Tc<sup>99m</sup> can remain absorbed on the column</li>
+<li>140 keV photons may not be good for deep seated lesions</li>
+</ol></td>
+</tr>
+</tbody>
+</table>
+      </div>
+    </div>
+
+    <div class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>Technetium-99m</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>Now that we have our elution from a <sup>99</sup>Mo/<sup>99m</sup>Tc generator we can talk about:</p>
+<ul>
+<li>Since <sup>99m</sup>Tc is used in 80% of nuclear medicine studies, we need to know all about it</li>
+<li>There are 3 main contents in a <sup>99</sup>Mo/<sup>99m</sup>Tc generator elution</li>
+</ul>
+<p>What do we need to talk about with Technetium-99m?</p>
+<ul>
+<li>General Properties and characteristics</li>
+<li>Oxidation states of Technetium-99m</li>
+<li>Reduction of Technetium-99m</li>
+<li>Free Pertechnetium in a Radiopharmaceutical kit</li>
+<li>Hydrolysis of Reduced Tc-99m and Tin</li>
+<li>Bound Tc-99m</li>
+</ul>
+<h3>What we know about Technetium</h3>
+<ul>
+<li>Atomic Number &mdash; 43</li>
+<li>There are 22 isotopes of Tc with mass #'s ranging from 90&ndash;111</li>
+<li>All Isotopes of Tc are Radioactive &mdash; No stable isotopes</li>
+<li>Comes from the Greek word <em>technetos</em> meaning artificial</li>
+</ul>
+<h3>What we know about Technetium-99m</h3>
+<ul>
+<li>Atomic Number &mdash; 43</li>
+<li>Has a 6 hour Half-Life</li>
+<li>Has an abundant 140 keV gamma ray
+  <ul><li>90% of <sup>99m</sup>Tc decay by 140 keV gamma ray</li></ul>
+</li>
+<li>Easily available in the Moly/Tech generator</li>
+<li>Eluted as sterile, pyrogen and carrier free</li>
+</ul>
+<h3>Oxidation States of Tc<sup>99m</sup></h3>
+<p>Before we get into the oxidation states of <sup>99m</sup>Tc, let's figure out what oxidation is:</p>
+<ul>
+<li>Oxidation of an element is any reaction in which electrons are transferred
+  <ul><li>Electrons are transferred between 2 elements</li></ul>
+</li>
+<li>Oxidation # is the # of protons compared to electrons
+  <ul>
+    <li>An element with a 7+ oxidation # means it has 7 more protons than electrons</li>
+    <li>Oxidation # is also referred to as the oxidation state</li>
+  </ul>
+</li>
+</ul>
+<p><sup>99m</sup>Tc can exist in 8 oxidation states (1<sup>-</sup> to 7<sup>+</sup>):</p>
+<ul>
+<li><sup>99m</sup>Tc at 7+ means it has 7 more protons than electrons &mdash; needs 7 electrons to bond with another element</li>
+<li><sup>99m</sup>Tc at 1- means it has 1 more electron than protons &mdash; needs to donate 1 electron to bond</li>
+</ul>
+<h3>Reduction of <sup>99m</sup>Tc</h3>
+<p>When <sup>99m</sup>Tc is eluted from a generator it is at a 7+ oxidation state:</p>
+<ul>
+<li><sup>99m</sup>Tc<sup>7+</sup> can be reduced to one of its other 7 oxidation states</li>
+<li>Reducing <sup>99m</sup>Tc to a lower oxidation state will add e<sup>-</sup> to <sup>99m</sup>Tc:
+  <ul>
+    <li><sup>99m</sup>Tc<sup>7+</sup> + 3e<sup>-</sup> &rarr; <sup>99m</sup>Tc<sup>4+</sup></li>
+    <li><sup>99m</sup>Tc<sup>7+</sup> + 4e<sup>-</sup> &rarr; <sup>99m</sup>Tc<sup>3+</sup></li>
+  </ul>
+</li>
+</ul>
+<p><sup>99m</sup>Tc<sup>7+</sup> is not good for labeling with other compounds &mdash; must be reduced first.</p>
+<p>Reducing agents that can reduce <sup>99m</sup>Tc<sup>7+</sup>:</p>
+<ul>
+<li>Stannous Chloride, Stannous Tartrate, HCl, Sodium Borohydride &amp; Ferrous Sulfate</li>
+<li>Stannous Chloride (SnCl) is the most common reducing agent</li>
+</ul>
+<p>The ratio of SnCl to <sup>99m</sup>Tc<sup>7+</sup> is <strong>10<sup>6</sup> : 1</strong> &mdash; ensuring complete reduction.</p>
+<p>Common oxidation states to reduce <sup>99m</sup>Tc<sup>7+</sup> to:</p>
+<ul>
+<li><sup>99m</sup>Tc<sup>5+</sup>, <sup>99m</sup>Tc<sup>3+</sup>, <sup>99m</sup>Tc<sup>1+</sup></li>
+<li>Each oxidation state labels to different compounds to form different radiopharmaceuticals</li>
+</ul>
+<h3>Free <sup>99m</sup>Tc in a Radiopharmaceutical Kit</h3>
+<p>Free <sup>99m</sup>Tc = <sup>99m</sup>Tc that is NOT bound to a pharmaceutical. It won't go to the target organ.</p>
+<p>Causes of Free <sup>99m</sup>Tc:</p>
+<ol>
+<li><sup>99m</sup>Tc<sup>7+</sup> that did not get reduced (most common reason)
+  <ul>
+    <li>Oxygen in the vial will oxidize the SnCl and render it useless</li>
+    <li>Not enough SnCl in the vial to reduce the <sup>99m</sup>Tc</li>
+  </ul>
+</li>
+<li>Oxygen in the vial causing the <sup>99m</sup>Tc-pharmaceutical bond to break</li>
+</ol>
+<p>Prevention: keep enough SnCl in the kit and keep oxygen and air out of the kit.</p>
+<h3>Hydrolysis of Reduced <sup>99m</sup>Tc</h3>
+<ul>
+<li>Reduced <sup>99m</sup>Tc can react with water instead of the pharmaceutical &mdash; rendering the agent ineffective</li>
+<li>Tin (Sn) can also undergo hydrolysis &mdash; losing its ability to reduce <sup>99m</sup>Tc</li>
+</ul>
+<h3>Bound <sup>99m</sup>Tc in a Radiopharmaceutical Kit</h3>
+<ul>
+<li>Bound <sup>99m</sup>Tc is good &mdash; it is <sup>99m</sup>Tc bound to a radiopharmaceutical</li>
+<li>Examples: <sup>99m</sup>Tc-HDP, <sup>99m</sup>Tc-Sestamibi, <sup>99m</sup>Tc-Mebrofenin</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>Decreased Yield</h2>
+      </div>
+      <div class="section-body sc-content">
+        <p>What would cause you to have less <sup>99m</sup>Tc Elution than you expected?</p>
+<ol>
+<li><strong>Channeling</strong> (most common reason)
+  <ul>
+    <li>When part of the column is not accessible to the eluting solution</li>
+    <li>Usually caused by an air pocket on the column
+      <ul>
+        <li>Prevents the NaCl from washing over that section of the column</li>
+        <li>If NaCl doesn't wash over a section, the <sup>99m</sup>Tc will not be eluted from that section</li>
+      </ul>
+    </li>
+  </ul>
+</li>
+<li><strong>Less <sup>99</sup>Mo loaded onto the column</strong>
+  <ul><li>Less <sup>99</sup>Mo creates less <sup>99m</sup>Tc to be eluted</li></ul>
+</li>
+<li><strong>Clogged tubing</strong>
+  <ul><li>Prevents some or all of the <sup>99m</sup>Tc from traveling through the tubing &amp; into the elution vial</li></ul>
+</li>
+<li><strong>Loss of Vacuum</strong>
+  <ul>
+    <li>Usually caused by holes or cracks in the tubing or glass column</li>
+    <li>Air enters &rarr; vacuum is gone &rarr; Na<sup>99m</sup>TcO<sub>4</sub> is not pulled into the elution vial</li>
+  </ul>
+</li>
+<li><strong>Cracks in the Elution vial</strong>
+  <ul>
+    <li>A crack allows air to be sucked in &rarr; evacuation is lost</li>
+    <li>Na<sup>99m</sup>TcO<sub>4</sub> will not be sucked into the elution vial</li>
+  </ul>
+</li>
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Glossary</h2>
+      </div>
+      <div class="section-body sc-content">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>Generator</dt><dd>A device containing a parent radionuclide that decays to produce a useful daughter radionuclide. Typically ~45 lbs, 18 inches tall, cylindrical, housed in lead.</dd></div>
+          <div class="glossary-card"><dt>Parent Radionuclide</dt><dd>The longer-lived radionuclide loaded into a generator that decays to produce the daughter. In the Moly/Tech generator, <sup>99</sup>Mo is the parent.</dd></div>
+          <div class="glossary-card"><dt>Daughter Radionuclide</dt><dd>The product of parent decay extracted for clinical use. In the Moly/Tech generator, <sup>99m</sup>Tc is the daughter.</dd></div>
+          <div class="glossary-card"><dt>Granddaughter</dt><dd>The stable or very long-lived product of daughter decay. In the Moly/Tech generator, <sup>99</sup>Tc (T&frac12; = 210,000 years) is the granddaughter.</dd></div>
+          <div class="glossary-card"><dt>Elution</dt><dd>The process of washing the generator column with saline to extract the daughter radionuclide. Also refers to the final product (Na<sup>99m</sup>TcO<sub>4</sub>) collected in the evacuated vial.</dd></div>
+          <div class="glossary-card"><dt>Eluting Solvent</dt><dd>Normal saline (0.9% NaCl, isotonic saline) &mdash; the physiologic pH solution used to wash over the column and extract <sup>99m</sup>Tc.</dd></div>
+          <div class="glossary-card"><dt>Alumina</dt><dd>The absorbent material inside the column that holds the parent radionuclide (<sup>99</sup>Mo) via strong bonds while allowing <sup>99m</sup>Tc to be eluted via weak bonds.</dd></div>
+          <div class="glossary-card"><dt>Carrier Free</dt><dd>A daughter radionuclide that is a different element than its parent, making separation easy and eliminating contamination with the parent.</dd></div>
+          <div class="glossary-card"><dt>Physiologic pH</dt><dd>The pH of blood. The eluting solvent must be at physiologic pH so the final product can safely mix with blood when administered to patients.</dd></div>
+          <div class="glossary-card"><dt>Evacuated Vial</dt><dd>A glass vial from which air has been removed. When inserted onto the generator needle, the vacuum pulls the elution solution through the column and into the vial.</dd></div>
+          <div class="glossary-card"><dt>Sodium Pertechnetate</dt><dd>Na<sup>99m</sup>TcO<sub>4</sub> &mdash; the final product of generator elution. Expires 12 hours after elution.</dd></div>
+          <div class="glossary-card"><dt>Generator Equilibrium</dt><dd>The state reached when the ratio of parent to daughter activity becomes constant. Occurs when parent T&frac12; is greater than daughter T&frac12;.</dd></div>
+          <div class="glossary-card"><dt>Secular Equilibrium</dt><dd>Generator equilibrium where the parent T&frac12; is &ge;100&times; larger than the daughter. Examples: <sup>81</sup>Rb/<sup>81m</sup>Kr, <sup>113</sup>Sn/<sup>113m</sup>In.</dd></div>
+          <div class="glossary-card"><dt>Transient Equilibrium</dt><dd>Generator equilibrium where the parent T&frac12; is 10&ndash;50&times; larger than the daughter. Example: <sup>99</sup>Mo/<sup>99m</sup>Tc (takes ~24 hours to reach).</dd></div>
+          <div class="glossary-card"><dt>Moly Efficiency</dt><dd>The fraction of <sup>99</sup>Mo that decays to <sup>99m</sup>Tc &mdash; 88%. The remaining 12% decays directly to <sup>99</sup>Tc.</dd></div>
+          <div class="glossary-card"><dt>Generator Efficiency (Yield)</dt><dd>The fraction of <sup>99m</sup>Tc in the column that is actually eluted &mdash; 85&ndash;95%. Also called generator yield.</dd></div>
+          <div class="glossary-card"><dt>Calibration</dt><dd>The day the generator is shipped from the manufacturer. The amount of <sup>99</sup>Mo is recorded at this time.</dd></div>
+          <div class="glossary-card"><dt>Unit Dose</dt><dd>A pre-measured dose of radiopharmaceutical supplied by a Nuclear Pharmacy to smaller hospitals that do not have their own generators.</dd></div>
+          <div class="glossary-card"><dt>Oxidation State</dt><dd>The number of protons compared to electrons in an element. <sup>99m</sup>Tc can exist in 8 oxidation states from 1<sup>-</sup> to 7<sup>+</sup>. Eluted as 7+.</dd></div>
+          <div class="glossary-card"><dt>Reduction (of 99mTc)</dt><dd>Adding electrons to <sup>99m</sup>Tc<sup>7+</sup> to lower its oxidation state (e.g., to 4+, 3+, or 1+), allowing it to bond with a pharmaceutical.</dd></div>
+          <div class="glossary-card"><dt>Stannous Chloride (SnCl)</dt><dd>The most common reducing agent used to reduce <sup>99m</sup>Tc<sup>7+</sup> in a radiopharmaceutical kit. Added at a ratio of 10<sup>6</sup> : 1.</dd></div>
+          <div class="glossary-card"><dt>Free 99mTc</dt><dd><sup>99m</sup>Tc not bound to a pharmaceutical in a kit. Most commonly caused by <sup>99m</sup>Tc<sup>7+</sup> that was not reduced. Will not localize to the target organ.</dd></div>
+          <div class="glossary-card"><dt>Hydrolysis</dt><dd>A reaction in which reduced <sup>99m</sup>Tc or Sn reacts with water rather than the pharmaceutical, rendering the agent ineffective.</dd></div>
+          <div class="glossary-card"><dt>Channeling</dt><dd>The most common cause of decreased generator yield. An air pocket prevents saline from washing part of the column, leaving <sup>99m</sup>Tc trapped.</dd></div>
+          <div class="glossary-card"><dt>Loss of Vacuum</dt><dd>A cause of decreased yield where cracks or holes in tubing or the glass column allow air to enter, eliminating the vacuum needed to collect the elution.</dd></div>
+        </dl>
+      </div>
+    </div>
+  <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+<script>
+var QUIZ_BANK = [
+  { section: "s1", q: "What is the primary reason hospitals use Nuclear Medicine Generators instead of reactors?", a: 0, choices: ["To bring short-lived radionuclides to hospitals without needing a reactor or accelerator", "Generators produce more radiation than reactors", "Reactors are only used for imaging", "Generators are cheaper than accelerators"] },
+  { section: "s2", q: "Approximately how much does a typical Moly/Tech generator weigh?", a: 2, choices: ["5 lbs", "15 lbs", "45 lbs", "100 lbs"] },
+  { section: "s3", q: "Which characteristic ensures a generator remains useful for about a week?", a: 1, choices: ["The daughter has a long T1/2", "The parent has a long enough T1/2 for good generator life", "The generator is made of lead", "The eluting solvent is acidic"] },
+  { section: "s3", q: "Why must the daughter radionuclide be a different element than the parent?", a: 0, choices: ["So the daughter is carrier free and easier to separate", "Because different elements have the same charge", "To allow the parent to decay faster", "So the daughter has a longer half-life"] },
+  { section: "s3", q: "What does 'carrier free' mean in the context of a generator?", a: 2, choices: ["The solution has no saline", "The parent and daughter are the same element", "The daughter is a different element than the parent, making separation easy", "The generator does not require tubing"] },
+  { section: "s4", q: "What are the half-lives of the Mo-99/Tc-99m/Tc-99 generator chain?", a: 0, choices: ["67 hours / 6 hours / 210,000 years", "6 hours / 67 hours / stable", "115 days / 1.7 hours / stable", "4.7 hours / 13 seconds / stable"] },
+  { section: "s4", q: "In the Sn-113/In-113m generator chain, what is the half-life of In-113m?", a: 1, choices: ["115 days", "1.7 hours", "13 seconds", "Stable"] },
+  { section: "s5", q: "What is the main advantage of a Liquid Column Generator?", a: 2, choices: ["Easy separation of parent and daughter", "Long shelf life", "Cheap", "No lead shielding required"] },
+  { section: "s5", q: "Which type of generator is the main type used in Nuclear Medicine today?", a: 1, choices: ["Liquid Column Generator", "Solid Column Generator", "Gas Column Generator", "Ion Exchange Generator"] },
+  { section: "s6", q: "What material holds the parent radionuclide inside the generator column?", a: 0, choices: ["Alumina", "Saline", "Lead", "Glass fritted disk"] },
+  { section: "s6", q: "What is the function of the filter (Glass Fritted Disk) in a generator?", a: 2, choices: ["To hold the parent radionuclide", "To shield the column from radiation", "To filter out alumina from the elution solution", "To control the flow rate of saline"] },
+  { section: "s6", q: "What is the typical volume of the eluting solvent vial on a standard generator?", a: 1, choices: ["10 mL", "135 mL", "500 mL", "50 mL"] },
+  { section: "s7", q: "How is 99Mo bound to the alumina compared to 99mTc?", a: 0, choices: ["99Mo is bound by strong bonds; 99mTc by weak bonds", "99Mo is bound by weak bonds; 99mTc by strong bonds", "Both are bound equally", "Neither is bound to the alumina"] },
+  { section: "s7", q: "What is the final product of generator elution?", a: 3, choices: ["Molybdenum saline", "Alumina solution", "Isotonic NaCl", "Sodium Pertechnetate (Na99mTcO4)"] },
+  { section: "s7", q: "How does the elution vial pull the solution through the generator?", a: 1, choices: ["A pump forces the saline through", "The evacuated vial creates a vacuum that sucks in the generator contents", "Gravity pulls the saline through", "Pressure from the lead shielding forces the flow"] },
+  { section: "s8", q: "How long after elution does it take for maximum 99mTc to build up in the generator?", a: 2, choices: ["6 hours", "12 hours", "23 hours", "48 hours"] },
+  { section: "s8", q: "How long after elution does Na99mTcO4 expire?", a: 0, choices: ["12 hours", "6 hours", "24 hours", "48 hours"] },
+  { section: "s9", q: "What type of equilibrium occurs when the parent T1/2 is 100 times or more greater than the daughter?", a: 1, choices: ["Transient Equilibrium", "Secular Equilibrium", "Dynamic Equilibrium", "Radioactive Equilibrium"] },
+  { section: "s9", q: "Which generator is an example of Transient Equilibrium?", a: 0, choices: ["99Mo/99mTc", "81Rb/81mKr", "113Sn/113mIn", "68Ge/68Ga"] },
+  { section: "s9", q: "Approximately how long does it take for a 99Mo/99mTc generator to reach equilibrium?", a: 2, choices: ["6 hours", "12 hours", "24 hours", "72 hours"] },
+  { section: "s10", q: "What percentage of 99Mo decays to 99mTc (Moly efficiency)?", a: 1, choices: ["95%", "88%", "75%", "50%"] },
+  { section: "s10", q: "What is the generator efficiency (yield) of a 99Mo/99mTc generator?", a: 0, choices: ["85-95%", "50-60%", "60-70%", "95-100%"] },
+  { section: "s10", q: "Hospital generator sizes typically use how much 99Mo?", a: 2, choices: ["8.3-16.6 Ci", "50-100 mCi", "0.22-3 Ci", "100-500 mCi"] },
+  { section: "s11", q: "In what percentage of nuclear medicine studies is 99mTc used?", a: 3, choices: ["50%", "60%", "70%", "80%"] },
+  { section: "s11", q: "When 99mTc is eluted from a generator, what is its oxidation state?", a: 0, choices: ["7+", "4+", "3+", "1-"] },
+  { section: "s11", q: "What is the most common reducing agent used to reduce 99mTc7+?", a: 1, choices: ["Ferrous Sulfate", "Stannous Chloride (SnCl)", "Sodium Borohydride", "HCl"] },
+  { section: "s11", q: "What is the ratio of SnCl to 99mTc7+ ions in a radiopharmaceutical kit?", a: 2, choices: ["1 : 1", "100 : 1", "1,000,000 : 1", "10 : 1"] },
+  { section: "s11", q: "What is 'Free 99mTc' in a radiopharmaceutical kit?", a: 0, choices: ["99mTc that is not bound to a pharmaceutical", "99mTc that has been reduced to 4+", "99mTc bound to Sestamibi", "99mTc in the alumina column"] },
+  { section: "s12", q: "What is the most common reason for decreased 99mTc yield from a generator?", a: 1, choices: ["Loss of vacuum", "Channeling (air pocket on the column)", "Clogged tubing", "Cracked elution vial"] },
+  { section: "s12", q: "If the elution vial has a crack, what happens?", a: 2, choices: ["The 99mTc is contaminated with alumina", "The generator loses all radiation", "Air is sucked in, vacuum is lost, and Na99mTcO4 is not collected", "The generator overheats"] },
+];
+
+  var mainEl4 = document.querySelector('main');
+  var tocLinks = Array.from(document.querySelectorAll('nav#toc a'));
+  var sectionEls = tocLinks.map(function(a){return document.getElementById(a.dataset.target);}).filter(Boolean);
+  var searchInput = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('clearBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var searchCount = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var quizBtn = document.getElementById('quizBtn');
+  var quizClose = document.getElementById('quizClose');
+  var quizOverlay = document.getElementById('quizOverlay');
+  var quizBody = document.getElementById('quizBody');
+  var quizStartBtn = document.getElementById('quizStartBtn');
+  var quizAvg = document.getElementById('quizAvg');
+  var highlightToggle = document.getElementById('highlightToggle');
+  var allMatches = [], currentMatch = -1, highlightsOn = false, debounceTimer;
+
+  function setNavActive(on) {
+    if (on) { prevBtn.classList.remove('inactive'); nextBtn.classList.remove('inactive'); }
+    else { prevBtn.classList.add('inactive'); nextBtn.classList.add('inactive'); searchCount.textContent = '— / —'; }
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('mark.hl').forEach(function(m){
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    allMatches = []; currentMatch = -1;
+  }
+
+  function doSearch(term) {
+    clearHighlights(); noResults.style.display = 'none';
+    if (!term) { setNavActive(false); return; }
+    var re = new RegExp('(' + term.replace(/[-[]{}()*+?.,\^$|#s]/g, '\$&') + ')', 'gi');
+    var walker = document.createTreeWalker(mainEl4, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        var p = node.parentNode;
+        while (p) { if (p.tagName === 'SCRIPT' || p.tagName === 'STYLE') return NodeFilter.FILTER_REJECT; p = p.parentNode; }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+    var nodes = []; var n; while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(node) {
+      if (!re.test(node.textContent)) return; re.lastIndex = 0;
+      var frag = document.createDocumentFragment(), last = 0, m;
+      while ((m = re.exec(node.textContent)) !== null) {
+        frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+        var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[1];
+        frag.appendChild(mark); allMatches.push(mark); last = m.index + m[1].length;
+      }
+      frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (allMatches.length === 0) { noResults.style.display = 'block'; setNavActive(false); searchCount.textContent = '0 found'; }
+    else { setNavActive(true); currentMatch = 0; highlightCurrent(); }
+  }
+
+  function highlightCurrent() {
+    allMatches.forEach(function(m){m.classList.remove('current');}); if (!allMatches.length) return;
+    allMatches[currentMatch].classList.add('current');
+    allMatches[currentMatch].scrollIntoView({behavior:'smooth',block:'center'});
+    searchCount.textContent = (currentMatch+1) + ' / ' + allMatches.length;
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer); var val = searchInput.value.trim();
+    clearBtn.style.display = val ? 'block' : 'none';
+    debounceTimer = setTimeout(function(){doSearch(val);}, 260);
+  });
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = ''; clearBtn.style.display = 'none'; clearHighlights(); noResults.style.display = 'none'; setNavActive(false);
+  });
+  prevBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch - 1 + allMatches.length) % allMatches.length; highlightCurrent();
+  });
+  nextBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch + 1) % allMatches.length; highlightCurrent();
+  });
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { var id = e.target.id;
+        tocLinks.forEach(function(a){a.classList.toggle('active', a.dataset.target === id);});
+      }
+    });
+  }, {root: mainEl4, threshold: 0.15});
+  sectionEls.forEach(function(s){observer.observe(s);});
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault(); var t = document.getElementById(a.dataset.target); if (t) t.scrollIntoView({behavior:'smooth'});
+    });
+  });
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function loadAvg4() {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores4') || '[]');
+      if (scores.length > 0) {
+        var avg = Math.round(scores.reduce(function(s,v){return s+v;},0)/scores.length);
+        quizAvg.textContent = 'Avg: ' + avg + '%';
+      }
+    } catch(e){}
+  }
+  function saveScore4(pct) {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores4') || '[]');
+      scores.push(pct); if (scores.length > 20) scores = scores.slice(-20);
+      localStorage.setItem('radQuizScores4', JSON.stringify(scores)); loadAvg4();
+    } catch(e){}
+  }
+  function saveStats4(results) {
+    try {
+      var stats = JSON.parse(localStorage.getItem('radQuizSectionStats4') || '{}');
+      results.forEach(function(r){
+        if (!stats[r.section]) stats[r.section] = {correct:0,total:0};
+        stats[r.section].total++; if (r.correct) stats[r.section].correct++;
+      });
+      localStorage.setItem('radQuizSectionStats4', JSON.stringify(stats));
+    } catch(e){}
+  }
+
+  loadAvg4();
+  quizBtn.addEventListener('click', function(){quizOverlay.classList.add('open');});
+  quizClose.addEventListener('click', function(){quizOverlay.classList.remove('open');});
+  quizOverlay.addEventListener('click', function(e){if(e.target===quizOverlay)quizOverlay.classList.remove('open');});
+  quizStartBtn.addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+
+  function renderQuiz(questions) {
+    var html = '<div class="quiz-progress">' + questions.length + ' questions</div>';
+    html += '<div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" style="width:100%"></div></div>';
+    questions.forEach(function(q,i) {
+      var shuffled = shuffle(q.choices.map(function(c,idx){return {text:c,orig:idx};}));
+      var ci = shuffled.findIndex(function(s){return s.orig===q.a;});
+      html += '<div class="quiz-q" data-qi="'+i+'" data-correct="'+ci+'" data-section="'+q.section+'">';
+      html += '<div class="quiz-q-text">'+(i+1)+'. '+q.q+'</div><div class="quiz-choices">';
+      shuffled.forEach(function(ch,idx){
+        html += '<label class="quiz-choice"><input type="radio" name="q'+i+'" value="'+idx+'">'+ch.text+'</label>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="quizSubmitBtn">Submit Quiz</button></div>';
+    quizBody.innerHTML = html;
+    document.getElementById('quizSubmitBtn').addEventListener('click', function(){gradeQuiz(questions);});
+  }
+
+  function gradeQuiz(questions) {
+    var correct = 0, results = [];
+    quizBody.querySelectorAll('.quiz-q').forEach(function(qEl) {
+      var correctIdx = parseInt(qEl.dataset.correct), section = qEl.dataset.section;
+      var choices = qEl.querySelectorAll('.quiz-choice');
+      var selected = qEl.querySelector('input:checked');
+      var selIdx = selected ? parseInt(selected.value) : -1;
+      var ok = selIdx === correctIdx;
+      if (ok) correct++;
+      results.push({section:section,correct:ok});
+      choices.forEach(function(ch,idx){
+        ch.classList.add('locked');
+        if (idx===correctIdx) ch.classList.add('reveal-correct');
+        if (idx===selIdx && !ok) ch.classList.add('incorrect');
+        if (idx===selIdx && ok) ch.classList.add('correct');
+      });
+      var fb = document.createElement('div'); fb.className = 'quiz-feedback '+(ok?'ok':'bad');
+      fb.textContent = ok ? '✓ Correct!' : '✗ '+(selected?'Incorrect.':'Not answered.');
+      qEl.appendChild(fb);
+    });
+    var pct = Math.round((correct/questions.length)*100);
+    saveScore4(pct); saveStats4(results);
+    var msg = pct>=90?'Excellent work!':pct>=70?'Good job!':'Keep studying!';
+    quizBody.querySelector('.quiz-actions').innerHTML = '<button class="quiz-retry-btn" id="quizRetryBtn">Try Another Quiz</button>';
+    var r = document.createElement('div'); r.className = 'quiz-result';
+    r.innerHTML = '<div class="quiz-score-ring">'+correct+' / '+questions.length+'</div><p>'+pct+'% — '+msg+'</p>';
+    quizBody.insertBefore(r, quizBody.firstChild);
+    document.getElementById('quizRetryBtn').addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+  }
+
+  function applyTocHighlights(id, cls) {
+    var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+    if (link) { link.classList.remove('study-warn','study-crit'); if (cls) link.classList.add(cls); }
+  }
+
+  highlightToggle.addEventListener('click', function() {
+    highlightsOn = !highlightsOn; highlightToggle.classList.toggle('active', highlightsOn);
+    if (highlightsOn) {
+      try {
+        var stats = JSON.parse(localStorage.getItem('radQuizSectionStats4') || '{}');
+        for (var id in stats) {
+          var s = stats[id], pct = s.total > 0 ? (s.correct/s.total)*100 : 100;
+          var el = document.getElementById(id); if (!el) continue;
+          el.classList.remove('study-warn','study-crit');
+          var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+          if (cls) el.classList.add(cls);
+          applyTocHighlights(id, cls);
+        }
+      } catch(e){}
+    } else {
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('study-warn','study-crit');});
+      document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
+    }
+  });
+
+</script>
+</body>
+</html>
