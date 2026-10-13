@@ -981,7 +981,7 @@ var QUIZ_BANK = [
   function doSearch(term) {
     clearHighlights(); noResults.style.display = 'none';
     if (!term) { setNavActive(false); return; }
-    var re = new RegExp('(' + term.replace(/[-[]{}()*+?.,\^$|#s]/g, '\$&') + ')', 'gi');
+    var re = new RegExp('(' + term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')', 'gi');
     var walker = document.createTreeWalker(mainEl4, NodeFilter.SHOW_TEXT, {
       acceptNode: function(node) {
         var p = node.parentNode;
