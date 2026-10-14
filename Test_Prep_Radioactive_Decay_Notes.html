@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>Test Prep: Radioactive Decay — Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-review { margin-top: 24px; text-align: left; }
+    .quiz-review-item { padding: 12px 0; border-bottom: 1px solid #e5e7eb; font-size: 0.88rem; }
+    .quiz-review-item:last-child { border-bottom: none; }
+    .quiz-review-item .rq { font-weight: 600; color: #1f2328; margin-bottom: 4px; }
+    .quiz-review-item .ra { color: #15803d; }
+    .quiz-review-item .rw { color: #b91c1c; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px - env(safe-area-inset-top, 0px)); height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; }
+    .section-body { padding: 20px 24px; }
+    .sc-content ul, .sc-content ol { padding-left: 22px; margin: 8px 0; }
+    .sc-content ul ul, .sc-content ul ol, .sc-content ol ul { margin: 2px 0; }
+    .sc-content li { margin-bottom: 3px; }
+    .sc-content p { margin-bottom: 8px; }
+    .sc-content p:last-child { margin-bottom: 0; }
+    .sc-content img { max-width: 100%; height: auto; border-radius: 6px; margin: 14px auto; display: block; border: 1px solid #e5e7eb; }
+    .sc-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    .sc-content th { background: #1a56a6; color: white; padding: 8px 12px; text-align: left; }
+    .sc-content td { padding: 7px 12px; border-bottom: 1px solid #e5e7eb; }
+    .sc-content tr:nth-child(even) td { background: #f9fafb; }
+    .sc-content h1 { font-size: 1.05rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content h2 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content strong { font-weight: 700; }
+    .sc-content em { font-style: italic; }
+    .sc-content a { color: #1a56a6; text-decoration: none; }
+    .callout { background: #eff6ff; border-left: 4px solid #1a56a6; border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 12px 0; font-size: 0.92rem; color: #1e3a5f; }
+    .callout.warning { background: #fff7ed; border-left-color: #ea580c; color: #7c2d12; }
+    .formula-box { background: #fefce8; border: 1px solid #ca8a04; border-radius: 6px; padding: 10px 16px; margin: 12px 0; font-family: monospace; font-size: 0.95rem; color: #1f2328; }
+    .test-banner { background: #7c5cd8; color: #fff; border-radius: 8px; padding: 14px 20px; margin-bottom: 28px; font-size: 0.92rem; line-height: 1.6; }
+    .test-banner strong { font-weight: 700; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html { height: 100%; height: -webkit-fill-available; overflow: hidden; }
+    body { height: 100%; min-height: -webkit-fill-available; overflow: hidden; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Test Prep: Radioactive Decay</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&#x2026;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Radioactive Decay Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions covering all 5 test topic areas.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: —</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">Test Topics Overview</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">Atomic Structure &amp; Nuclear Stability</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">Alpha Decay</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Beta-Minus Decay</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Positron (β⁺) Decay</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">Electron Capture</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">Isomeric Transition &amp; Gamma</span></a>
+      <a href="javascript:void(0)" data-target="s8"><span class="toc-num">8</span><span class="toc-label">Internal Conversion</span></a>
+      <a href="javascript:void(0)" data-target="s9"><span class="toc-num">9</span><span class="toc-label">Spontaneous Fission</span></a>
+      <a href="javascript:void(0)" data-target="s10"><span class="toc-num">10</span><span class="toc-label">Radiation Characteristics</span></a>
+      <a href="javascript:void(0)" data-target="s11"><span class="toc-num">11</span><span class="toc-label">Characteristic X-rays &amp; Half-Life</span></a>
+      <a href="javascript:void(0)" data-target="s12"><span class="toc-num">12</span><span class="toc-label">Decay Schemes</span></a>
+      <a href="javascript:void(0)" data-target="s13"><span class="toc-num">13</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main>
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Test Topics Overview</h2>
+      </div>
+      <div class="section-body sc-content">
+        <div class="test-banner">
+          <strong>Your instructor highlighted these 5 areas for the upcoming test:</strong><br>
+          1. Radioactive Decay Mechanisms &nbsp;·&nbsp;
+          2. Atomic Structure &amp; Nuclear Stability &nbsp;·&nbsp;
+          3. Radiation Characteristics &amp; Interactions &nbsp;·&nbsp;
+          4. Nuclear Energy &amp; Radiation Emissions &nbsp;·&nbsp;
+          5. Internal Conversion &amp; Characteristic X-Rays
+        </div>
+        <p>This guide consolidates the relevant content from your Nuclear Physics Section III and Introduction to RadioBiology notes. Use the quiz to test yourself on all five areas.</p>
+        <h3>Key Principle: Conservation in All Decay</h3>
+        <p>In <strong>every</strong> radioactive decay mode, the following are conserved:</p>
+        <ul>
+          <li><strong>Energy</strong></li>
+          <li><strong>Charge</strong></li>
+          <li><strong>Mass</strong></li>
+        </ul>
+        <h3>The Six Decay Modes</h3>
+        <ol>
+          <li>Alpha (α) Decay</li>
+          <li>Beta-Minus (β⁻) Decay</li>
+          <li>Positron (β⁺) Decay</li>
+          <li>Electron Capture (EC)</li>
+          <li>Isomeric Transition (IT) — includes Gamma Emission and Internal Conversion</li>
+          <li>Fission</li>
+        </ol>
+        <div class="callout">
+          A radionuclide can decay by <strong>one or a combination</strong> of these methods. When it decays, it transforms from an unstable <em>parent</em> nucleus into a more stable <em>daughter</em> nucleus.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Atomic Structure &amp; Nuclear Stability</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Basic Atomic Structure</h3>
+        <ul>
+          <li><strong>Protons</strong> — positively charged particles in the nucleus; determine the element (atomic number Z)</li>
+          <li><strong>Neutrons</strong> — neutral particles in the nucleus; together with protons they determine the mass number (A)</li>
+          <li><strong>Electrons</strong> — negatively charged particles orbiting in shells outside the nucleus</li>
+        </ul>
+        <div class="formula-box">
+          Atomic Number (Z) = number of protons
+          Mass Number (A) = protons + neutrons
+          Neutrons (N) = A − Z
+        </div>
+        <h3>What Makes a Nucleus Unstable?</h3>
+        <ul>
+          <li>Radionuclides are <strong>unstable</strong> — they decay to become stable</li>
+          <li>Instability is driven by an imbalance between protons and neutrons:</li>
+          <ul>
+            <li><strong>Too many protons relative to neutrons</strong> → proton-rich nucleus → tends toward positron decay or electron capture</li>
+            <li><strong>Too many neutrons relative to protons</strong> → neutron-rich nucleus (high n:Z ratio) → tends toward beta-minus decay</li>
+            <li><strong>Very heavy nucleus</strong> → tends toward alpha decay or spontaneous fission</li>
+          </ul>
+        </ul>
+        <h3>Parent → Daughter Transformation</h3>
+        <ul>
+          <li>The <strong>parent radionuclide</strong> is the original unstable nucleus</li>
+          <li>The <strong>daughter radionuclide</strong> is the more stable product</li>
+          <li>When decay occurs, the nucleus emits a particle, a gamma ray, or both</li>
+          <li>The atomic number (Z) and/or mass number (A) change depending on the decay mode</li>
+        </ul>
+        <div class="callout">
+          Henri Becquerel discovered natural radioactivity in 1896. Today, ~3,000 artificially produced radionuclides are known. We are concerned not with how they are made, but with <strong>how they decay</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Alpha Decay</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>When Does It Occur?</h3>
+        <ul>
+          <li>Occurs in radionuclides that are <strong>neutron deficient</strong> (proton rich) and typically very heavy</li>
+          <li>The parent has too many protons relative to neutrons</li>
+        </ul>
+        <h3>What Is Emitted?</h3>
+        <ul>
+          <li>An <strong>alpha particle (α)</strong> — a helium-4 nucleus: 2 protons + 2 neutrons</li>
+          <li>Written as <sup>4</sup><sub>2</sub>He or α</li>
+          <li>Charge: <strong>+2</strong></li>
+        </ul>
+        <h3>How Does the Nucleus Change?</h3>
+        <div class="formula-box">X → Y + α
+  Mass number (A): decreases by 4
+  Atomic number (Z): decreases by 2</div>
+        <h3>Properties of Alpha Particles</h3>
+        <ul>
+          <li><strong>Size:</strong> Largest and heaviest type of radiation</li>
+          <li><strong>Speed:</strong> Slowest — travels only a few centimeters in air</li>
+          <li><strong>Penetration:</strong> Least penetrating — stopped by a sheet of paper or skin</li>
+          <li><strong>Charge:</strong> +2</li>
+        </ul>
+        <div class="callout warning">
+          Alpha particles are the <strong>least penetrating</strong> externally but the most damaging internally if inhaled or ingested, due to their large size and high energy deposition over a short range.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Beta-Minus (β⁻) Decay</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>When Does It Occur?</h3>
+        <ul>
+          <li>Occurs in radionuclides that are <strong>neutron rich</strong> (high n:Z ratio)</li>
+        </ul>
+        <h3>What Happens Inside the Nucleus?</h3>
+        <ul>
+          <li>A <strong>neutron is converted into a proton</strong> inside the nucleus:</li>
+        </ul>
+        <div class="formula-box">n → p + β⁻ + antineutrino</div>
+        <h3>What Is Emitted?</h3>
+        <ul>
+          <li>A <strong>beta-minus particle (β⁻)</strong> — essentially an electron from the nucleus</li>
+          <li>An <strong>antineutrino</strong> — carries away excess energy from the reaction</li>
+        </ul>
+        <h3>How Does the Nucleus Change?</h3>
+        <div class="formula-box">X → Y + β⁻ + antineutrino
+  Mass number (A): does NOT change (lose neutron, gain proton)
+  Atomic number (Z): increases by 1 (gained a proton)</div>
+        <h3>Properties of Beta-Minus Particles</h3>
+        <ul>
+          <li><strong>Size:</strong> Smaller than alpha; electron mass</li>
+          <li><strong>Charge:</strong> −1</li>
+          <li><strong>Speed:</strong> Faster than alpha, slower than gamma</li>
+          <li><strong>Penetration:</strong> May travel a few meters in air, a few centimeters in skin; stopped by a few mm of aluminum</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Positron (β⁺) Decay</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>When Does It Occur?</h3>
+        <ul>
+          <li>Occurs in radionuclides that are <strong>proton rich</strong> (high Z:n ratio)</li>
+          <li>Requires a <strong>minimum transition energy of 1.02 MeV</strong></li>
+        </ul>
+        <h3>What Happens Inside the Nucleus?</h3>
+        <ul>
+          <li>A <strong>proton is converted into a neutron</strong>:</li>
+        </ul>
+        <div class="formula-box">p → n + β⁺ + neutrino</div>
+        <h3>What Is Emitted?</h3>
+        <ul>
+          <li>A <strong>positron (β⁺)</strong> — an electron with a <em>positive</em> charge (+1)</li>
+          <li>A <strong>neutrino</strong> — carries away excess energy</li>
+        </ul>
+        <h3>How Does the Nucleus Change?</h3>
+        <div class="formula-box">X → Y + β⁺ + neutrino
+  Mass number (A): does NOT change
+  Atomic number (Z): decreases by 1</div>
+        <h3>Annihilation — What Happens to the Positron?</h3>
+        <ul>
+          <li>The β⁺ flies out of the nucleus and quickly collides with a nearby electron (e⁻)</li>
+          <li><strong>Annihilation</strong> occurs — mass is converted back to energy:</li>
+          <ul>
+            <li>Two gamma photons are produced at <strong>180° from each other</strong></li>
+            <li>Each gamma has <strong>0.511 MeV</strong> of energy (total = 1.02 MeV)</li>
+          </ul>
+        </ul>
+        <h3>Why 1.02 MeV Minimum?</h3>
+        <ul>
+          <li>The mass of a proton and electron each equals ~0.511 MeV of energy</li>
+          <li>Creating a positron (pair production) requires converting at least 1.02 MeV of energy into mass</li>
+        </ul>
+        <div class="callout">
+          Positron decay and electron capture are <strong>competing alternatives</strong> for proton-rich nuclei. EC is favored when transition energy is less than 1.02 MeV; positron decay requires ≥ 1.02 MeV.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Electron Capture</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>When Does It Occur?</h3>
+        <ul>
+          <li>Occurs in radionuclides that are <strong>proton rich</strong> — same trigger as positron decay</li>
+          <li>Usually when transition energy is <strong>less than 1.02 MeV</strong> (positron decay is not energetically possible)</li>
+        </ul>
+        <h3>What Happens?</h3>
+        <ul>
+          <li>The nucleus <strong>captures an inner orbital electron</strong> (usually from the K-shell)</li>
+          <li>The captured electron combines with a proton to form a neutron:</li>
+        </ul>
+        <div class="formula-box">p + e⁻ → n + neutrino</div>
+        <h3>How Does the Nucleus Change?</h3>
+        <div class="formula-box">Mass number (A): does NOT change
+  Atomic number (Z): decreases by 1</div>
+        <h3>What Follows EC?</h3>
+        <ul>
+          <li>Capturing the K-shell electron leaves a <strong>vacancy (hole) in the K-shell</strong></li>
+          <li>An outer-shell electron falls in to fill the vacancy</li>
+          <li>The energy difference is released as a <strong>characteristic x-ray</strong></li>
+        </ul>
+        <div class="callout">
+          Example: <sup>201</sup>Tl (thallium-201) decays by EC and emits characteristic x-rays of mercury (Hg) at 69–83 keV. These x-rays are used diagnostically in nuclear medicine.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Isomeric Transition &amp; Gamma Emission</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Nuclear Energy States</h3>
+        <ul>
+          <li><strong>Ground state</strong> — all protons and neutrons are at the lowest possible energy level</li>
+          <li><strong>Isomeric states</strong> — the nucleus is in an excited (above-ground) energy level</li>
+          <ul>
+            <li>Usually short-lived (seconds to minutes)</li>
+          </ul>
+          <li><strong>Metastable state</strong> — a long-lived isomeric state denoted by "m" (e.g., <sup>99m</sup>Tc)</li>
+          <ul>
+            <li>Typically on the order of hours or more</li>
+            <li><sup>99m</sup>Tc has a half-life of <strong>6 hours</strong></li>
+          </ul>
+        </ul>
+        <h3>Two Forms of Isomeric Transition (IT)</h3>
+        <ol>
+          <li><strong>Gamma (γ) ray emission</strong></li>
+          <li><strong>Internal Conversion</strong> (see Section 8)</li>
+        </ol>
+        <h3>Gamma Ray Emission</h3>
+        <ul>
+          <li>The nucleus in an excited isomeric state decays to a <strong>lower energy state</strong></li>
+          <li>The energy difference is released as a <strong>gamma (γ) ray</strong></li>
+          <li>Gamma rays <strong>come from the nucleus</strong> (not from electron shells)</li>
+        </ul>
+        <div class="formula-box">Energy of γ = E(upper isomeric state) − E(lower isomeric state)
+  Example: 300 keV state → 160 keV state = 140 keV gamma
+  (This is why ⁹⁹ᵐTc emits a 140 keV gamma!)</div>
+        <h3>How Does the Nucleus Change in IT?</h3>
+        <ul>
+          <li>Only the <strong>energy state</strong> changes — Z and A do <strong>not</strong> change</li>
+          <li>In a decay scheme, IT is shown as an arrow pointing <strong>straight down</strong></li>
+        </ul>
+        <div class="callout">
+          Gamma emission and x-ray emission both produce electromagnetic radiation, but they originate from <strong>different places</strong>: γ rays come from the <em>nucleus</em>; characteristic x-rays come from <em>electron shell transitions</em>.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Internal Conversion &amp; the Auger Process</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Internal Conversion — The Process</h3>
+        <ul>
+          <li>This is the <strong>second form of isomeric transition</strong></li>
+          <li>Instead of emitting a gamma ray, the nucleus transfers its excitation energy <strong>directly to an orbital electron</strong> (usually K-shell)</li>
+          <li><strong>No gamma ray is produced</strong> in the process — the energy goes straight to the electron</li>
+          <li>If the excitation energy ≥ the electron's binding energy, the electron is <strong>ejected</strong></li>
+          <ul>
+            <li>The ejected electron is called the <strong>conversion electron</strong></li>
+          </ul>
+        </ul>
+        <h3>What Follows Ejection of the Conversion Electron?</h3>
+        <ul>
+          <li>A vacancy is left in the electron shell (usually K-shell)</li>
+          <li>An outer-shell electron falls in to fill the vacancy</li>
+          <li>A <strong>characteristic x-ray</strong> is emitted (same as after electron capture)</li>
+        </ul>
+        <h3>Key Distinction: IC vs. Gamma Emission</h3>
+        <table>
+          <tr><th>Feature</th><th>Gamma Emission</th><th>Internal Conversion</th></tr>
+          <tr><td>Energy origin</td><td>Nucleus</td><td>Nucleus</td></tr>
+          <tr><td>What is emitted</td><td>Gamma photon</td><td>Conversion electron</td></tr>
+          <tr><td>Gamma ray produced?</td><td>Yes</td><td>No</td></tr>
+          <tr><td>Followed by…</td><td>Nothing (or further decay)</td><td>Characteristic x-ray emission</td></tr>
+        </table>
+        <h3>The Auger Process</h3>
+        <ul>
+          <li>Can occur during internal conversion</li>
+          <li>After the conversion electron is ejected and an outer electron falls in, the energy released from that transition can <strong>strike yet another orbital electron</strong></li>
+          <li>If that energy exceeds the electron's binding energy, the electron is ejected — this is the <strong>Auger electron</strong></li>
+        </ul>
+        <div class="callout warning">
+          Remember: Internal conversion energy originates from the <strong>nucleus</strong>, but characteristic x-rays and Auger electrons result from <strong>rearrangements of orbital electrons</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Spontaneous Fission</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>When Does It Occur?</h3>
+        <ul>
+          <li>Occurs in <strong>very heavy nuclei</strong> (e.g., U-235, Cf-254)</li>
+          <li>Low probability overall; increases as mass number increases</li>
+        </ul>
+        <h3>What Happens?</h3>
+        <ul>
+          <li>The heavy nucleus <strong>spontaneously splits</strong> into:</li>
+          <ul>
+            <li>2 fission fragments</li>
+            <li>2–3 neutrons</li>
+            <li>200–400 MeV of excess energy</li>
+          </ul>
+        </ul>
+        <div class="callout">
+          This is <em>spontaneous</em> fission — a natural decay mode. Man-made fission (in reactors) is a separate process covered in radiopharmacy.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>Radiation Characteristics &amp; Interactions</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Particulate vs. Electromagnetic Radiation</h3>
+        <ul>
+          <li><strong>Particulate radiation</strong> — carries mass and charge; directly ionizing</li>
+          <ul>
+            <li>Alpha particles (α), Beta particles (β⁻, β⁺)</li>
+          </ul>
+          <li><strong>Electromagnetic radiation</strong> — no mass, no charge; indirectly ionizing</li>
+          <ul>
+            <li>Gamma rays (γ), X-rays (x)</li>
+          </ul>
+        </ul>
+        <h3>Comparison Table</h3>
+        <table>
+          <tr><th>Property</th><th>Alpha (α)</th><th>Beta (β⁻ / β⁺)</th><th>Gamma (γ) / X-ray</th></tr>
+          <tr><td>Type</td><td>Particle (He nucleus)</td><td>Particle (electron/positron)</td><td>Electromagnetic photon</td></tr>
+          <tr><td>Mass</td><td>Largest (4 amu)</td><td>Small (~1/1836 amu)</td><td>None (massless)</td></tr>
+          <tr><td>Charge</td><td>+2</td><td>−1 (β⁻) / +1 (β⁺)</td><td>None (neutral)</td></tr>
+          <tr><td>Speed</td><td>Slowest</td><td>Intermediate</td><td>Speed of light</td></tr>
+          <tr><td>Penetration</td><td>Least — stopped by skin/paper</td><td>Moderate — stopped by aluminum (few mm)</td><td>Most — requires lead to stop</td></tr>
+          <tr><td>Origin</td><td>Nucleus</td><td>Nucleus</td><td>Nucleus (γ) or electron shells (x-ray)</td></tr>
+        </table>
+        <h3>Order of Penetration (Most → Least)</h3>
+        <ol>
+          <li>Gamma rays and X-rays (equal — most penetrating; stopped by lead)</li>
+          <li>Beta particles (stopped by a few mm of aluminum)</li>
+          <li>Alpha particles (stopped by skin or paper)</li>
+        </ol>
+        <h3>Order of Speed (Fastest → Slowest)</h3>
+        <ol>
+          <li>Gamma and X-rays (speed of light)</li>
+          <li>Beta particles (fast, but not light speed)</li>
+          <li>Alpha particles (slowest)</li>
+        </ol>
+        <div class="callout">
+          The larger the particle, the <strong>less penetrating</strong> it is. As particle energy increases, penetration increases for any given type.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>Characteristic X-rays, Binding Energy &amp; Half-Life</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Electron Binding Energy &amp; Shells</h3>
+        <ul>
+          <li>Electrons orbit the nucleus in <strong>shells</strong> (K, L, M, …)</li>
+          <li>The K-shell is closest to the nucleus and has the <strong>highest binding energy</strong></li>
+          <li>Electrons in inner shells require more energy to be removed than outer-shell electrons</li>
+        </ul>
+        <h3>How Characteristic X-rays Are Produced</h3>
+        <ul>
+          <li>A vacancy is created in an inner shell (K-shell most commonly) — this happens after:</li>
+          <ul>
+            <li>Electron Capture (the nucleus captures the K-shell electron)</li>
+            <li>Internal Conversion (the excitation energy ejects the K-shell electron)</li>
+          </ul>
+          <li>An <strong>outer-shell electron falls in</strong> to fill the vacancy</li>
+          <li>The energy released = difference between the two shell energies → emitted as a <strong>characteristic x-ray</strong></li>
+        </ul>
+        <div class="formula-box">E(x-ray) = E(outer shell) − E(inner shell vacancy)</div>
+        <ul>
+          <li>The energy is "characteristic" because it is specific to the element</li>
+        </ul>
+        <h3>Key Distinction</h3>
+        <ul>
+          <li><strong>Gamma rays</strong> — energy originates from the <em>nucleus</em></li>
+          <li><strong>Characteristic X-rays</strong> — energy originates from <em>electron shell rearrangements</em></li>
+        </ul>
+        <h3>Half-Life (T½)</h3>
+        <ul>
+          <li>The time it takes for a radioactive material to decay to <strong>50% of its original activity</strong></li>
+          <li>Radioactivity decreases over time</li>
+          <li>In a decay scheme, the half-life is listed next to the radionuclide</li>
+          <li>Example: <sup>99m</sup>Tc has a T½ of <strong>6 hours</strong></li>
+          <ul>
+            <li>100 mCi → 50 mCi after 6 hours → 25 mCi after 12 hours</li>
+          </ul>
+        </ul>
+        <div class="callout">
+          Half-life reflects how quickly a radionuclide decays. It is shown in decay schemes and is an important property when choosing radiopharmaceuticals for patient studies.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>Reading Decay Schemes</h2>
+      </div>
+      <div class="section-body sc-content">
+        <h3>What a Decay Scheme Shows</h3>
+        <ol>
+          <li><strong>Mode of decay</strong> — how the radionuclide decays, % abundance, and energy</li>
+          <li><strong>Byproducts of decay</strong> — particles or photons emitted</li>
+          <li><strong>Half-life</strong> — listed next to the parent nuclide</li>
+        </ol>
+        <h3>Arrow Directions in Decay Schemes</h3>
+        <table>
+          <tr><th>Arrow Direction</th><th>Meaning</th><th>Decay Type</th></tr>
+          <tr><td>Slants to the <strong>right</strong></td><td>Z increases (gaining a proton)</td><td>β⁻ Decay</td></tr>
+          <tr><td>Slants to the <strong>left</strong></td><td>Z decreases (losing a proton)</td><td>β⁺ Decay or EC</td></tr>
+          <tr><td>Points <strong>straight down</strong></td><td>Z unchanged (energy change only)</td><td>Isomeric Transition (IT)</td></tr>
+        </table>
+        <h3>Other Information Shown</h3>
+        <ul>
+          <li>The <strong>percentage</strong> alongside each arrow indicates how often that decay path occurs</li>
+          <li>The <strong>energy value</strong> shown is the energy of the particle or photon emitted</li>
+          <li>Gamma transitions are shown as vertical (downward) arrows from excited states to lower states</li>
+        </ul>
+        <div class="callout">
+          Decay schemes are a compact visual language. An arrow to the right = more protons = β⁻. An arrow to the left = fewer protons = β⁺ or EC. A vertical arrow = no change in Z = IT (gamma or internal conversion).
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Glossary</h2>
+      </div>
+      <div class="section-body">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>Alpha Decay</dt><dd>Nucleus emits an alpha particle (⁴₂He). Z decreases by 2, A decreases by 4. Occurs in heavy, proton-rich nuclei.</dd></div>
+          <div class="glossary-card"><dt>Alpha Particle</dt><dd>2 protons + 2 neutrons. Charge +2. Largest, slowest, least penetrating; stopped by skin or paper.</dd></div>
+          <div class="glossary-card"><dt>Annihilation</dt><dd>A positron (β⁺) collides with an electron (β⁻). Their mass converts to two 0.511 MeV gamma photons emitted at 180° to each other.</dd></div>
+          <div class="glossary-card"><dt>Antineutrino</dt><dd>Antimatter counterpart of a neutrino; emitted in beta-minus decay to carry away excess energy.</dd></div>
+          <div class="glossary-card"><dt>Atomic Number (Z)</dt><dd>Number of protons in the nucleus. Determines the element. Changes in all decay modes except IT.</dd></div>
+          <div class="glossary-card"><dt>Auger Electron</dt><dd>Electron ejected when characteristic x-ray energy from a shell transition ejects another orbital electron instead of being emitted as a photon.</dd></div>
+          <div class="glossary-card"><dt>Beta-Minus Decay (β⁻)</dt><dd>Neutron-rich nucleus converts n → p + β⁻ + antineutrino. Z increases by 1; A unchanged.</dd></div>
+          <div class="glossary-card"><dt>Characteristic X-ray</dt><dd>X-ray emitted when an outer electron fills an inner-shell vacancy. Energy = difference between the two shell binding energies. Originates from electron shells (not the nucleus).</dd></div>
+          <div class="glossary-card"><dt>Conversion Electron</dt><dd>Orbital electron ejected during internal conversion when nuclear excitation energy is transferred directly to it (instead of being emitted as a gamma ray).</dd></div>
+          <div class="glossary-card"><dt>Daughter Radionuclide</dt><dd>The more stable product nucleus after radioactive decay of the parent.</dd></div>
+          <div class="glossary-card"><dt>Decay Scheme</dt><dd>Diagram showing decay mode, arrow direction, energy, % abundance, and half-life of a radionuclide.</dd></div>
+          <div class="glossary-card"><dt>Electron Capture (EC)</dt><dd>Proton-rich nucleus captures an inner-shell (K-shell) electron. p + e⁻ → n + neutrino. Z decreases by 1; A unchanged. Produces characteristic x-rays.</dd></div>
+          <div class="glossary-card"><dt>Excitation Energy</dt><dd>Energy above ground state that a nucleus holds in an isomeric state. Released as a gamma ray (IT) or transferred to an orbital electron (IC).</dd></div>
+          <div class="glossary-card"><dt>Ground State</dt><dd>Lowest energy state of a nucleus; all nucleons at their lowest possible energy levels.</dd></div>
+          <div class="glossary-card"><dt>Half-Life (T½)</dt><dd>Time for radioactive activity to decay to 50% of its original value. Listed in decay schemes. Example: ⁹⁹ᵐTc T½ = 6 hours.</dd></div>
+          <div class="glossary-card"><dt>Internal Conversion (IC)</dt><dd>Form of isomeric transition where nuclear excitation energy ejects an orbital electron (conversion electron) rather than emitting a gamma ray. Followed by characteristic x-ray emission.</dd></div>
+          <div class="glossary-card"><dt>Isomeric Transition (IT)</dt><dd>Nucleus in excited metastable state returns to ground state by gamma emission or internal conversion. Z and A do not change.</dd></div>
+          <div class="glossary-card"><dt>Mass Number (A)</dt><dd>Total number of protons + neutrons. Unchanged in β⁻, β⁺, EC, and IT. Decreases by 4 in alpha decay.</dd></div>
+          <div class="glossary-card"><dt>Metastable State</dt><dd>Long-lived isomeric state denoted by "m" (e.g., ⁹⁹ᵐTc). Typically lasts hours or more.</dd></div>
+          <div class="glossary-card"><dt>Neutrino</dt><dd>Nearly massless, chargeless particle emitted in positron decay and electron capture; carries away excess energy.</dd></div>
+          <div class="glossary-card"><dt>Parent Radionuclide</dt><dd>The original unstable nucleus that undergoes radioactive decay.</dd></div>
+          <div class="glossary-card"><dt>Positron (β⁺)</dt><dd>Antimatter electron with charge +1. Emitted in positron decay; undergoes annihilation with a nearby electron producing two 0.511 MeV gamma photons.</dd></div>
+          <div class="glossary-card"><dt>Positron Decay (β⁺)</dt><dd>Proton-rich nucleus converts p → n + β⁺ + neutrino. Requires ≥1.02 MeV. Z decreases by 1; A unchanged.</dd></div>
+          <div class="glossary-card"><dt>Spontaneous Fission</dt><dd>Heavy nucleus splits into 2 fragments + 2–3 neutrons + 200–400 MeV energy. Probability increases with mass number.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+<script>
+// ── TOC navigation & active highlight ────────────────────────────────────────
+var mainEl6 = document.querySelector('main');
+var navLinks = document.querySelectorAll('nav#toc a[data-target]');
+var sectionEls6 = Array.from(document.querySelectorAll('.section'));
+
+function updateTocActive6() {
+  var mainRect = mainEl6.getBoundingClientRect();
+  var best = null, bestTop = -Infinity;
+  sectionEls6.forEach(function(s) {
+    var top = s.getBoundingClientRect().top - mainRect.top;
+    if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+  });
+  if (!best && sectionEls6.length) best = sectionEls6[0].id;
+  navLinks.forEach(function(a) {
+    a.classList.toggle('active', a.dataset.target === best);
+  });
+}
+mainEl6.addEventListener('scroll', updateTocActive6, {passive: true});
+updateTocActive6();
+
+navLinks.forEach(function(link) {
+  link.addEventListener('click', function() {
+    var target = document.getElementById(this.dataset.target);
+    if (!target) return;
+    mainEl6.scrollTop += target.getBoundingClientRect().top - mainEl6.getBoundingClientRect().top;
+    updateTocActive6();
+  });
+});
+
+// ── Search ────────────────────────────────────────────────────────────────────
+var searchInput = document.getElementById('searchInput');
+var clearBtn = document.getElementById('clearBtn');
+var prevBtn = document.getElementById('prevBtn');
+var nextBtn = document.getElementById('nextBtn');
+var countEl = document.getElementById('searchCount');
+var noResults = document.getElementById('noResults');
+var marks = []; var cur = -1; var debounceTimer;
+
+function setNavActive(on) {
+  [prevBtn, nextBtn].forEach(function(b) {
+    if (on) b.classList.remove('inactive'); else b.classList.add('inactive');
+  });
+  if (!on) { countEl.textContent = '\u2014 / \u2014'; }
+}
+
+var hlSpans = [];
+
+function clearMarks() {
+  hlSpans.forEach(function(s) {
+    if (s && s.parentNode) s.parentNode.replaceChild(document.createTextNode(s.dataset.orig), s);
+  });
+  hlSpans = []; marks = []; cur = -1;
+}
+
+function doSearch(q) {
+  clearMarks(); noResults.style.display = 'none';
+  if (!q) { setNavActive(false); return; }
+  var re; try { re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'); } catch(e) { return; }
+  var walker = document.createTreeWalker(mainEl6, NodeFilter.SHOW_TEXT, null, false);
+  var nodes = []; var node;
+  while ((node = walker.nextNode())) {
+    if (['SCRIPT','STYLE','MARK','SPAN'].indexOf(node.parentNode.nodeName) === -1 && re.test(node.nodeValue)) nodes.push(node);
+  }
+  nodes.forEach(function(n) {
+    re.lastIndex = 0;
+    var orig = n.nodeValue;
+    var span = document.createElement('span'); span.className = 'hl-wrap'; span.dataset.orig = orig;
+    var last = 0; var m;
+    while ((m = re.exec(orig)) !== null) {
+      if (m.index > last) span.appendChild(document.createTextNode(orig.slice(last, m.index)));
+      var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[0]; span.appendChild(mark); marks.push(mark);
+      last = m.index + m[0].length;
+    }
+    if (last < orig.length) span.appendChild(document.createTextNode(orig.slice(last)));
+    hlSpans.push(span);
+    n.parentNode.replaceChild(span, n);
+  });
+  if (marks.length === 0) { noResults.style.display = 'block'; setNavActive(false); countEl.textContent = '0 found'; return; }
+  setNavActive(true); cur = 0; goTo(0);
+}
+
+function goTo(i) {
+  if (!marks.length) return;
+  marks.forEach(function(m) { m.classList.remove('current'); });
+  cur = (i + marks.length) % marks.length;
+  marks[cur].classList.add('current');
+  countEl.textContent = (cur + 1) + ' / ' + marks.length;
+  marks[cur].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+searchInput.addEventListener('input', function() {
+  clearBtn.style.display = this.value ? 'block' : 'none';
+  clearTimeout(debounceTimer);
+  var q = this.value.trim();
+  debounceTimer = setTimeout(function() { doSearch(q); }, 260);
+});
+clearBtn.addEventListener('click', function() {
+  searchInput.value = ''; clearBtn.style.display = 'none'; clearMarks();
+  setNavActive(false); noResults.style.display = 'none';
+});
+prevBtn.addEventListener('click', function() { goTo(cur - 1); });
+nextBtn.addEventListener('click', function() { goTo(cur + 1); });
+
+// ── Quiz ──────────────────────────────────────────────────────────────────────
+var QUIZ_BANK = [
+  // Topic 1: Radioactive Decay Mechanisms
+  { section: "s1", q: "What are the six modes of radioactive decay?", a: 0, choices: ["Alpha, Beta, Positron, Electron Capture, Isomeric Transition, Fission", "Alpha, Beta, Gamma, X-ray, Neutron, Fission", "Alpha, Beta, Positron, Gamma, X-ray, Proton", "Alpha, Beta, EC, Fission, Photon, Neutron emission"] },
+  { section: "s1", q: "What three things are conserved in ALL radioactive decay modes?", a: 2, choices: ["Only mass and charge", "Only energy and mass", "Energy, charge, and mass", "Only energy and charge"] },
+  { section: "s3", q: "In alpha decay, how does atomic number (Z) change?", a: 1, choices: ["Increases by 2", "Decreases by 2", "Decreases by 4", "Does not change"] },
+  { section: "s3", q: "In alpha decay, how does mass number (A) change?", a: 3, choices: ["Decreases by 2", "Increases by 4", "Does not change", "Decreases by 4"] },
+  { section: "s4", q: "In beta-minus decay, a neutron is converted to:", a: 0, choices: ["A proton, emitting a β⁻ and an antineutrino", "A proton, emitting a β⁺ and a neutrino", "A proton, emitting a gamma ray", "An alpha particle"] },
+  { section: "s4", q: "What type of nucleus undergoes beta-minus decay?", a: 1, choices: ["Proton rich (high Z:n)", "Neutron rich (high n:Z)", "In a metastable state", "Very heavy nucleus"] },
+  { section: "s5", q: "Positron decay requires a minimum transition energy of:", a: 2, choices: ["0.511 MeV", "140 keV", "1.02 MeV", "2.04 MeV"] },
+  { section: "s5", q: "In positron annihilation, what is produced?", a: 1, choices: ["One gamma photon of 1.02 MeV", "Two gamma photons of 0.511 MeV each at 180° apart", "Two alpha particles", "One x-ray of 511 keV"] },
+  { section: "s5", q: "In positron decay, atomic number (Z):", a: 0, choices: ["Decreases by 1", "Increases by 1", "Does not change", "Decreases by 2"] },
+  { section: "s6", q: "Electron capture and positron decay are both triggered by what type of nucleus?", a: 3, choices: ["Neutron rich", "Very heavy", "In metastable state", "Proton rich"] },
+  { section: "s6", q: "In electron capture, what reaction occurs?", a: 2, choices: ["n + e⁻ → p + antineutrino", "p → n + β⁺ + neutrino", "p + e⁻ → n + neutrino", "n → p + β⁻ + antineutrino"] },
+  { section: "s9", q: "Spontaneous fission produces:", a: 2, choices: ["1 fragment and 1 neutron", "2 fragments and no neutrons", "2 fragments, 2–3 neutrons, and 200–400 MeV", "2 alpha particles and gamma rays"] },
+  // Topic 2: Atomic Structure & Nuclear Stability
+  { section: "s2", q: "Which decay mode is favored for a neutron-rich nucleus?", a: 0, choices: ["Beta-minus (β⁻) decay", "Positron decay", "Electron capture", "Alpha decay"] },
+  { section: "s2", q: "Which two decay modes compete for proton-rich nuclei?", a: 3, choices: ["Alpha decay and beta-minus decay", "Gamma emission and internal conversion", "Fission and alpha decay", "Positron decay and electron capture"] },
+  // Topic 3: Radiation Characteristics
+  { section: "s10", q: "Which radiation type travels at the speed of light?", a: 3, choices: ["Alpha particles", "Beta particles", "Alpha and beta", "Gamma rays and x-rays"] },
+  { section: "s10", q: "Which radiation type has the greatest penetrating power?", a: 2, choices: ["Alpha particles", "Beta particles", "Gamma rays and x-rays", "Conversion electrons"] },
+  { section: "s10", q: "Alpha particles are stopped by:", a: 0, choices: ["Skin or paper", "A few mm of aluminum", "Lead", "Concrete"] },
+  { section: "s10", q: "What is the correct order of penetration (most to least penetrating)?", a: 1, choices: ["Alpha, Beta, Gamma/X-ray", "Gamma/X-ray, Beta, Alpha", "Beta, Gamma/X-ray, Alpha", "Gamma/X-ray, Alpha, Beta"] },
+  { section: "s10", q: "Beta particles carry a charge of:", a: 2, choices: ["+2", "+1", "−1 (β⁻) or +1 (β⁺)", "0 (neutral)"] },
+  // Topic 4: Nuclear Energy & Radiation Emissions
+  { section: "s7", q: "What does the 'm' in ⁹⁹ᵐTc indicate?", a: 1, choices: ["Modified state", "Metastable state", "Medical grade", "Minimal energy"] },
+  { section: "s7", q: "The energy of a gamma ray in isomeric transition equals:", a: 0, choices: ["The difference between the two isomeric energy states", "0.511 MeV always", "The binding energy of the K-shell electron", "1.02 MeV always"] },
+  { section: "s7", q: "⁹⁹ᵐTc emits a gamma ray of approximately:", a: 3, choices: ["511 keV", "1.02 MeV", "80 keV", "140 keV"] },
+  { section: "s7", q: "In isomeric transition, which of the following does NOT change?", a: 2, choices: ["The energy state of the nucleus", "The amount of excitation energy", "Both Z (atomic number) and A (mass number)", "The half-life"] },
+  // Topic 5: Internal Conversion & Characteristic X-rays
+  { section: "s8", q: "In internal conversion, what is emitted instead of a gamma ray?", a: 1, choices: ["An Auger electron", "A conversion electron", "A characteristic x-ray", "An antineutrino"] },
+  { section: "s8", q: "After internal conversion ejects a K-shell electron, what is produced next?", a: 0, choices: ["A characteristic x-ray as an outer electron fills the vacancy", "A gamma ray from the nucleus", "A neutrino", "An alpha particle"] },
+  { section: "s11", q: "Characteristic x-rays originate from:", a: 3, choices: ["The nucleus emitting excess energy", "Neutron-proton conversion", "Positron annihilation", "Electron shell rearrangements after an inner vacancy is filled"] },
+  { section: "s11", q: "The energy of a characteristic x-ray equals:", a: 2, choices: ["The total binding energy of the K-shell", "0.511 MeV", "The difference between the two electron shell energies", "The excitation energy of the nucleus"] },
+  { section: "s11", q: "Half-life is defined as:", a: 1, choices: ["The time for a radionuclide to decay completely", "The time for activity to decrease to 50% of its original value", "The time for Z to decrease by half", "The time for A to decrease by 50%"] },
+  { section: "s12", q: "In a decay scheme, an arrow slanting to the LEFT indicates:", a: 1, choices: ["Z increases — beta-minus decay", "Z decreases — positron decay or EC", "No Z change — isomeric transition", "Fission"] },
+  { section: "s12", q: "In a decay scheme, an arrow pointing straight DOWN indicates:", a: 2, choices: ["Beta-minus decay", "Positron decay", "Isomeric Transition (energy change only, Z unchanged)", "Fission"] },
+];
+
+var quizBtn = document.getElementById('quizBtn');
+var quizOverlay = document.getElementById('quizOverlay');
+var quizClose = document.getElementById('quizClose');
+var quizBody = document.getElementById('quizBody');
+var quizIntro = document.getElementById('quizIntro');
+var quizStartBtn = document.getElementById('quizStartBtn');
+var quizAvgEl = document.getElementById('quizAvg');
+
+quizBtn.addEventListener('click', function() { quizOverlay.classList.add('open'); });
+quizClose.addEventListener('click', function() { quizOverlay.classList.remove('open'); });
+quizOverlay.addEventListener('click', function(e) { if (e.target === quizOverlay) quizOverlay.classList.remove('open'); });
+quizStartBtn.addEventListener('click', renderQuiz);
+
+function shuffle(arr) { return arr.slice().sort(function() { return Math.random() - 0.5; }); }
+
+function loadAvg() {
+  try {
+    var scores = JSON.parse(localStorage.getItem('radQuizScores6') || '[]');
+    if (scores.length) { quizAvgEl.textContent = 'Avg: ' + Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) + '%'; }
+  } catch(e) {}
+}
+loadAvg();
+
+function saveScore(pct) {
+  try {
+    var scores = JSON.parse(localStorage.getItem('radQuizScores6') || '[]');
+    scores.push(pct); if (scores.length > 20) scores.shift();
+    localStorage.setItem('radQuizScores6', JSON.stringify(scores));
+    quizAvgEl.textContent = 'Avg: ' + Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) + '%';
+  } catch(e) {}
+}
+
+function saveSectionStat(section, correct) {
+  try {
+    var stats = JSON.parse(localStorage.getItem('radQuizSectionStats6') || '{}');
+    if (!stats[section]) stats[section] = {correct:0,total:0};
+    stats[section].total++;
+    if (correct) stats[section].correct++;
+    localStorage.setItem('radQuizSectionStats6', JSON.stringify(stats));
+  } catch(e) {}
+}
+
+function renderQuiz() {
+  var qs = shuffle(QUIZ_BANK).slice(0, 10);
+  var html = '<div class="quiz-progress">Questions: <strong>10</strong> &nbsp;|&nbsp; Choose one answer per question</div>';
+  html += '<div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" style="width:0%"></div></div>';
+  qs.forEach(function(q, qi) {
+    var choices = shuffle(q.choices.map(function(c, i) { return {text: c, orig: i}; }));
+    var correctShuffled = choices.findIndex(function(c) { return c.orig === q.a; });
+    html += '<div class="quiz-q" data-section="' + q.section + '" data-correct="' + correctShuffled + '">';
+    html += '<div class="quiz-q-text">' + (qi+1) + '. ' + q.q + '</div>';
+    html += '<div class="quiz-choices">';
+    choices.forEach(function(c, ci) {
+      html += '<label class="quiz-choice"><input type="radio" name="q' + qi + '" value="' + ci + '"> ' + c.text + '</label>';
+    });
+    html += '</div></div>';
+  });
+  html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="quizSubmitBtn">Submit Quiz</button></div>';
+  quizBody.innerHTML = html;
+  document.getElementById('quizSubmitBtn').addEventListener('click', gradeQuiz);
+  quizBody.querySelectorAll('.quiz-choice input').forEach(function(inp) {
+    inp.addEventListener('change', function() {
+      var answered = document.querySelectorAll('.quiz-q input:checked').length;
+      var fill = Math.round(answered / 10 * 100);
+      document.querySelector('.quiz-progress-bar-fill').style.width = fill + '%';
+    });
+  });
+}
+
+function gradeQuiz() {
+  var qs = quizBody.querySelectorAll('.quiz-q');
+  var allAnswered = true;
+  qs.forEach(function(qDiv) {
+    if (!qDiv.querySelector('input:checked')) allAnswered = false;
+  });
+  if (!allAnswered) { alert('Please answer all questions before submitting.'); return; }
+  var score = 0;
+  qs.forEach(function(qDiv) {
+    var correct = parseInt(qDiv.dataset.correct);
+    var section = qDiv.dataset.section;
+    var chosen = parseInt(qDiv.querySelector('input:checked').value);
+    var isCorrect = chosen === correct;
+    if (isCorrect) score++;
+    saveSectionStat(section, isCorrect);
+    qDiv.querySelectorAll('.quiz-choice').forEach(function(lbl, i) {
+      lbl.classList.add('locked');
+      if (i === correct) lbl.classList.add(isCorrect && chosen === i ? 'correct' : 'reveal-correct');
+      else if (i === chosen && !isCorrect) lbl.classList.add('incorrect');
+    });
+    var fb = document.createElement('div');
+    fb.className = 'quiz-feedback ' + (isCorrect ? 'ok' : 'bad');
+    fb.textContent = isCorrect ? '✓ Correct!' : '✗ Incorrect';
+    qDiv.appendChild(fb);
+  });
+  var pct = Math.round(score / 10 * 100);
+  saveScore(pct);
+  var msg = pct >= 90 ? 'Excellent work!' : pct >= 70 ? 'Good job!' : pct >= 50 ? 'Keep studying!' : 'Review the material and try again.';
+  var reviewHtml = '<div class="quiz-review">';
+  qs.forEach(function(qDiv) {
+    var qText = qDiv.querySelector('.quiz-q-text').textContent;
+    var correct = parseInt(qDiv.dataset.correct);
+    var chosen = parseInt(qDiv.querySelector('input:checked').value);
+    var isCorrect = chosen === correct;
+    var correctText = qDiv.querySelectorAll('.quiz-choice')[correct].textContent.trim();
+    reviewHtml += '<div class="quiz-review-item"><div class="rq">' + qText + '</div>';
+    if (isCorrect) reviewHtml += '<div class="ra">✓ ' + correctText + '</div>';
+    else reviewHtml += '<div class="rw">✗ Correct: ' + correctText + '</div>';
+    reviewHtml += '</div>';
+  });
+  reviewHtml += '</div>';
+  var resultSection = document.createElement('div');
+  resultSection.innerHTML = '<div class="quiz-result"><div class="quiz-score-ring">' + score + ' / 10</div><p>' + pct + '% — ' + msg + '</p><button class="quiz-retry-btn" id="quizRetryBtn">Try Another Quiz</button></div>' + reviewHtml;
+  quizBody.appendChild(resultSection);
+  document.getElementById('quizRetryBtn').addEventListener('click', renderQuiz);
+  resultSection.scrollIntoView({behavior:'smooth'});
+}
+
+// ── Study Highlights ──────────────────────────────────────────────────────────
+var highlightBtn = document.getElementById('highlightToggle');
+var highlightsOn = false;
+
+function applyHighlights() {
+  try {
+    var stats = JSON.parse(localStorage.getItem('radQuizSectionStats6') || '{}');
+    document.querySelectorAll('.section').forEach(function(sec) {
+      sec.classList.remove('study-warn','study-crit');
+      var id = sec.id;
+      var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+      if (link) link.classList.remove('study-warn','study-crit');
+      if (!stats[id]) return;
+      var pct = stats[id].total ? Math.round(stats[id].correct / stats[id].total * 100) : 100;
+      var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+      if (cls) { sec.classList.add(cls); if (link) link.classList.add(cls); }
+    });
+  } catch(e) {}
+}
+
+function clearHighlights() {
+  document.querySelectorAll('.section').forEach(function(sec) {
+    sec.classList.remove('study-warn','study-crit');
+  });
+  document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
+}
+
+highlightBtn.addEventListener('click', function() {
+  highlightsOn = !highlightsOn;
+  highlightBtn.classList.toggle('active', highlightsOn);
+  if (highlightsOn) applyHighlights(); else clearHighlights();
+});
+</script>
+</body>
+</html>
