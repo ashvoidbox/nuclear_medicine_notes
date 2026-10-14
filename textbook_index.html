@@ -162,12 +162,23 @@
       font-style: italic;
     }
 
-    /* Chapter colors */
+    /* Chapter colors — Course Textbook */
     .ch4-header  { background: #0d9488; }
     .ch5-header  { background: #d97706; }
     .ch9-header  { background: #7c3aed; }
     .ch10-header { background: #0284c7; }
     .ch16-header { background: #16a34a; }
+
+    /* Chapter colors — NMP Basics (Chandra & Rahmim) */
+    .nmp1-header  { background: #db2777; }
+    .nmp2-header  { background: #4f46e5; }
+    .nmp3-header  { background: #0891b2; }
+    .nmp4-header  { background: #65a30d; }
+    .nmp5-header  { background: #ea580c; }
+    .nmp6-header  { background: #6d28d9; }
+    .nmp7-header  { background: #475569; }
+    .nmp17-header { background: #dc2626; }
+    .nmp18-header { background: #92400e; }
 
     .chapter-body { padding: 16px 22px 20px; }
 
@@ -210,18 +221,42 @@
       color: #374151;
       white-space: nowrap;
     }
+    /* Pill colors — Course Textbook */
     .sec-pill.ch4  { border-color: #0d9488; color: #0d9488; }
     .sec-pill.ch5  { border-color: #d97706; color: #92400e; }
     .sec-pill.ch9  { border-color: #7c3aed; color: #5b21b6; }
     .sec-pill.ch10 { border-color: #0284c7; color: #0369a1; }
     .sec-pill.ch16 { border-color: #16a34a; color: #166534; }
+    /* Pill colors — NMP Basics (Chandra & Rahmim) */
+    .sec-pill.nmp1  { border-color: #db2777; color: #9d174d; }
+    .sec-pill.nmp2  { border-color: #4f46e5; color: #3730a3; }
+    .sec-pill.nmp3  { border-color: #0891b2; color: #0e7490; }
+    .sec-pill.nmp4  { border-color: #65a30d; color: #3f6212; }
+    .sec-pill.nmp5  { border-color: #ea580c; color: #9a3412; }
+    .sec-pill.nmp6  { border-color: #6d28d9; color: #4c1d95; }
+    .sec-pill.nmp7  { border-color: #475569; color: #1e293b; }
+    .sec-pill.nmp17 { border-color: #dc2626; color: #991b1b; }
+    .sec-pill.nmp18 { border-color: #92400e; color: #78350f; }
 
     /* Legend */
     .legend {
+      margin-bottom: 24px;
+    }
+    .legend-group {
+      margin-bottom: 10px;
+    }
+    .legend-group-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+    .legend-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 24px;
+      gap: 8px;
     }
     .legend-item {
       display: flex;
@@ -234,6 +269,34 @@
       width: 12px;
       height: 12px;
       border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Book badge in chapter header */
+    .book-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.22);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 5px;
+      padding: 2px 8px;
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+
+    /* TOC book group label */
+    .toc-group-label {
+      padding: 10px 14px 4px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
+    .toc-divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 6px 14px;
     }
 
     /* Spacers */
@@ -260,11 +323,23 @@
   <div class="sidebar">
     <div class="toc-heading">Chapters</div>
     <nav id="toc">
+      <div class="toc-group-label">📘 Course Textbook</div>
       <a href="#" data-target="ch4"><span class="toc-dot" style="background:#0d9488;"></span>Ch. 4 — Radiochemistry</a>
       <a href="#" data-target="ch5"><span class="toc-dot" style="background:#d97706;"></span>Ch. 5 — Radiation Safety</a>
       <a href="#" data-target="ch9"><span class="toc-dot" style="background:#7c3aed;"></span>Ch. 9 — Physics</a>
       <a href="#" data-target="ch10"><span class="toc-dot" style="background:#0284c7;"></span>Ch. 10 — Instrumentation</a>
       <a href="#" data-target="ch16"><span class="toc-dot" style="background:#16a34a;"></span>Ch. 16 — Respiratory</a>
+      <div class="toc-divider"></div>
+      <div class="toc-group-label">📗 NMP Basics</div>
+      <a href="#" data-target="nmp1"><span class="toc-dot" style="background:#db2777;"></span>Ch. 1 — Basic Review</a>
+      <a href="#" data-target="nmp2"><span class="toc-dot" style="background:#4f46e5;"></span>Ch. 2 — Nuclides &amp; Decay</a>
+      <a href="#" data-target="nmp3"><span class="toc-dot" style="background:#0891b2;"></span>Ch. 3 — Radioactivity</a>
+      <a href="#" data-target="nmp4"><span class="toc-dot" style="background:#65a30d;"></span>Ch. 4 — Production</a>
+      <a href="#" data-target="nmp5"><span class="toc-dot" style="background:#ea580c;"></span>Ch. 5 — Radiopharmaceuticals</a>
+      <a href="#" data-target="nmp6"><span class="toc-dot" style="background:#6d28d9;"></span>Ch. 6 — Interaction / Matter</a>
+      <a href="#" data-target="nmp7"><span class="toc-dot" style="background:#475569;"></span>Ch. 7 — Dosimetry</a>
+      <a href="#" data-target="nmp17"><span class="toc-dot" style="background:#dc2626;"></span>Ch. 17 — Biologic Effects</a>
+      <a href="#" data-target="nmp18"><span class="toc-dot" style="background:#92400e;"></span>Ch. 18 — Safe Handling</a>
       <div style="height:120px;flex-shrink:0;"></div>
     </nav>
   </div>
@@ -272,16 +347,35 @@
   <main id="mainEl">
 
     <div class="intro-callout">
-      Each chapter block below shows exactly which study guide sections cover that textbook chapter.
-      Section pills use the same color as the <strong>📖 Ch. N</strong> badges shown in each notes file.
+      Each chapter block shows which study guide sections cover it. Blocks are grouped by book.
+      Section pills match the color of the chapter's book badge.
     </div>
 
     <div class="legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#0d9488;"></div>Ch. 4 · Radiochemistry &amp; Radiopharmacology</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div>Ch. 5 · Radiation Safety</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>Ch. 9 · Physics of Nuclear Medicine</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div>Ch. 10 · Instrumentation</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Ch. 16 · Respiratory System</div>
+      <div class="legend-group">
+        <div class="legend-group-label">📘 Course Textbook</div>
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:#0d9488;"></div>Ch. 4 · Radiochemistry &amp; Radiopharmacology</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div>Ch. 5 · Radiation Safety</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>Ch. 9 · Physics of Nuclear Medicine</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div>Ch. 10 · Instrumentation</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Ch. 16 · Respiratory System</div>
+        </div>
+      </div>
+      <div class="legend-group">
+        <div class="legend-group-label">📗 NMP Basics — Chandra &amp; Rahmim, 8th Ed.</div>
+        <div class="legend-row">
+          <div class="legend-item"><div class="legend-dot" style="background:#db2777;"></div>Ch. 1 · Basic Review</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#4f46e5;"></div>Ch. 2 · Nuclides &amp; Radioactive Processes</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div>Ch. 3 · Radioactivity &amp; Half-Life</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#65a30d;"></div>Ch. 4 · Production of Radionuclides</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ea580c;"></div>Ch. 5 · Radiopharmaceuticals</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#6d28d9;"></div>Ch. 6 · Interaction with Matter</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#475569;"></div>Ch. 7 · Radiation Dosimetry</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626;"></div>Ch. 17 · Biologic Effects of Radiation</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#92400e;"></div>Ch. 18 · Safe Handling &amp; Regulations</div>
+        </div>
+      </div>
     </div>
 
     <!-- Chapter 4 -->
@@ -290,6 +384,7 @@
         <span class="ch-num">Chapter 4</span>
         <h2>Radiochemistry &amp; Radiopharmacology</h2>
         <span class="textbook-ref">Production of radionuclides · Nuclear pharmacy · Generator systems · Radiopharmaceutical QC</span>
+        <span class="book-badge">📘 Course Textbook</span>
       </div>
       <div class="chapter-body">
 
@@ -321,6 +416,7 @@
         <span class="ch-num">Chapter 5</span>
         <h2>Radiation Safety in Nuclear Medicine</h2>
         <span class="textbook-ref">Radiation safety program · Regulations · Dose · Biological effects</span>
+        <span class="book-badge">📘 Course Textbook</span>
       </div>
       <div class="chapter-body">
 
@@ -368,6 +464,7 @@
         <span class="ch-num">Chapter 9</span>
         <h2>Physics of Nuclear Medicine</h2>
         <span class="textbook-ref">Atomic structure · Radioactive decay · Interaction with matter · Units · Attenuation</span>
+        <span class="book-badge">📘 Course Textbook</span>
       </div>
       <div class="chapter-body">
 
@@ -456,6 +553,7 @@
         <span class="ch-num">Chapter 10</span>
         <h2>Instrumentation</h2>
         <span class="textbook-ref">Gas-filled detectors · Dose calibrator · Gamma cameras · SPECT · Image quality · QC</span>
+        <span class="book-badge">📘 Course Textbook</span>
       </div>
       <div class="chapter-body">
 
@@ -477,6 +575,7 @@
         <span class="ch-num">Chapter 16</span>
         <h2>Respiratory System</h2>
         <span class="textbook-ref">Anatomy · Pathophysiology · Radiopharmaceuticals · V/Q imaging · Interpretation</span>
+        <span class="book-badge">📘 Course Textbook</span>
       </div>
       <div class="chapter-body">
 
@@ -515,6 +614,364 @@
       </div>
     </div>
 
+    <!-- ════════════════════════════════════════════════════════ -->
+    <!-- NMP BASICS — Chandra & Rahmim, 8th Ed.                 -->
+    <!-- ════════════════════════════════════════════════════════ -->
+
+    <!-- NMP Ch. 1 — Basic Review -->
+    <div class="chapter-block" id="nmp1">
+      <div class="chapter-header nmp1-header">
+        <span class="ch-num">Chapter 1</span>
+        <h2>Basic Review</h2>
+        <span class="textbook-ref">Atomic structure · Binding energy · Ionization · Characteristic X-rays · Auger electrons · E=mc²</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp1">s1 — Introduction to Nuclear Decay</span>
+            <span class="sec-pill nmp1">s6 — Characteristic Radiation</span>
+            <span class="sec-pill nmp1">s10 — Auger Process</span>
+            <span class="sec-pill nmp1">s14 — Size of Particles</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp1">s2 — Atomic Structure &amp; Stability</span>
+            <span class="sec-pill nmp1">s8 — Internal Conversion &amp; Auger</span>
+            <span class="sec-pill nmp1">s11 — Characteristic X-rays &amp; Half-Life</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Interaction_of_Radiation_with_Matter_Notes.html">Interaction / Matter</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp1">s1 — Introduction</span>
+            <span class="sec-pill nmp1">s2 — What Interacts</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 2 — Nuclides & Radioactive Processes -->
+    <div class="chapter-block" id="nmp2">
+      <div class="chapter-header nmp2-header">
+        <span class="ch-num">Chapter 2</span>
+        <h2>Nuclides &amp; Radioactive Processes</h2>
+        <span class="textbook-ref">Nuclide classification · Isomers · α/β/γ decay · Conservation laws · Decay schemes</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp2">s1 — Introduction to Nuclear Decay</span>
+            <span class="sec-pill nmp2">s2 — Alpha Decay</span>
+            <span class="sec-pill nmp2">s3 — Beta Decay</span>
+            <span class="sec-pill nmp2">s4 — Positron Decay</span>
+            <span class="sec-pill nmp2">s5 — Electron Capture</span>
+            <span class="sec-pill nmp2">s6 — Characteristic Radiation</span>
+            <span class="sec-pill nmp2">s7 — Isomeric Transition</span>
+            <span class="sec-pill nmp2">s8 — Gamma Ray Emission</span>
+            <span class="sec-pill nmp2">s9 — Internal Conversion</span>
+            <span class="sec-pill nmp2">s10 — Auger Process</span>
+            <span class="sec-pill nmp2">s11 — Fission</span>
+            <span class="sec-pill nmp2">s12 — Other Decay Topics</span>
+            <span class="sec-pill nmp2">s16 — Decay Schemes</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp2">s3 — Radiation</span>
+            <span class="sec-pill nmp2">s4 — Alpha</span>
+            <span class="sec-pill nmp2">s5 — Beta</span>
+            <span class="sec-pill nmp2">s6 — Positron</span>
+            <span class="sec-pill nmp2">s7 — Gamma</span>
+            <span class="sec-pill nmp2">s8 — X-rays</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp2">s3 — Alpha Decay</span>
+            <span class="sec-pill nmp2">s4 — Beta-Minus Decay</span>
+            <span class="sec-pill nmp2">s5 — Positron Decay</span>
+            <span class="sec-pill nmp2">s6 — Electron Capture</span>
+            <span class="sec-pill nmp2">s7 — Isomeric Transition &amp; Gamma</span>
+            <span class="sec-pill nmp2">s8 — Internal Conversion &amp; Auger</span>
+            <span class="sec-pill nmp2">s9 — Spontaneous Fission</span>
+            <span class="sec-pill nmp2">s12 — Reading Decay Schemes</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 3 — Radioactivity: Decay Law, Half-Life, Statistics -->
+    <div class="chapter-block" id="nmp3">
+      <div class="chapter-header nmp3-header">
+        <span class="ch-num">Chapter 3</span>
+        <h2>Radioactivity: Decay Law, Half-Life &amp; Statistics</h2>
+        <span class="textbook-ref">Exponential decay · Half-life · Specific activity · Biologic &amp; effective half-life · Poisson statistics</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp3">s14 — Radioactivity</span>
+            <span class="sec-pill nmp3">s15 — Half-Life</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp3">s13 — Speed of Photons &amp; Particles</span>
+            <span class="sec-pill nmp3">s15 — Penetration of Photons &amp; Particles</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp3">s11 — Characteristic X-rays &amp; Half-Life</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 4 — Production of Radionuclides -->
+    <div class="chapter-block" id="nmp4">
+      <div class="chapter-header nmp4-header">
+        <span class="ch-num">Chapter 4</span>
+        <h2>Production of Radionuclides</h2>
+        <span class="textbook-ref">Reactor · Cyclotron · Fission · ⁹⁹Mo–⁹⁹ᵐTc generator · Generator principles</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Pharmacy_Section_III_Notes.html">Nuclear Pharmacy III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp4">s1 — Introduction to Generators</span>
+            <span class="sec-pill nmp4">s2 — Generators Con't</span>
+            <span class="sec-pill nmp4">s3 — Generator Characteristics</span>
+            <span class="sec-pill nmp4">s4 — Common Generators</span>
+            <span class="sec-pill nmp4">s5 — Types of Generators</span>
+            <span class="sec-pill nmp4">s6 — Generator Parts &amp; Function</span>
+            <span class="sec-pill nmp4">s7 — Generator Function</span>
+            <span class="sec-pill nmp4">s8 — Generator Elution</span>
+            <span class="sec-pill nmp4">s9 — Generator Equilibrium</span>
+            <span class="sec-pill nmp4">s10 — Moly Efficiency &amp; Generator Size</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp4">s11 — Fission</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 5 — Radiopharmaceuticals -->
+    <div class="chapter-block" id="nmp5">
+      <div class="chapter-header nmp5-header">
+        <span class="ch-num">Chapter 5</span>
+        <h2>Radiopharmaceuticals</h2>
+        <span class="textbook-ref">Tc-99m agents · PET tracers (¹⁸FDG, ⁶⁸Ga-DOTATATE) · QC · Theranostics · Pregnant/lactating women</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Pharmacy_Section_III_Notes.html">Nuclear Pharmacy III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp5">s11 — Technetium-99m</span>
+            <span class="sec-pill nmp5">s12 — Decreased Yield</span>
+            <span class="sec-pill nmp5">s8 — Generator Elution</span>
+            <span class="sec-pill nmp5">s9 — Generator Equilibrium</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Respiratory_System_Notes.html">Respiratory System</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp5">s8 — Intro to Respiratory Radiopharmaceuticals</span>
+            <span class="sec-pill nmp5">s9 — Ventilation Agents (¹³³Xe, ⁹⁹ᵐTc-DTPA)</span>
+            <span class="sec-pill nmp5">s10 — Perfusion Agents (MAA)</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 6 — Interaction of High-Energy Radiation with Matter -->
+    <div class="chapter-block" id="nmp6">
+      <div class="chapter-header nmp6-header">
+        <span class="ch-num">Chapter 6</span>
+        <h2>Interaction of High-Energy Radiation with Matter</h2>
+        <span class="textbook-ref">Charged particles · LET · Stopping power · Compton · Photoelectric · Pair production · Neutrons</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Interaction_of_Radiation_with_Matter_Notes.html">Interaction / Matter</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp6">s1 — Introduction</span>
+            <span class="sec-pill nmp6">s2 — What Interacts</span>
+            <span class="sec-pill nmp6">s3 — Passage Through Matter</span>
+            <span class="sec-pill nmp6">s4 — Range of Radiation</span>
+            <span class="sec-pill nmp6">s5 — Gamma &amp; X-rays / Matter</span>
+            <span class="sec-pill nmp6">s6 — Photoelectric Effect</span>
+            <span class="sec-pill nmp6">s7 — Coherent Scatter</span>
+            <span class="sec-pill nmp6">s8 — Compton Scatter</span>
+            <span class="sec-pill nmp6">s9 — Pair Production</span>
+            <span class="sec-pill nmp6">s10 — Photodisintegration</span>
+            <span class="sec-pill nmp6">s11 — Probability of Interactions</span>
+            <span class="sec-pill nmp6">s12 — Particles / Matter</span>
+            <span class="sec-pill nmp6">s13 — Neutrons / Matter</span>
+            <span class="sec-pill nmp6">s14 — RBE</span>
+            <span class="sec-pill nmp6">s15 — Radiation Weighting Factors (Wᵣ)</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp6">s3 — Radiation</span>
+            <span class="sec-pill nmp6">s4 — Alpha</span>
+            <span class="sec-pill nmp6">s5 — Beta</span>
+            <span class="sec-pill nmp6">s6 — Positron</span>
+            <span class="sec-pill nmp6">s7 — Gamma</span>
+            <span class="sec-pill nmp6">s8 — X-rays</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp6">s13 — Speed of Photons &amp; Particles</span>
+            <span class="sec-pill nmp6">s14 — Size of Particles</span>
+            <span class="sec-pill nmp6">s15 — Penetration of Photons &amp; Particles</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp6">s10 — Radiation Characteristics &amp; Interactions</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 7 — Radiation Dosimetry -->
+    <div class="chapter-block" id="nmp7">
+      <div class="chapter-header nmp7-header">
+        <span class="ch-num">Chapter 7</span>
+        <h2>Radiation Dosimetry</h2>
+        <span class="textbook-ref">Radiation dose &amp; dose rate · Cumulated activity · S-factor · OLINDA/EXM · Fetal dose</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp7">s9 — Radiation and Exposure</span>
+            <span class="sec-pill nmp7">s10 — Units</span>
+            <span class="sec-pill nmp7">s11 — Exposure</span>
+            <span class="sec-pill nmp7">s12 — Absorbed Dose</span>
+            <span class="sec-pill nmp7">s13 — Dose Equivalent</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 17 — Biologic Effects of Radiation -->
+    <div class="chapter-block" id="nmp17">
+      <div class="chapter-header nmp17-header">
+        <span class="ch-num">Chapter 17</span>
+        <h2>Biologic Effects of Radiation &amp; Risk Evaluation</h2>
+        <span class="textbook-ref">Mechanisms of biologic damage · Acute &amp; late effects · Equivalent dose · Effective dose · Stochastic effects</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Interaction_of_Radiation_with_Matter_Notes.html">Interaction / Matter</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp17">s14 — Relative Biological Effectiveness (RBE)</span>
+            <span class="sec-pill nmp17">s15 — Radiation Weighting Factors (Wᵣ)</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp17">s1 — Section I Topics</span>
+            <span class="sec-pill nmp17">s2 — What is RadioBiology</span>
+            <span class="sec-pill nmp17">s9 — Radiation and Exposure</span>
+            <span class="sec-pill nmp17">s12 — Absorbed Dose</span>
+            <span class="sec-pill nmp17">s13 — Dose Equivalent</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp17">s10 — Radiation Characteristics &amp; Interactions</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- NMP Ch. 18 — Safe Handling & Regulations -->
+    <div class="chapter-block" id="nmp18">
+      <div class="chapter-header nmp18-header">
+        <span class="ch-num">Chapter 18</span>
+        <h2>Safe Handling of Radionuclides &amp; Regulations</h2>
+        <span class="textbook-ref">ALARA · Dose limits · NRC regulations · Personnel monitoring · Contamination surveys · Transport</span>
+        <span class="book-badge">📗 NMP Basics</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill nmp18">s16 — Sources of Exposure</span>
+            <span class="sec-pill nmp18">s17 — Radon</span>
+            <span class="sec-pill nmp18">s18 — External Background Radiation</span>
+            <span class="sec-pill nmp18">s19 — Medical Exposure</span>
+            <span class="sec-pill nmp18">s20 — Internal Exposure</span>
+            <span class="sec-pill nmp18">s21 — Consumer Products</span>
+            <span class="sec-pill nmp18">s22 — Cosmic Radiation</span>
+            <span class="sec-pill nmp18">s23 — Atmospheric Radiation</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <div class="scroll-spacer"></div>
   </main>
 
@@ -523,7 +980,8 @@
 <script>
   var mainEl = document.getElementById('mainEl');
   var tocLinks = document.querySelectorAll('nav#toc a');
-  var chapterEls = ['ch4','ch5','ch9','ch10','ch16'].map(function(id){
+  var chapterEls = ['ch4','ch5','ch9','ch10','ch16',
+                    'nmp1','nmp2','nmp3','nmp4','nmp5','nmp6','nmp7','nmp17','nmp18'].map(function(id){
     return document.getElementById(id);
   });
 
