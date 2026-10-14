@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Textbook Cross-Reference</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: #f0f2f5;
+      color: #1f2328;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow: hidden;
+      height: 100dvh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a56a6;
+      color: white;
+      min-height: 52px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: env(safe-area-inset-top);
+    }
+    .home-btn {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      flex: 1;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      height: calc(100dvh - 52px);
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 210px;
+      flex-shrink: 0;
+      border-right: 1px solid #e5e7eb;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+    }
+    .toc-heading {
+      padding: 12px 16px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+      flex-shrink: 0;
+    }
+    nav#toc {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 8px 0;
+    }
+    nav#toc a {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 14px;
+      text-decoration: none;
+      color: #374151;
+      font-size: 0.82rem;
+      border-left: 3px solid transparent;
+      transition: background 0.1s;
+    }
+    nav#toc a:hover { background: #f3f4f6; }
+    nav#toc a.active {
+      background: #eff6ff;
+      color: #1a56a6;
+      border-left-color: #1a56a6;
+      font-weight: 600;
+    }
+    .toc-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* ── Main ── */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 28px 32px;
+      height: 100%;
+    }
+    .intro-callout {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 0.88rem;
+      color: #1e40af;
+    }
+
+    /* ── Chapter blocks ── */
+    .chapter-block {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .chapter-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 22px;
+      color: white;
+    }
+    .chapter-header h2 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .chapter-header .ch-num {
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.25);
+      border-radius: 6px;
+      padding: 2px 8px;
+      white-space: nowrap;
+    }
+    .chapter-header .textbook-ref {
+      margin-left: auto;
+      font-size: 0.72rem;
+      opacity: 0.85;
+      font-style: italic;
+    }
+
+    /* Chapter colors */
+    .ch4-header  { background: #0d9488; }
+    .ch5-header  { background: #d97706; }
+    .ch9-header  { background: #7c3aed; }
+    .ch10-header { background: #0284c7; }
+    .ch16-header { background: #16a34a; }
+
+    .chapter-body { padding: 16px 22px 20px; }
+
+    /* ── Section rows ── */
+    .section-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 9px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .section-row:last-child { border-bottom: none; }
+    .section-row .guide-tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #57606a;
+      white-space: nowrap;
+      min-width: 120px;
+      padding-top: 2px;
+    }
+    .section-row .guide-tag a {
+      color: #1a56a6;
+      text-decoration: none;
+    }
+    .section-row .guide-tag a:hover { text-decoration: underline; }
+    .section-row .section-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
+    }
+    .sec-pill {
+      display: inline-flex;
+      align-items: center;
+      background: #f7f8fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      color: #374151;
+      white-space: nowrap;
+    }
+    .sec-pill.ch4  { border-color: #0d9488; color: #0d9488; }
+    .sec-pill.ch5  { border-color: #d97706; color: #92400e; }
+    .sec-pill.ch9  { border-color: #7c3aed; color: #5b21b6; }
+    .sec-pill.ch10 { border-color: #0284c7; color: #0369a1; }
+    .sec-pill.ch16 { border-color: #16a34a; color: #166534; }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: #374151;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    /* Spacers */
+    .scroll-spacer { height: 120px; flex-shrink: 0; }
+
+    @media (max-width: 600px) {
+      .sidebar { display: none; }
+      main { padding: 20px 16px; }
+    }
+    @media (min-width: 601px) and (max-width: 900px) {
+      .sidebar { width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="home-btn" href="index.html">⌂ Menu</a>
+  <h1>Textbook Cross-Reference</h1>
+</header>
+
+<div class="layout">
+
+  <div class="sidebar">
+    <div class="toc-heading">Chapters</div>
+    <nav id="toc">
+      <a href="#" data-target="ch4"><span class="toc-dot" style="background:#0d9488;"></span>Ch. 4 — Radiochemistry</a>
+      <a href="#" data-target="ch5"><span class="toc-dot" style="background:#d97706;"></span>Ch. 5 — Radiation Safety</a>
+      <a href="#" data-target="ch9"><span class="toc-dot" style="background:#7c3aed;"></span>Ch. 9 — Physics</a>
+      <a href="#" data-target="ch10"><span class="toc-dot" style="background:#0284c7;"></span>Ch. 10 — Instrumentation</a>
+      <a href="#" data-target="ch16"><span class="toc-dot" style="background:#16a34a;"></span>Ch. 16 — Respiratory</a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+
+  <main id="mainEl">
+
+    <div class="intro-callout">
+      Each chapter block below shows exactly which study guide sections cover that textbook chapter.
+      Section pills use the same color as the <strong>📖 Ch. N</strong> badges shown in each notes file.
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#0d9488;"></div>Ch. 4 · Radiochemistry &amp; Radiopharmacology</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d97706;"></div>Ch. 5 · Radiation Safety</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>Ch. 9 · Physics of Nuclear Medicine</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0284c7;"></div>Ch. 10 · Instrumentation</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#16a34a;"></div>Ch. 16 · Respiratory System</div>
+    </div>
+
+    <!-- Chapter 4 -->
+    <div class="chapter-block" id="ch4">
+      <div class="chapter-header ch4-header">
+        <span class="ch-num">Chapter 4</span>
+        <h2>Radiochemistry &amp; Radiopharmacology</h2>
+        <span class="textbook-ref">Production of radionuclides · Nuclear pharmacy · Generator systems · Radiopharmaceutical QC</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Pharmacy_Section_III_Notes.html">Nuclear Pharmacy III</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch4">s1 — Introduction to Generators</span>
+            <span class="sec-pill ch4">s2 — Generators Con't</span>
+            <span class="sec-pill ch4">s3 — Generator Characteristics</span>
+            <span class="sec-pill ch4">s4 — Common Generators</span>
+            <span class="sec-pill ch4">s5 — Types of Generators</span>
+            <span class="sec-pill ch4">s6 — Generator Parts &amp; Function</span>
+            <span class="sec-pill ch4">s7 — Generator Function</span>
+            <span class="sec-pill ch4">s8 — Generator Elution</span>
+            <span class="sec-pill ch4">s9 — Generator Equilibrium</span>
+            <span class="sec-pill ch4">s10 — Moly Efficiency &amp; Generator Size</span>
+            <span class="sec-pill ch4">s11 — Technetium-99m</span>
+            <span class="sec-pill ch4">s12 — Decreased Yield</span>
+            <span class="sec-pill ch4">s13 — Glossary</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chapter 5 -->
+    <div class="chapter-block" id="ch5">
+      <div class="chapter-header ch5-header">
+        <span class="ch-num">Chapter 5</span>
+        <h2>Radiation Safety in Nuclear Medicine</h2>
+        <span class="textbook-ref">Radiation safety program · Regulations · Dose · Biological effects</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch5">s9 — Radiation and Exposure</span>
+            <span class="sec-pill ch5">s10 — Units</span>
+            <span class="sec-pill ch5">s11 — Exposure</span>
+            <span class="sec-pill ch5">s12 — Absorbed Dose</span>
+            <span class="sec-pill ch5">s13 — Dose Equivalent</span>
+            <span class="sec-pill ch5">s16 — Sources of Exposure</span>
+            <span class="sec-pill ch5">s17 — Radon</span>
+            <span class="sec-pill ch5">s18 — External Background Radiation</span>
+            <span class="sec-pill ch5">s19 — Medical Exposure</span>
+            <span class="sec-pill ch5">s20 — Internal Exposure</span>
+            <span class="sec-pill ch5">s21 — Consumer Products</span>
+            <span class="sec-pill ch5">s22 — Cosmic Radiation</span>
+            <span class="sec-pill ch5">s23 — Atmospheric Radiation</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Interaction_of_Radiation_with_Matter_Notes.html">Interaction / Matter</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch5">s14 — Relative Biological Effectiveness (RBE)</span>
+            <span class="sec-pill ch5">s15 — Radiation Weighting Factors (Wr)</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch5">s10 — Radiation Characteristics &amp; Interactions</span>
+            <span class="sec-pill ch5">s13 — Glossary</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chapter 9 -->
+    <div class="chapter-block" id="ch9">
+      <div class="chapter-header ch9-header">
+        <span class="ch-num">Chapter 9</span>
+        <h2>Physics of Nuclear Medicine</h2>
+        <span class="textbook-ref">Atomic structure · Radioactive decay · Interaction with matter · Units · Attenuation</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Physics_Section_III_Notes.html">Nuclear Physics III</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch9">s1 — Introduction to Nuclear Decay</span>
+            <span class="sec-pill ch9">s2 — Alpha Decay</span>
+            <span class="sec-pill ch9">s3 — Beta Decay</span>
+            <span class="sec-pill ch9">s4 — Positron Decay</span>
+            <span class="sec-pill ch9">s5 — Electron Capture</span>
+            <span class="sec-pill ch9">s6 — Characteristic Radiation</span>
+            <span class="sec-pill ch9">s7 — Isomeric Transition</span>
+            <span class="sec-pill ch9">s8 — Gamma Ray Emission</span>
+            <span class="sec-pill ch9">s9 — Internal Conversion</span>
+            <span class="sec-pill ch9">s10 — Auger Process</span>
+            <span class="sec-pill ch9">s11 — Fission</span>
+            <span class="sec-pill ch9">s12 — Other Decay Topics</span>
+            <span class="sec-pill ch9">s13 — Speed of Photons &amp; Particles</span>
+            <span class="sec-pill ch9">s14 — Size of Particles</span>
+            <span class="sec-pill ch9">s15 — Penetration of Photons &amp; Particles</span>
+            <span class="sec-pill ch9">s16 — Decay Schemes</span>
+            <span class="sec-pill ch9">s17 — Glossary</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Interaction_of_Radiation_with_Matter_Notes.html">Interaction / Matter</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch9">s1 — Introduction</span>
+            <span class="sec-pill ch9">s2 — What Interacts</span>
+            <span class="sec-pill ch9">s3 — Passage Through Matter</span>
+            <span class="sec-pill ch9">s4 — Range of Radiation</span>
+            <span class="sec-pill ch9">s5 — Gamma &amp; X-rays / Matter</span>
+            <span class="sec-pill ch9">s6 — Photoelectric Effect</span>
+            <span class="sec-pill ch9">s7 — Coherent Scatter</span>
+            <span class="sec-pill ch9">s8 — Compton Scatter</span>
+            <span class="sec-pill ch9">s9 — Pair Production</span>
+            <span class="sec-pill ch9">s10 — Photodisintegration</span>
+            <span class="sec-pill ch9">s11 — Probability of Interactions</span>
+            <span class="sec-pill ch9">s12 — Particles / Matter</span>
+            <span class="sec-pill ch9">s13 — Neutrons / Matter</span>
+            <span class="sec-pill ch9">s16 — Glossary</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Introduction_to_RadioBiology_and_Radiation_Notes.html">Intro to RadioBiology</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch9">s1 — Section I Topics</span>
+            <span class="sec-pill ch9">s2 — What is RadioBiology</span>
+            <span class="sec-pill ch9">s3 — Radiation</span>
+            <span class="sec-pill ch9">s4 — Alpha</span>
+            <span class="sec-pill ch9">s5 — Beta</span>
+            <span class="sec-pill ch9">s6 — Positron</span>
+            <span class="sec-pill ch9">s7 — Gamma</span>
+            <span class="sec-pill ch9">s8 — X-rays</span>
+            <span class="sec-pill ch9">s14 — Radioactivity</span>
+            <span class="sec-pill ch9">s15 — Half-Life</span>
+          </div>
+        </div>
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Test_Prep_Radioactive_Decay_Notes.html">Test Prep: Decay</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch9">s1 — Test Topics Overview</span>
+            <span class="sec-pill ch9">s2 — Atomic Structure &amp; Stability</span>
+            <span class="sec-pill ch9">s3 — Alpha Decay</span>
+            <span class="sec-pill ch9">s4 — Beta-Minus Decay</span>
+            <span class="sec-pill ch9">s5 — Positron Decay</span>
+            <span class="sec-pill ch9">s6 — Electron Capture</span>
+            <span class="sec-pill ch9">s7 — Isomeric Transition &amp; Gamma</span>
+            <span class="sec-pill ch9">s8 — Internal Conversion &amp; Auger</span>
+            <span class="sec-pill ch9">s9 — Spontaneous Fission</span>
+            <span class="sec-pill ch9">s11 — Characteristic X-rays &amp; Half-Life</span>
+            <span class="sec-pill ch9">s12 — Reading Decay Schemes</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chapter 10 -->
+    <div class="chapter-block" id="ch10">
+      <div class="chapter-header ch10-header">
+        <span class="ch-num">Chapter 10</span>
+        <h2>Instrumentation</h2>
+        <span class="textbook-ref">Gas-filled detectors · Dose calibrator · Gamma cameras · SPECT · Image quality · QC</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Nuclear_Pharmacy_Section_III_Notes.html">Nuclear Pharmacy III</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch10">s8 — Generator Elution (dose calibrator)</span>
+            <span class="sec-pill ch10">s9 — Generator Equilibrium (activity measurement)</span>
+            <span class="sec-pill ch10">s10 — Moly Efficiency &amp; Generator Size</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Chapter 16 -->
+    <div class="chapter-block" id="ch16">
+      <div class="chapter-header ch16-header">
+        <span class="ch-num">Chapter 16</span>
+        <h2>Respiratory System</h2>
+        <span class="textbook-ref">Anatomy · Pathophysiology · Radiopharmaceuticals · V/Q imaging · Interpretation</span>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section-row">
+          <div class="guide-tag"><a href="Respiratory_System_Notes.html">Respiratory System</a></div>
+          <div class="section-list">
+            <span class="sec-pill ch16">s1 — Introduction</span>
+            <span class="sec-pill ch16">s2 — A&amp;P Overview</span>
+            <span class="sec-pill ch16">s3 — Organs of the Respiratory System</span>
+            <span class="sec-pill ch16">s4 — Bronchi</span>
+            <span class="sec-pill ch16">s5 — Lungs</span>
+            <span class="sec-pill ch16">s6 — Breathing &amp; Respiration</span>
+            <span class="sec-pill ch16">s7 — Lung Pathology</span>
+            <span class="sec-pill ch16">s8 — Intro to Respiratory Radiopharmaceuticals</span>
+            <span class="sec-pill ch16">s9 — Ventilation Agents</span>
+            <span class="sec-pill ch16">s10 — Perfusion Agents</span>
+            <span class="sec-pill ch16">s11 — Respiratory Imaging Overview</span>
+            <span class="sec-pill ch16">s12 — ¹³³Xe Ventilation Imaging</span>
+            <span class="sec-pill ch16">s13 — ⁹⁹ᵐTc-DTPA Aerosol Imaging</span>
+            <span class="sec-pill ch16">s14 — Perfusion Imaging</span>
+            <span class="sec-pill ch16">s15 — Indications for Lung Scan</span>
+            <span class="sec-pill ch16">s16 — Segments of the Lung</span>
+            <span class="sec-pill ch16">s17 — Pulmonary Embolism (PE)</span>
+            <span class="sec-pill ch16">s18 — COPD on Lung Scan</span>
+            <span class="sec-pill ch16">s19 — Lung Quantification Study</span>
+            <span class="sec-pill ch16">s20 — Case Study 1</span>
+            <span class="sec-pill ch16">s21 — Case Study 2</span>
+            <span class="sec-pill ch16">s22 — Case Study 3</span>
+            <span class="sec-pill ch16">s23 — Case Study 4</span>
+            <span class="sec-pill ch16">s24 — Case Study 5</span>
+            <span class="sec-pill ch16">s25 — Case Study 6</span>
+            <span class="sec-pill ch16">s26 — Glossary</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="scroll-spacer"></div>
+  </main>
+
+</div>
+
+<script>
+  var mainEl = document.getElementById('mainEl');
+  var tocLinks = document.querySelectorAll('nav#toc a');
+  var chapterEls = ['ch4','ch5','ch9','ch10','ch16'].map(function(id){
+    return document.getElementById(id);
+  });
+
+  function updateTocActive() {
+    var mainRect = mainEl.getBoundingClientRect();
+    var best = null, bestTop = -Infinity;
+    chapterEls.forEach(function(el) {
+      if (!el) return;
+      var top = el.getBoundingClientRect().top - mainRect.top;
+      if (top <= 40 && top > bestTop) { bestTop = top; best = el.id; }
+    });
+    if (!best && chapterEls[0]) best = chapterEls[0].id;
+    tocLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === best);
+    });
+  }
+
+  mainEl.addEventListener('scroll', updateTocActive);
+  updateTocActive();
+
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var t = document.getElementById(a.dataset.target);
+      if (!t) return;
+      mainEl.scrollTop += t.getBoundingClientRect().top - mainEl.getBoundingClientRect().top;
+      updateTocActive();
+    });
+  });
+</script>
+
+</body>
+</html>
