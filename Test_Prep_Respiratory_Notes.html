@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>Test Prep: Respiratory System — Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-review { margin-top: 24px; text-align: left; }
+    .quiz-review-item { padding: 12px 0; border-bottom: 1px solid #e5e7eb; font-size: 0.88rem; }
+    .quiz-review-item:last-child { border-bottom: none; }
+    .quiz-review-item .rq { font-weight: 600; color: #1f2328; margin-bottom: 4px; }
+    .quiz-review-item .ra { color: #15803d; }
+    .quiz-review-item .rw { color: #b91c1c; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100dvh - 52px); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; flex: 1; }
+    .ch-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; flex-shrink:0; letter-spacing:0.02em; }
+    .ch-badge.ch16 { background:#16a34a; color:#fff; }
+    .ch-badge.nmp5 { background:#ea580c; color:#fff; }
+    .ch-badge.nmp6 { background:#6d28d9; color:#fff; }
+    .ch-badge.nmp17 { background:#dc2626; color:#fff; }
+    .section-body { padding: 20px 24px; }
+    .section-body ul, .section-body ol { padding-left: 22px; margin: 8px 0; }
+    .section-body ul ul, .section-body ol ul { margin: 2px 0; }
+    .section-body li { margin-bottom: 4px; }
+    .section-body p { margin-bottom: 10px; }
+    .section-body h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .callout { background: #eff6ff; border-left: 4px solid #1a56a6; border-radius: 0 6px 6px 0; padding: 12px 16px; margin: 12px 0; font-size: 0.92rem; color: #1e3a5f; }
+    .callout.warning { background: #fff7ed; border-left-color: #ea580c; color: #7c2d12; }
+    .callout.green { background: #f0fdf4; border-left-color: #16a34a; color: #14532d; }
+    .formula-box { background: #fefce8; border: 1px solid #ca8a04; border-radius: 6px; padding: 10px 16px; margin: 12px 0; font-family: monospace; font-size: 0.95rem; color: #1f2328; line-height: 1.6; }
+    .test-banner { background: #7c5cd8; color: #fff; border-radius: 8px; padding: 14px 20px; margin-bottom: 28px; font-size: 0.92rem; line-height: 1.6; }
+    .test-banner strong { font-weight: 700; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    th { background: #1a56a6; color: white; padding: 8px 12px; text-align: left; }
+    td { padding: 7px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    tr:nth-child(even) td { background: #f9fafb; }
+    .compare-table td:first-child { font-weight: 600; color: #374151; width: 38%; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html, body { height: 100dvh; overflow: hidden; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Test Prep: Respiratory System</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&#x2026;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Respiratory System Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions covering all test topic areas.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: —</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">Test Topics Overview</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">A&amp;P Essentials</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">Lung Pathology</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Radiopharmaceuticals</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Ventilation Agents Compared</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">¹³³Xe Imaging Protocol</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">⁹⁹ᵐTc-DTPA Aerosol Protocol</span></a>
+      <a href="javascript:void(0)" data-target="s8"><span class="toc-num">8</span><span class="toc-label">Perfusion Imaging Protocol</span></a>
+      <a href="javascript:void(0)" data-target="s9"><span class="toc-num">9</span><span class="toc-label">Interpreting V/Q Scans</span></a>
+      <a href="javascript:void(0)" data-target="s10"><span class="toc-num">10</span><span class="toc-label">PE vs COPD on Lung Scan</span></a>
+      <a href="javascript:void(0)" data-target="s11"><span class="toc-num">11</span><span class="toc-label">Lung Quantification</span></a>
+      <a href="javascript:void(0)" data-target="s12"><span class="toc-num">12</span><span class="toc-label">Case Study Review</span></a>
+      <a href="javascript:void(0)" data-target="s13"><span class="toc-num">13</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main id="mainEl7">
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Test Topics Overview</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+        <span class="ch-badge nmp5">📗 NMP Ch. 5</span>
+      </div>
+      <div class="section-body">
+        <div class="test-banner">
+          <strong>Key test areas for Respiratory System Procedures:</strong><br>
+          1. A&amp;P of the Respiratory System &nbsp;·&nbsp;
+          2. Radiopharmaceuticals (¹³³Xe, ⁹⁹ᵐTc-DTPA, ⁹⁹ᵐTc-MAA) &nbsp;·&nbsp;
+          3. Imaging Protocols (Ventilation &amp; Perfusion) &nbsp;·&nbsp;
+          4. V/Q Scan Interpretation (PE vs COPD) &nbsp;·&nbsp;
+          5. Lung Quantification
+        </div>
+        <p>This guide consolidates content from the Respiratory System Procedures SoftChalk notes, <em>NM&amp;MI Technology and Techniques</em> (Gilmore &amp; Waterstram-Rich, Ch. 16), and <em>Nuclear Medicine Physics: The Basics</em> (Chandra &amp; Rahmim, Ch. 5 &amp; NMP Basics). Use the quiz to test yourself across all five areas.</p>
+        <h3>The Big Picture</h3>
+        <ul>
+          <li>Nuclear medicine lung imaging uses two complementary scans: <strong>Ventilation (V)</strong> and <strong>Perfusion (Q)</strong></li>
+          <li>Together they are called a <strong>V/Q scan</strong></li>
+          <li>The primary clinical question is: <strong>Does this patient have a Pulmonary Embolism (PE)?</strong></li>
+          <li>The key interpretive principle: a <strong>mismatched defect</strong> (normal V, abnormal Q) = PE; a <strong>matched defect</strong> (both V and Q abnormal) = COPD or obstructive disease</li>
+        </ul>
+        <div class="callout">
+          <strong>Ventilation:</strong> follows airflow &nbsp;|&nbsp; <strong>Perfusion:</strong> follows blood flow. Compare the same view side-by-side to identify matches vs. mismatches.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>A&amp;P Essentials</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>Respiratory System Structure</h3>
+        <ul>
+          <li><strong>Upper:</strong> Nose &amp; Pharynx</li>
+          <li><strong>Lower:</strong> Larynx → Trachea → Bronchi → Lungs</li>
+        </ul>
+        <h3>Bronchial Tree</h3>
+        <ul>
+          <li>Trachea → Primary Bronchi (R &amp; L) → Secondary Bronchi → Tertiary Bronchi → Terminal Bronchioles</li>
+          <li><strong>Right primary bronchus:</strong> more vertical, shorter, wider — foreign objects lodge here more easily</li>
+          <li>Right lung: <strong>3 lobes, 3 secondary bronchi</strong></li>
+          <li>Left lung: <strong>2 lobes, 2 secondary bronchi</strong> (cardiac notch on left)</li>
+        </ul>
+        <h3>The Lungs</h3>
+        <ul>
+          <li><strong>Right lung:</strong> thicker, broader, shorter (liver elevates right diaphragm); ~55% of total function</li>
+          <li><strong>Left lung:</strong> narrower (cardiac notch); ~45% of total function</li>
+          <li>Alveoli (250–300 million) are the site of gas exchange</li>
+          <li>Pleural membranes surround each lung; pleural fluid reduces friction</li>
+        </ul>
+        <h3>Important Landmarks</h3>
+        <table>
+          <tr><th>Structure</th><th>Function / Significance</th></tr>
+          <tr><td>Epiglottis</td><td>Trap door; covers trachea during swallowing; routes food to esophagus</td></tr>
+          <tr><td>Hilus</td><td>Where bronchi, blood vessels, lymphatics, and nerves enter/exit the lung</td></tr>
+          <tr><td>Cardiac notch</td><td>Left lung; shows as attenuated area on CXR and lung scan</td></tr>
+          <tr><td>Alveoli</td><td>Gas exchange by diffusion across alveolar cells and capillary walls</td></tr>
+        </table>
+        <div class="callout">
+          We breathe automatically to <strong>eliminate CO₂</strong>, not in response to low O₂. Before inspiration, lung pressure = atmospheric pressure (760 mmHg). Diaphragm contracts → pressure drops → air rushes in.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Lung Pathology</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>Key Conditions</h3>
+        <table>
+          <tr><th>Condition</th><th>Definition</th></tr>
+          <tr><td>Pneumothorax</td><td>Air in the pleural cavity; can cause lung collapse (atelectasis)</td></tr>
+          <tr><td>Hemothorax</td><td>Blood in the pleural cavity</td></tr>
+          <tr><td>Pleurisy</td><td>Inflammation of pleural membrane; causes chest/back pain from friction</td></tr>
+          <tr><td>Pneumonia</td><td>Acute infection/inflammation of alveoli; filled with fluid and dead WBCs</td></tr>
+          <tr><td>Emphysema</td><td>Destruction of alveolar walls; creates air spaces; reduces gas exchange</td></tr>
+          <tr><td>Bronchitis</td><td>Inflammation of bronchi; excessive mucus; chronic cough</td></tr>
+          <tr><td>Asthma</td><td>Inflammatory disorder; difficulty breathing; NOT caused by smoking</td></tr>
+        </table>
+        <h3>COPD</h3>
+        <ul>
+          <li><strong>Chronic Obstructive Pulmonary Disease</strong> — obstruction/narrowing of air passages</li>
+          <li>80% caused by smoking; 20% air pollutants</li>
+          <li>Types: Asthma, Bronchitis, Emphysema</li>
+          <li>S&amp;S: cough, breathlessness, wheezing, dyspnea</li>
+        </ul>
+        <h3>Pulmonary Embolism (PE)</h3>
+        <ul>
+          <li>Blood clot (or other foreign material) in a pulmonary vessel — <strong>obstructs circulation</strong></li>
+          <li>Most originate from <strong>DVT</strong> (deep vein thrombosis), usually in the legs</li>
+          <li>Risk factors: surgery, cancer, pregnancy, smoking, birth control pills, prolonged immobility</li>
+          <li>S&amp;S: sudden chest pain, dyspnea, cyanosis, tachycardia, shock</li>
+        </ul>
+        <h3>Three Types of PE</h3>
+        <ul>
+          <li><strong>Distal PE:</strong> Small clot in lung periphery; pleuritic chest pain</li>
+          <li><strong>Lobar PE:</strong> Clot in lobar branch; blocks flow to one lobe</li>
+          <li><strong>Saddle PE:</strong> Massive clot straddling the bifurcation of the main pulmonary artery — life-threatening</li>
+        </ul>
+        <div class="callout warning">
+          Treatment of PE: (1) anticoagulants (Heparin) to prevent new clots, (2) thrombolytics (Streptokinase) to dissolve clots, (3) surgical clot removal, (4) IVC filter placement.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Radiopharmaceuticals</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+        <span class="ch-badge nmp5">📗 NMP Ch. 5</span>
+      </div>
+      <div class="section-body">
+        <h3>Two Categories</h3>
+        <ul>
+          <li><strong>Ventilation agents</strong> — follow <em>airflow</em></li>
+          <li><strong>Perfusion agents</strong> — follow <em>blood flow</em></li>
+        </ul>
+        <h3>Ventilation Agents</h3>
+        <table>
+          <tr><th>Agent</th><th>Type</th><th>Status</th></tr>
+          <tr><td>¹³³Xe (Xenon-133)</td><td>Radioactive inert gas</td><td>Most commonly used; byproduct of fission → cheap</td></tr>
+          <tr><td>⁹⁹ᵐTc-DTPA aerosol</td><td>Radiolabeled aerosol</td><td>Common alternative; uses nebulizer</td></tr>
+          <tr><td>¹²⁷Xe</td><td>Radioactive inert gas</td><td>Expensive; not readily available — historical</td></tr>
+          <tr><td>⁸¹ᵐKr (Krypton)</td><td>Radioactive inert gas</td><td>T½ = 13 sec; needs on-site generator — inconvenient</td></tr>
+        </table>
+        <h3>Perfusion Agents</h3>
+        <table>
+          <tr><th>Agent</th><th>Mechanism</th><th>Dose</th></tr>
+          <tr><td>⁹⁹ᵐTc-MAA (Macroaggregated Albumin)</td><td>Capillary blockade — particles lodge in pulmonary capillaries on 1st pass</td><td>1–5 mCi IV</td></tr>
+          <tr><td>⁹⁹ᵐTc-Pulmolite</td><td>Similar to MAA; interchangeable</td><td>1–5 mCi IV</td></tr>
+        </table>
+        <h3>MAA Key Facts</h3>
+        <ul>
+          <li>Particle size: <strong>5–100 µm</strong> (most: 10–30 µm)</li>
+          <li>Minimum particles: <strong>100,000</strong>; typically inject 200,000–700,000</li>
+          <li>95% localize in lungs on first pass</li>
+          <li>Blocks 1 in 1,000 normal capillaries — all others remain open for O₂</li>
+        </ul>
+        <div class="callout warning">
+          Inject ⁹⁹ᵐTc-MAA <strong>slowly over 30 seconds</strong> with patient supine. Do NOT flush the syringe with blood — both factors cause particle clumping.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Ventilation Agents Compared</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <table class="compare-table">
+          <tr><th>Feature</th><th>¹³³Xe</th><th>⁹⁹ᵐTc-DTPA Aerosol</th></tr>
+          <tr><td>Type</td><td>Radioactive inert gas</td><td>Radiolabeled aerosol</td></tr>
+          <tr><td>Cost</td><td>Cheap (fission byproduct)</td><td>Uses ⁹⁹ᵐTc — readily available</td></tr>
+          <tr><td>Views</td><td><strong>POST only</strong></td><td>6 views (ANT, POST, R&amp;L LAT, POST obliques)</td></tr>
+          <tr><td>Sensitivity for COPD</td><td><strong>More sensitive</strong> (washout phase)</td><td>Less sensitive</td></tr>
+          <tr><td>Scan speed</td><td>Faster (½ time of aerosol)</td><td>Slower</td></tr>
+          <tr><td>Energy</td><td>Low energy (81 keV) — ½ photons attenuated</td><td>140 keV — good imaging</td></tr>
+          <tr><td>Room requirements</td><td>Negative pressure + xenon trap</td><td>No special room needed</td></tr>
+          <tr><td>Patient cooperation</td><td>Higher (closed spirometer)</td><td>Lower</td></tr>
+          <tr><td>Lung retention</td><td>Rapid clearance (biologic T½ = 30 sec)</td><td>Stays longer → multiple views possible</td></tr>
+          <tr><td>Dose to lungs</td><td>—</td><td>Only 2–10% delivered; ~1–2 mCi reaches lungs</td></tr>
+          <tr><td>Single breath / washout</td><td>Available</td><td>Not available</td></tr>
+        </table>
+        <div class="callout">
+          <strong>Key advantage of ¹³³Xe:</strong> different energy from ⁹⁹ᵐTc → can be done before perfusion with minimal interference.<br>
+          <strong>Key advantage of ⁹⁹ᵐTc-DTPA:</strong> multiple views, no special room, less patient cooperation needed.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>¹³³Xe Imaging Protocol</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>Setup</h3>
+        <ul>
+          <li>Load <strong>10–20 mCi</strong> of ¹³³Xe into a gas generator</li>
+          <li>Patient positioned <strong>supine or upright</strong>, camera posterior</li>
+          <li>Patient connected to <strong>facemask or mouthpiece</strong></li>
+          <li>Only the <strong>POST view</strong> is taken (least attenuation; best lung field view)</li>
+        </ul>
+        <h3>Three Phases</h3>
+        <ol>
+          <li>
+            <strong>Wash-in (Single Breath / Initial Breath)</strong>
+            <ul>
+              <li>Patient exhales maximally, then <strong>inhales ¹³³Xe and holds for 15 sec</strong></li>
+              <li>Static image taken</li>
+              <li>Represents <em>regional ventilation</em></li>
+              <li>Detects <strong>66%</strong> of ventilation defects</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Equilibrium</strong>
+            <ul>
+              <li>Patient rebreathes expired ¹³³Xe with <strong>2 L of O₂</strong> for <strong>2–5 minutes</strong> in a closed system</li>
+              <li>Static image taken</li>
+              <li>Least sensitive for defects; essential baseline for washout</li>
+              <li>Represents <em>distribution of lung volume</em></li>
+            </ul>
+          </li>
+          <li>
+            <strong>Washout Phase</strong>
+            <ul>
+              <li>¹³³Xe stopped; patient breathes fresh air/O₂ for <strong>2–3 minutes</strong></li>
+              <li><strong>15-second serial images</strong> taken</li>
+              <li>¹³³Xe should clear within 2–3 min</li>
+              <li>Retention = air trapping / obstructive disease</li>
+              <li>Detects <strong>90%</strong> of obstructive airway diseases</li>
+            </ul>
+          </li>
+        </ol>
+        <div class="callout green">
+          Total ¹³³Xe study takes approximately <strong>15 minutes</strong>. Patient can move directly to the perfusion scan — staying on the imaging table.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>⁹⁹ᵐTc-DTPA Aerosol Protocol</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>Procedure Steps</h3>
+        <ol>
+          <li>Load <strong>30 mCi</strong> of ⁹⁹ᵐTc-DTPA into a nebulizer in <strong>2–3 mL volume</strong></li>
+          <li>Connect oxygen to the nebulizer at <strong>10 L/min</strong> — O₂ picks up DTPA to form a radiolabeled aerosol</li>
+          <li>Administer aerosol via mouthpiece; patient <strong>supine</strong> for even distribution</li>
+          <li>Patient breathes for <strong>5–10 minutes</strong>
+            <ul>
+              <li>0.5–1.0 mCi localizes in lungs</li>
+              <li>150K cpm should localize</li>
+            </ul>
+          </li>
+          <li>Images taken with patient <strong>upright or supine</strong></li>
+          <li>Take <strong>6 images for 200K–300K counts</strong>: ANT, POST, R &amp; L LAT, POST obliques</li>
+        </ol>
+        <div class="callout">
+          Only <strong>2–10%</strong> of the 30 mCi dose actually reaches the patient's lungs. This is expected and normal — not a concern.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Perfusion Imaging Protocol</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+        <span class="ch-badge nmp5">📗 NMP Ch. 5</span>
+      </div>
+      <div class="section-body">
+        <h3>Procedure Steps</h3>
+        <ol>
+          <li>Inject <strong>1–5 mCi of ⁹⁹ᵐTc-MAA IV</strong> with patient <strong>supine</strong>
+            <ul>
+              <li>Inject <strong>slowly over 30 seconds</strong></li>
+              <li><strong>Do NOT flush syringe with blood</strong> — causes particle clumping</li>
+            </ul>
+          </li>
+          <li>Take <strong>6 images for 500K counts</strong>: ANT, POST, R &amp; L LAT, POST obliques
+            <ul>
+              <li><strong>POST is the most important view</strong></li>
+              <li>For LAT views: have patient put arms above their head to limit attenuation</li>
+            </ul>
+          </li>
+        </ol>
+        <h3>Interpretation Baseline</h3>
+        <ul>
+          <li>Ventilation scan is performed <strong>first</strong> in a V/Q study</li>
+          <li>Compare each perfusion view with the <strong>same view</strong> from ventilation</li>
+          <li>Look for defects that are present on perfusion but not ventilation</li>
+        </ul>
+        <div class="callout green">
+          Remain consistent with your count goals across patients — 500K for perfusion, 200–300K for aerosol ventilation.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Interpreting V/Q Scans</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>The Core Rule</h3>
+        <div class="formula-box">Mismatched defect = Normal V + Abnormal Q → Pulmonary Embolism (PE)
+Matched defect   = Abnormal V + Abnormal Q → COPD / Obstructive Disease</div>
+        <h3>Probability Classifications</h3>
+        <table>
+          <tr><th>Finding</th><th>PE Probability</th></tr>
+          <tr><td>Multiple large mismatched perfusion defects (wedge-shaped); normal ventilation</td><td><strong>High Probability</strong></td></tr>
+          <tr><td>One or more mismatched defects, some uncertainty</td><td><strong>Intermediate Probability</strong></td></tr>
+          <tr><td>Matched defects (both V &amp; Q abnormal); no mismatches</td><td><strong>Low Probability</strong></td></tr>
+          <tr><td>Normal perfusion</td><td><strong>Normal / PE excluded</strong></td></tr>
+        </table>
+        <h3>PE Characteristics on Scan</h3>
+        <ul>
+          <li><strong>Mismatched</strong> defect — normal ventilation, abnormal perfusion</li>
+          <li>Defects commonly <strong>wedge-shaped</strong></li>
+          <li>Most common in <strong>lower lobes</strong> (clots travel from deep leg veins)</li>
+          <li>May occur anywhere; compare all views</li>
+        </ul>
+        <h3>COPD Characteristics on Scan</h3>
+        <ul>
+          <li><strong>Matched</strong> defect — both V and Q abnormal</li>
+          <li>Defects are <strong>NOT wedge-shaped</strong></li>
+          <li>¹³³Xe washout: <strong>tracer trapping</strong>, delayed/absent clearance</li>
+          <li>Ventilation: patchy, non-uniform distribution</li>
+        </ul>
+        <div class="callout warning">
+          Whenever a lung scan is positive for any finding (regardless of diagnosis), the report typically reads <strong>"Low Probability of PE"</strong> — unless there are clear mismatched defects meeting high-probability criteria.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>PE vs COPD — Side by Side</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <table class="compare-table">
+          <tr><th>Feature</th><th>Pulmonary Embolism (PE)</th><th>COPD</th></tr>
+          <tr><td>Ventilation scan</td><td>Normal</td><td>Abnormal (patchy, trapping on washout)</td></tr>
+          <tr><td>Perfusion scan</td><td>Abnormal (defect)</td><td>Abnormal (same areas as vent)</td></tr>
+          <tr><td>Defect type</td><td><strong>Mismatched</strong></td><td><strong>Matched</strong></td></tr>
+          <tr><td>Defect shape</td><td>Wedge-shaped; lobar/segmental</td><td>Non-wedge; irregular</td></tr>
+          <tr><td>Most common location</td><td>Lower lobes</td><td>Any lobe; upper lobe emphysema common</td></tr>
+          <tr><td>¹³³Xe washout</td><td>Normal clearance</td><td>Tracer trapping / delayed clearance</td></tr>
+          <tr><td>Origin</td><td>Blood clot — usually from DVT</td><td>Chronic airway disease; mostly smoking</td></tr>
+          <tr><td>Presentation</td><td>Sudden SOB, chest pain, pleuritic pain</td><td>Chronic cough, wheezing, dyspnea</td></tr>
+        </table>
+        <div class="callout">
+          The clinical challenge: <strong>COPD patients can also get PEs</strong>. A matched defect in a COPD patient may still need CT pulmonary angiography for confirmation if clinical suspicion is high.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>Lung Quantification</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>Why Perform It?</h3>
+        <ul>
+          <li><strong>Pre-surgical planning</strong> — predict post-operative lung function before lobectomy or pneumonectomy for lung cancer</li>
+          <li><strong>Regional lung function assessment</strong> — how much does each lung contribute?</li>
+          <li><strong>Asymmetry evaluation</strong> — detect under-performing lung/lobe due to obstruction, PE, or chronic disease</li>
+        </ul>
+        <h3>How It Is Done</h3>
+        <ol>
+          <li>Complete a full V/Q scan (ventilation + perfusion)</li>
+          <li>Draw a <strong>Region of Interest (ROI)</strong> around each lung</li>
+          <li>Perform data analysis to calculate activity per lung/lobe</li>
+        </ol>
+        <h3>Normal Values</h3>
+        <table>
+          <tr><th>Lung</th><th>Normal %</th><th>Lobar Breakdown (approx.)</th></tr>
+          <tr><td>Right lung</td><td>~55%</td><td>Upper: 20%, Middle: 12%, Lower: 23%</td></tr>
+          <tr><td>Left lung</td><td>~45%</td><td>Upper (incl. lingula): 20%, Lower: 25%</td></tr>
+        </table>
+        <div class="callout">
+          Right lung is larger (3 lobes) and contributes more. Left lung accommodates the heart (cardiac notch), making it smaller. This asymmetry is normal.
+        </div>
+        <h3>Five Lung Lobes (Know These)</h3>
+        <ul>
+          <li>Right Upper Lobe</li>
+          <li>Right Middle Lobe</li>
+          <li>Right Lower Lobe</li>
+          <li>Left Upper Lobe</li>
+          <li>Left Lower Lobe</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>Case Study Review</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <h3>How to Approach a Lung Scan Case</h3>
+        <ol>
+          <li>Note patient history and clinical question (is this a PE evaluation?)</li>
+          <li>Compare ventilation and perfusion — <strong>same view, side by side</strong></li>
+          <li>Identify any defects — are they on perfusion, ventilation, or both?</li>
+          <li>Determine: <strong>mismatched</strong> (PE) or <strong>matched</strong> (COPD)?</li>
+          <li>Note defect shape — <strong>wedge = PE indicator</strong></li>
+          <li>State probability (High / Intermediate / Low / Normal)</li>
+        </ol>
+        <h3>Case Summary Table</h3>
+        <table>
+          <tr><th>Case</th><th>Patient</th><th>Key Finding</th><th>Diagnosis</th></tr>
+          <tr><td>1</td><td>60 YO male, CA history, SOB</td><td>Multiple mismatched perfusion defects in both lungs</td><td><strong>High probability PE</strong></td></tr>
+          <tr><td>2</td><td>22 YO male, post leg surgery, SOB</td><td>Massive perfusion decrease in entire R lung — mismatched</td><td><strong>Massive PE, R lung</strong></td></tr>
+          <tr><td>3</td><td>28 YO male, DVT history, chest pain</td><td>Large mismatched defect at R lung base; questionable apex</td><td><strong>Intermediate probability PE</strong></td></tr>
+          <tr><td>4</td><td>27 YO female, sickle cell, tachypnea</td><td>2 matched defects at L Post-Base</td><td><strong>Low probability PE / COPD</strong></td></tr>
+          <tr><td>5</td><td>45 YO male, SOB, only POST view</td><td>Large matched defect, POST lobe L lung</td><td><strong>COPD</strong></td></tr>
+          <tr><td>6</td><td>80 YO male, chest pain</td><td>Large round matched defect in R lung — unusual shape</td><td><strong>Large tumor</strong></td></tr>
+        </table>
+        <div class="callout warning">
+          <strong>Remember:</strong> Round/perfectly circular matched defects are suspicious — ventilation defects are rarely perfectly round. Consider tumor or mass when shape is atypical for COPD.
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Glossary</h2>
+        <span class="ch-badge ch16">📖 Ch. 16</span>
+      </div>
+      <div class="section-body">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>V/Q Scan</dt><dd>Combined ventilation/perfusion lung scan; primary tool to evaluate for pulmonary embolism.</dd></div>
+          <div class="glossary-card"><dt>Mismatched Defect</dt><dd>Normal ventilation with abnormal perfusion — classic sign of PE. Ventilation = normal; Perfusion = defect.</dd></div>
+          <div class="glossary-card"><dt>Matched Defect</dt><dd>Both ventilation and perfusion show a defect in the same area — indicates COPD or obstructive airway disease.</dd></div>
+          <div class="glossary-card"><dt>Pulmonary Embolism (PE)</dt><dd>Blood clot in a pulmonary artery. Originates from DVT. Shows as mismatched, often wedge-shaped perfusion defect.</dd></div>
+          <div class="glossary-card"><dt>COPD</dt><dd>Chronic Obstructive Pulmonary Disease. Matched defects on V/Q. Tracer trapping on ¹³³Xe washout. 80% from smoking.</dd></div>
+          <div class="glossary-card"><dt>¹³³Xe (Xenon-133)</dt><dd>Radioactive inert gas; most common ventilation agent. Three phases: wash-in, equilibrium, washout. POST view only.</dd></div>
+          <div class="glossary-card"><dt>⁹⁹ᵐTc-DTPA Aerosol</dt><dd>Radiolabeled aerosol ventilation agent. 30 mCi in nebulizer; 6 views; 2–10% reaches lungs.</dd></div>
+          <div class="glossary-card"><dt>⁹⁹ᵐTc-MAA</dt><dd>Macroaggregated Albumin; perfusion agent. 1–5 mCi IV. Particles (5–100 µm) lodge in pulmonary capillaries.</dd></div>
+          <div class="glossary-card"><dt>Capillary Blockade</dt><dd>Mechanism of MAA: particles (5–100 µm) block capillaries on first pass. 95% localizes in lungs.</dd></div>
+          <div class="glossary-card"><dt>Wash-in Phase</dt><dd>Phase 1 of ¹³³Xe: patient inhales Xe, holds 15 sec. Detects 66% of defects.</dd></div>
+          <div class="glossary-card"><dt>Equilibrium Phase</dt><dd>Phase 2 of ¹³³Xe: patient rebreathes Xe + O₂ for 2–5 min. Least sensitive; baseline for washout.</dd></div>
+          <div class="glossary-card"><dt>Washout Phase</dt><dd>Phase 3 of ¹³³Xe: patient breathes room air. Retention = COPD. Detects 90% of obstructive disease.</dd></div>
+          <div class="glossary-card"><dt>Lung Quantification</dt><dd>Study measuring % contribution of each lung/lobe. Normal: R ~55%, L ~45%. Used for pre-surgical planning.</dd></div>
+          <div class="glossary-card"><dt>Saddle PE</dt><dd>Massive PE where clot straddles bifurcation of main pulmonary artery; life-threatening.</dd></div>
+          <div class="glossary-card"><dt>Lobar PE</dt><dd>Clot in a lobar branch; blocks flow to one lung lobe.</dd></div>
+          <div class="glossary-card"><dt>Distal PE</dt><dd>Small peripheral clot; may cause pleuritic chest pain.</dd></div>
+          <div class="glossary-card"><dt>MAA Particle Count</dt><dd>Minimum 100,000 required; typically 200,000–700,000 injected. Size: 5–100 µm.</dd></div>
+          <div class="glossary-card"><dt>Nebulizer</dt><dd>Device that converts liquid ⁹⁹ᵐTc-DTPA into a radiolabeled aerosol using oxygen at 10 L/min.</dd></div>
+          <div class="glossary-card"><dt>POST View</dt><dd>Most important view in lung scanning; least attenuation; only view taken with ¹³³Xe.</dd></div>
+          <div class="glossary-card"><dt>Pneumothorax</dt><dd>Air in pleural cavity; can cause atelectasis (lung collapse).</dd></div>
+          <div class="glossary-card"><dt>DVT</dt><dd>Deep Vein Thrombosis; most common source of pulmonary emboli.</dd></div>
+          <div class="glossary-card"><dt>Cardiac Notch</dt><dd>Concave area on the left lung where the heart lies; shows as attenuated area on lung scan — not a defect.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+  <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+
+<script>
+  var QUIZ_BANK = [
+  { section: "s2", q: "The right primary bronchus is more likely than the left to have a foreign object lodged in it because it is:", a: 0, choices: ["More vertical, shorter, and wider", "Longer and narrower", "More horizontal and curved", "The same as the left"] },
+  { section: "s2", q: "How many lobes does the right lung have?", a: 2, choices: ["2", "4", "3", "5"] },
+  { section: "s2", q: "What is the cardiac notch?", a: 1, choices: ["A defect on the right lung from the aorta", "A concave area on the left lung where the heart lies; shows as an attenuated area on lung scan", "A defect always indicating pathology", "The hilus of the left lung"] },
+  { section: "s2", q: "What triggers automatic breathing?", a: 1, choices: ["Low oxygen levels in the blood", "High CO₂ levels in the blood", "Low blood pressure", "High heart rate"] },
+  { section: "s3", q: "What type of V/Q defect does a pulmonary embolism produce?", a: 0, choices: ["Mismatched — normal ventilation, abnormal perfusion", "Matched — both ventilation and perfusion abnormal", "Normal on both scans", "Abnormal ventilation, normal perfusion"] },
+  { section: "s3", q: "A Saddle PE is defined as:", a: 2, choices: ["A small distal clot in the lung periphery", "A clot in one lobar branch of the pulmonary artery", "A massive clot straddling the bifurcation of the main pulmonary artery", "A clot in the right ventricle"] },
+  { section: "s3", q: "Most pulmonary emboli originate from:", a: 0, choices: ["Deep vein thrombosis (DVT) in the legs", "Heart valve disease", "Lung infections", "Arterial clots in the neck"] },
+  { section: "s4", q: "Which perfusion radiopharmaceutical is most commonly used for lung scanning?", a: 0, choices: ["⁹⁹ᵐTc-MAA (Macroaggregated Albumin)", "¹³³Xe", "⁹⁹ᵐTc-DTPA aerosol", "⁶⁷Ga-citrate"] },
+  { section: "s4", q: "What is the minimum number of MAA particles required for an adequate perfusion scan?", a: 1, choices: ["50,000", "100,000", "500,000", "1,000,000"] },
+  { section: "s4", q: "MAA particles localize in the lungs via what mechanism?", a: 1, choices: ["Active transport", "Capillary blockade — particles (5–100 µm) physically lodge in pulmonary capillaries", "Receptor binding", "Diffusion across alveolar membranes"] },
+  { section: "s5", q: "Which ventilation agent is most sensitive for detecting COPD?", a: 0, choices: ["¹³³Xe (because of its washout phase)", "⁹⁹ᵐTc-DTPA aerosol", "⁸¹ᵐKr", "¹²⁷Xe"] },
+  { section: "s5", q: "Why is ⁸¹ᵐKr impractical for routine ventilation imaging?", a: 2, choices: ["It is a liquid agent", "It is very expensive and not FDA approved", "Its T½ of 13 seconds requires an on-site generator", "It has too high an energy for imaging"] },
+  { section: "s5", q: "A key advantage of ⁹⁹ᵐTc-DTPA aerosol over ¹³³Xe is:", a: 1, choices: ["It is more sensitive for COPD", "It allows multiple views (6 views) and requires no special room", "It has a lower radiation dose", "It produces a washout phase"] },
+  { section: "s6", q: "During ¹³³Xe imaging, how many phases are performed?", a: 2, choices: ["1", "2", "3", "4"] },
+  { section: "s6", q: "In the ¹³³Xe wash-in phase, what does the patient do?", a: 0, choices: ["Exhale maximally, then inhale ¹³³Xe and hold breath for 15 seconds", "Breathe normally for 5 minutes", "Inhale ¹³³Xe then immediately exhale", "Breathe ¹³³Xe mixed with O₂ in a closed system"] },
+  { section: "s6", q: "During the ¹³³Xe washout phase, retention of tracer indicates:", a: 1, choices: ["Normal finding — all patients show some retention", "Air trapping or obstructive airway disease (COPD)", "Pulmonary embolism", "Atelectasis"] },
+  { section: "s6", q: "Why is only the posterior (POST) view taken with ¹³³Xe?", a: 0, choices: ["Least attenuation and provides the best view of lung fields", "NRC regulations require it", "Anterior view is reserved for perfusion only", "¹³³Xe does not distribute to anterior lung fields"] },
+  { section: "s7", q: "How much ⁹⁹ᵐTc-DTPA is loaded into the nebulizer for aerosol ventilation?", a: 0, choices: ["30 mCi in 2–3 mL", "5 mCi in 10 mL", "1 mCi in 1 mL", "100 mCi in 5 mL"] },
+  { section: "s7", q: "For ⁹⁹ᵐTc-DTPA aerosol imaging, oxygen is flowed through the nebulizer at:", a: 1, choices: ["5 L/min", "10 L/min", "2 L/min", "20 L/min"] },
+  { section: "s7", q: "How many images are taken for ⁹⁹ᵐTc-DTPA aerosol ventilation?", a: 2, choices: ["2 images (ANT, POST)", "4 images", "6 images — ANT, POST, R&L LAT, POST obliques", "8 images"] },
+  { section: "s8", q: "How should ⁹⁹ᵐTc-MAA be injected for perfusion imaging?", a: 0, choices: ["Slowly over 30 seconds, patient supine — do NOT flush with blood", "Rapid IV push standing", "Arterially under fluoroscopy", "Mixed with saline and infused over 1 hour"] },
+  { section: "s8", q: "For perfusion imaging, the posterior (POST) view is considered:", a: 0, choices: ["The most important view", "Optional if anterior is normal", "The least useful view", "Equivalent to the lateral views"] },
+  { section: "s8", q: "Which scan is performed FIRST in a standard V/Q study?", a: 0, choices: ["Ventilation scan", "Perfusion scan", "CT scan", "Either — order does not matter"] },
+  { section: "s9", q: "On a V/Q scan, a wedge-shaped perfusion defect with normal ventilation most likely indicates:", a: 0, choices: ["Pulmonary embolism (PE)", "COPD", "Pneumothorax", "Atelectasis"] },
+  { section: "s9", q: "Which finding would be classified as HIGH probability for PE?", a: 0, choices: ["Multiple large mismatched perfusion defects with normal ventilation", "Matched defects on both V and Q", "Normal perfusion scan", "Small matched defect at the base"] },
+  { section: "s10", q: "On a V/Q scan, COPD characteristically shows:", a: 1, choices: ["Normal ventilation and abnormal perfusion", "Matched non-wedge-shaped defects on both ventilation and perfusion", "Mismatched defects in the lower lobes", "A completely normal perfusion scan"] },
+  { section: "s10", q: "In the ¹³³Xe washout phase, COPD appears as:", a: 0, choices: ["Tracer trapping with delayed or absent clearance", "Rapid uniform clearance within 30 seconds", "No activity in affected areas", "Increased activity in lower lobes"] },
+  { section: "s10", q: "PE defects are most often found in which part of the lungs?", a: 2, choices: ["Upper lobes", "Medial segments", "Lower lobes", "Apices only"] },
+  { section: "s11", q: "What is the normal right-to-left lung contribution in a lung quantification study?", a: 0, choices: ["Right ~55%, Left ~45%", "Right ~45%, Left ~55%", "Equal 50% each", "Right ~70%, Left ~30%"] },
+  { section: "s11", q: "Lung quantification is most commonly performed for:", a: 1, choices: ["Diagnosing acute PE", "Pre-surgical planning before lobectomy or pneumonectomy", "Evaluating response to COPD treatment", "Screening for lung cancer"] },
+  { section: "s11", q: "To perform lung quantification, what is drawn around each lung?", a: 1, choices: ["A standard template from a normal atlas", "A Region of Interest (ROI)", "A threshold contour automatically by the camera", "Nothing — counts are measured globally"] },
+  { section: "s12", q: "Case: 22 YO post-leg surgery, massive perfusion decrease in entire right lung, mismatched to ventilation. What is the most likely diagnosis?", a: 0, choices: ["Massive PE in the right lung", "COPD", "Lung tumor", "Pleural effusion"] },
+  { section: "s12", q: "Case: 27 YO female with sickle cell anemia, 2 matched defects at L Post-Base. What does this indicate?", a: 1, choices: ["High probability of PE", "Low probability of PE / possible COPD", "Normal study", "Saddle PE"] },
+  { section: "s12", q: "A large, perfectly round matched defect on a V/Q scan should raise suspicion for:", a: 2, choices: ["COPD", "Pulmonary embolism", "A lung mass or tumor (ventilation defects are rarely perfectly round)", "Pneumothorax"] },
+  { section: "s12", q: "What percentage of ⁹⁹ᵐTc-MAA particles localizes in the lungs on first pass?", a: 0, choices: ["95%", "75%", "50%", "100%"] }
+  ];
+
+  var mainEl7 = document.getElementById('mainEl7');
+  var sectionEls = Array.from(document.querySelectorAll('.section'));
+  var tocLinks = Array.from(document.querySelectorAll('nav#toc a[data-target]'));
+
+  function updateTocActive7() {
+    var mainRect = mainEl7.getBoundingClientRect();
+    var best = null, bestTop = -Infinity;
+    sectionEls.forEach(function(s) {
+      var top = s.getBoundingClientRect().top - mainRect.top;
+      if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    if (!best && sectionEls.length) best = sectionEls[0].id;
+    tocLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === best);
+    });
+  }
+  mainEl7.addEventListener('scroll', updateTocActive7);
+  updateTocActive7();
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var t = document.getElementById(a.dataset.target);
+      if (!t) return;
+      mainEl7.scrollTop += t.getBoundingClientRect().top - mainEl7.getBoundingClientRect().top;
+      updateTocActive7();
+    });
+  });
+
+  // Search
+  var searchInput = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('clearBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var searchCount = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var hlMarks = [], hlIdx = -1;
+  var debounceTimer;
+
+  function setNavActive(on) {
+    if (on) { prevBtn.classList.remove('inactive'); nextBtn.classList.remove('inactive'); }
+    else { prevBtn.classList.add('inactive'); nextBtn.classList.add('inactive'); searchCount.textContent = '— / —'; }
+  }
+  function updateCount() { searchCount.textContent = hlMarks.length ? (hlIdx+1)+' / '+hlMarks.length : '0 found'; }
+  function clearHighlights() {
+    document.querySelectorAll('mark.hl').forEach(function(m) {
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    hlMarks = []; hlIdx = -1;
+  }
+  function doSearch(term) {
+    clearHighlights();
+    noResults.style.display = 'none';
+    if (!term) { setNavActive(false); return; }
+    var re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi');
+    var walker = document.createTreeWalker(mainEl7, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(n) {
+        var p = n.parentNode;
+        if (p.closest && (p.closest('.quiz-overlay') || p.closest('mark'))) return NodeFilter.FILTER_REJECT;
+        return n.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function(node) {
+      var txt = node.textContent, m, frags = [], last = 0;
+      while ((m = re.exec(txt)) !== null) {
+        frags.push(document.createTextNode(txt.slice(last, m.index)));
+        var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[0]; frags.push(mark);
+        last = m.index + m[0].length;
+      }
+      if (frags.length) {
+        frags.push(document.createTextNode(txt.slice(last)));
+        var frag = document.createDocumentFragment();
+        frags.forEach(function(f) { frag.appendChild(f); });
+        node.parentNode.replaceChild(frag, node);
+      }
+    });
+    hlMarks = Array.from(mainEl7.querySelectorAll('mark.hl'));
+    if (hlMarks.length) { setNavActive(true); hlIdx = 0; hlMarks[0].classList.add('current'); scrollToMark(hlMarks[0]); updateCount(); }
+    else { setNavActive(false); noResults.style.display = 'block'; searchCount.textContent = '0 found'; }
+  }
+  function scrollToMark(mark) { mark.scrollIntoView({block:'center'}); }
+  function navigate(dir) {
+    if (!hlMarks.length) return;
+    hlMarks[hlIdx].classList.remove('current');
+    hlIdx = (hlIdx + dir + hlMarks.length) % hlMarks.length;
+    hlMarks[hlIdx].classList.add('current'); scrollToMark(hlMarks[hlIdx]); updateCount();
+  }
+  searchInput.addEventListener('input', function() {
+    clearBtn.style.display = this.value ? 'block' : 'none';
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(function() { doSearch(searchInput.value.trim()); }, 260);
+  });
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = ''; clearBtn.style.display = 'none';
+    clearHighlights(); setNavActive(false); noResults.style.display = 'none';
+  });
+  prevBtn.addEventListener('click', function() { navigate(-1); });
+  nextBtn.addEventListener('click', function() { navigate(1); });
+
+  // Quiz
+  var QUIZ_KEY = 'radQuizScores7';
+  var STATS_KEY = 'radQuizSectionStats7';
+  var quizOverlay = document.getElementById('quizOverlay');
+  var quizBody = document.getElementById('quizBody');
+  var quizIntro = document.getElementById('quizIntro');
+  var quizBtn = document.getElementById('quizBtn');
+  var quizClose = document.getElementById('quizClose');
+  var quizAvgEl = document.getElementById('quizAvg');
+  var quizStartBtn = document.getElementById('quizStartBtn');
+
+  function loadAvg() {
+    try {
+      var scores = JSON.parse(localStorage.getItem(QUIZ_KEY) || '[]');
+      if (scores.length) { quizAvgEl.textContent = 'Avg: ' + Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) + '%'; }
+      else { quizAvgEl.textContent = 'Avg: —'; }
+    } catch(e) {}
+  }
+  function saveScore(pct) {
+    try {
+      var scores = JSON.parse(localStorage.getItem(QUIZ_KEY) || '[]');
+      scores.push(pct); if (scores.length > 20) scores.shift();
+      localStorage.setItem(QUIZ_KEY, JSON.stringify(scores)); loadAvg();
+    } catch(e) {}
+  }
+  function saveStats(wrong) {
+    try {
+      var stats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}');
+      wrong.forEach(function(sec) { stats[sec] = (stats[sec]||0) + 1; });
+      localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    } catch(e) {}
+  }
+  loadAvg();
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+    return a;
+  }
+
+  function applyHighlights() {
+    try {
+      var stats = JSON.parse(localStorage.getItem(STATS_KEY) || '{}');
+      var total = {};
+      QUIZ_BANK.forEach(function(q){total[q.section]=(total[q.section]||0)+1;});
+      sectionEls.forEach(function(el) {
+        el.classList.remove('study-warn','study-crit');
+        tocLinks.forEach(function(a){if(a.dataset.target===el.id){a.classList.remove('study-warn','study-crit');}});
+        var wrong = stats[el.id]||0, tot = total[el.id]||0;
+        if (!tot) return;
+        var pct = Math.max(0, 100 - Math.round(wrong/Math.max(wrong,tot)*100));
+        var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+        if (cls) {
+          el.classList.add(cls);
+          tocLinks.forEach(function(a){if(a.dataset.target===el.id) a.classList.add(cls);});
+        }
+      });
+    } catch(e){}
+  }
+
+  var highlightToggle = document.getElementById('highlightToggle');
+  var highlightsOn = false;
+  highlightToggle.addEventListener('click', function(){
+    highlightsOn = !highlightsOn;
+    highlightToggle.classList.toggle('active', highlightsOn);
+    if (highlightsOn) applyHighlights();
+    else {
+      sectionEls.forEach(function(el){ el.classList.remove('study-warn','study-crit'); });
+      tocLinks.forEach(function(a){ a.classList.remove('study-warn','study-crit'); });
+    }
+  });
+
+  quizBtn.addEventListener('click', function(){ quizOverlay.classList.add('open'); quizBody.innerHTML=''; quizBody.appendChild(quizIntro); });
+  quizClose.addEventListener('click', function(){ quizOverlay.classList.remove('open'); });
+  quizOverlay.addEventListener('click', function(e){ if(e.target===quizOverlay) quizOverlay.classList.remove('open'); });
+
+  quizStartBtn.addEventListener('click', function() {
+    var qs = shuffle(QUIZ_BANK).slice(0,10);
+    var html = '<div class="quiz-progress">Question 1 of 10</div><div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" id="qBar" style="width:10%"></div></div>';
+    qs.forEach(function(q, i) {
+      var shuffled = shuffle(q.choices.map(function(c,idx){return {c:c, orig:idx};}));
+      var correctShuffled = shuffled.findIndex(function(x){return x.orig===q.a;});
+      html += '<div class="quiz-q" data-correct="'+correctShuffled+'" data-section="'+q.section+'"><div class="quiz-q-text">'+(i+1)+'. '+q.q+'</div><div class="quiz-choices">';
+      shuffled.forEach(function(ch, ci) {
+        html += '<label class="quiz-choice"><input type="radio" name="q'+i+'" value="'+ci+'"> '+ch.c+'</label>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="submitBtn">Submit Quiz</button></div>';
+    quizBody.innerHTML = html;
+    quizBody.querySelectorAll('.quiz-choice').forEach(function(lbl) {
+      lbl.addEventListener('click', function(){
+        var inp = lbl.querySelector('input'); if(inp) inp.checked = true;
+        var qDiv = lbl.closest('.quiz-q');
+        var idx = Array.from(qDiv.querySelectorAll('.quiz-choice')).indexOf(lbl);
+        var qIdx = Array.from(quizBody.querySelectorAll('.quiz-q')).indexOf(qDiv);
+        var bar = document.getElementById('qBar');
+        if(bar) bar.style.width = Math.round((qIdx+1)/10*100)+'%';
+        document.querySelector('.quiz-progress').textContent = 'Question '+(qIdx+1)+' of 10';
+      });
+    });
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      var qDivs = quizBody.querySelectorAll('.quiz-q');
+      var allAnswered = true;
+      qDivs.forEach(function(qDiv, i) {
+        if (!qDiv.querySelector('input:checked')) allAnswered = false;
+      });
+      if (!allAnswered) { alert('Please answer all questions before submitting.'); return; }
+      var correct = 0, wrongSecs = [];
+      qDivs.forEach(function(qDiv, i) {
+        var correctIdx = parseInt(qDiv.dataset.correct);
+        var section = qDiv.dataset.section;
+        var choices = qDiv.querySelectorAll('.quiz-choice');
+        var selected = parseInt(qDiv.querySelector('input:checked').value);
+        choices.forEach(function(c){ c.classList.add('locked'); });
+        if (selected === correctIdx) {
+          correct++;
+          choices[selected].classList.add('correct');
+          var fb = document.createElement('div'); fb.className = 'quiz-feedback ok'; fb.textContent = '✓ Correct!';
+          choices[selected].after(fb);
+        } else {
+          choices[selected].classList.add('incorrect');
+          choices[correctIdx].classList.add('reveal-correct');
+          var fb = document.createElement('div'); fb.className = 'quiz-feedback bad'; fb.textContent = '✗ Incorrect. The correct answer is highlighted above.';
+          choices[selected].after(fb);
+          wrongSecs.push(section);
+        }
+      });
+      var pct = Math.round(correct/10*100);
+      saveScore(pct); saveStats(wrongSecs);
+      if (highlightsOn) applyHighlights();
+      var msg = pct>=90?'Excellent work!':pct>=70?'Good job — keep reviewing!':'Keep studying — use the highlights to find weak areas.';
+      var review = '<div class="quiz-result"><div class="quiz-score-ring">'+correct+'/10</div><p>'+pct+'% &mdash; '+msg+'</p></div>';
+      review += '<div class="quiz-review"><strong>Review:</strong>';
+      qDivs.forEach(function(qDiv, i) {
+        var q = quizBody.querySelectorAll('.quiz-q-text')[i].textContent;
+        var correctIdx = parseInt(qDiv.dataset.correct);
+        var correctTxt = qDiv.querySelectorAll('.quiz-choice')[correctIdx].textContent.trim();
+        var selected = parseInt(qDiv.querySelector('input:checked').value);
+        var ok = selected === correctIdx;
+        review += '<div class="quiz-review-item"><div class="rq">'+q+'</div><div class="'+(ok?'ra':'rw')+'">'+(ok?'✓':'✗')+' '+correctTxt+'</div></div>';
+      });
+      review += '</div><div class="quiz-actions"><button class="quiz-retry-btn" id="retryBtn">Try Another Quiz</button></div>';
+      quizBody.innerHTML = review;
+      document.getElementById('retryBtn').addEventListener('click', function(){ quizStartBtn.click(); });
+    });
+  });
+</script>
+</body>
+</html>
