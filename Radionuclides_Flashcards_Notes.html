@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>Radionuclides — Flashcards</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px - env(safe-area-inset-top, 0px)); height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; flex: 1; }
+    .section-body { padding: 20px 24px; }
+    .section-body h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .section-body p { margin-bottom: 8px; }
+    .section-body ul, .section-body ol { padding-left: 22px; margin: 8px 0; }
+    .section-body li { margin-bottom: 3px; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html { height: 100%; height: -webkit-fill-available; overflow: hidden; }
+    body { height: 100%; min-height: -webkit-fill-available; overflow: hidden; }
+    .callout { background: #eff6ff; border-left: 4px solid #1a56a6; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0; font-size: 0.9rem; color: #1e3a5f; }
+    /* ── Flashcard styles ── */
+    .flashcard-intro { font-size: 0.92rem; color: #57606a; margin-bottom: 20px; line-height: 1.6; }
+    .flip-all-btn { display: inline-flex; align-items: center; gap: 6px; background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 14px; margin-bottom: 18px; -webkit-tap-highlight-color: transparent; }
+    .flip-all-btn:active { background: #e5e7eb; }
+    .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .fc-scene { perspective: 900px; height: 180px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .fc-scene:focus { outline: 2px solid #1a56a6; outline-offset: 2px; border-radius: 10px; }
+    .fc-card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.42s cubic-bezier(0.4,0,0.2,1); }
+    .fc-scene.flipped .fc-card { transform: rotateY(180deg); }
+    .fc-front, .fc-back { position: absolute; inset: 0; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 12px; backface-visibility: hidden; -webkit-backface-visibility: hidden; text-align: center; }
+    .fc-front { background: #1a56a6; color: #fff; border: 1px solid #1648a0; }
+    .fc-front .fc-name { font-size: 1.05rem; font-weight: 700; line-height: 1.3; }
+    .fc-front .fc-hint { font-size: 0.7rem; color: rgba(255,255,255,0.55); margin-top: 10px; }
+    .fc-back { background: #f7f8fa; border: 1px solid #d1d5db; transform: rotateY(180deg); justify-content: flex-start; padding: 12px 14px; text-align: left; }
+    .fc-back .fc-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; padding: 4px 0; border-bottom: 1px solid #e5e7eb; font-size: 0.8rem; }
+    .fc-back .fc-row:last-of-type { border-bottom: none; }
+    .fc-back .fc-key { color: #57606a; font-weight: 600; flex-shrink: 0; margin-right: 8px; }
+    .fc-back .fc-val { color: #1f2328; font-weight: 500; text-align: right; flex: 1; }
+    .fc-back .fc-decay-tag { margin-top: 8px; width: 100%; text-align: center; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #1a56a6; }
+    /* group headers */
+    .group-header { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 24px 0 10px; }
+    .group-header:first-child { margin-top: 0; }
+    /* glossary */
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Radionuclides — Flashcards</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&hellip;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Radionuclides Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions drawn from the full radionuclide set.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: &mdash;</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">How to Use</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">SPECT Agents</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">PET Agents</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Therapy Agents</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Calibration Sources</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">Quiz Reference Table</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main>
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+    <!-- ─── Section 1: How to Use ─── -->
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>How to Use These Flashcards</h2>
+      </div>
+      <div class="section-body">
+        <p>Each card shows the <strong>radionuclide name</strong> on the front. Tap or click the card to flip it and reveal the <strong>half-life, photon energy, and decay mode</strong> on the back.</p>
+        <p>Use the <strong>Flip All</strong> button at the top of each group to reveal or hide all cards at once. Use the <strong>Quiz</strong> button in the sidebar to test yourself with 10 random multiple-choice questions.</p>
+        <div class="callout">
+          Cards are grouped by clinical use: <strong>SPECT agents</strong>, <strong>PET agents</strong>, <strong>Therapy agents</strong>, and <strong>Calibration sources</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Section 2: SPECT Agents ─── -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>SPECT Agents</h2>
+      </div>
+      <div class="section-body">
+        <p class="flashcard-intro">The workhorse radionuclides for conventional nuclear medicine gamma camera imaging. Tap a card to flip it.</p>
+        <button class="flip-all-btn" data-group="spect">&#8635; Flip All</button>
+        <div class="flashcard-grid" id="group-spect">
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Technetium-99m</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">6 hours</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">140 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">~80% of NM studies</span></div>
+                <div class="fc-decay-tag">Isomeric Transition</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Iodine-131</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">8 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">284, 364, 637 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Thyroid imaging &amp; therapy</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Iodine-123</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">13.2 hours</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">159 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Thyroid imaging</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Molybdenum-99</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">66 hours</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">740 &amp; 780 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Parent of <sup>99m</sup>Tc generator</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Gallium-67</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">78.2 hours</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">93, 184, 300 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Infection / tumor imaging</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Indium-111</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">2.8 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">171 &amp; 245 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">WBC / tumor / CSF imaging</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Xenon-133</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">5.3 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">81 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Ventilation imaging</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Thallium-201</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">73 hours</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">80, 135, 167 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Myocardial perfusion</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="spect">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Iodine-125</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">60 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">35 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">RIA / brachytherapy seeds</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Section 3: PET Agents ─── -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>PET Agents</h2>
+      </div>
+      <div class="section-body">
+        <p class="flashcard-intro">All PET agents are positron emitters. They all produce 511 keV annihilation photons detected in coincidence. What differs is the <strong>half-life</strong> — the key fact to know for each one.</p>
+        <button class="flip-all-btn" data-group="pet">&#8635; Flip All</button>
+        <div class="flashcard-grid" id="group-pet">
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Carbon-11</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">20 minutes</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Neuroreceptor PET</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Nitrogen-13</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">10 minutes</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Myocardial perfusion PET</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Oxygen-15</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">2 minutes</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Cerebral blood flow PET</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Fluorine-18</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">110 minutes</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">FDG — most common PET agent</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Gallium-68</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">67.7 minutes</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Neuroendocrine tumor PET</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="pet">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Rubidium-82</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">75 seconds</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">511 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Myocardial perfusion PET</span></div>
+                <div class="fc-decay-tag">Positron</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Section 4: Therapy Agents ─── -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Therapy Agents</h2>
+      </div>
+      <div class="section-body">
+        <p class="flashcard-intro">Therapeutic radionuclides deliver local radiation dose to target tissue. Note that these have higher energies and longer half-lives compared to imaging agents.</p>
+        <button class="flip-all-btn" data-group="therapy">&#8635; Flip All</button>
+        <div class="flashcard-grid" id="group-therapy">
+
+          <div class="fc-scene" tabindex="0" data-group="therapy">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Radium-223</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">11.4 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">5,980 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Bone metastases therapy</span></div>
+                <div class="fc-decay-tag">Alpha</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="therapy">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Lutetium-177</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">6.7 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">500.5 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">PRRT / PSMA therapy</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="therapy">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Yttrium-90</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">2.67 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">927 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Liver radioembolization</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Section 5: Calibration Sources ─── -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Calibration Sources</h2>
+      </div>
+      <div class="section-body">
+        <p class="flashcard-intro">Long-lived sources used to calibrate gamma cameras and dose calibrators. Their long half-lives mean they stay useful for years.</p>
+        <button class="flip-all-btn" data-group="cal">&#8635; Flip All</button>
+        <div class="flashcard-grid" id="group-cal">
+
+          <div class="fc-scene" tabindex="0" data-group="cal">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Cobalt-57</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">271 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">122 &amp; 136 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Flood source calibration</span></div>
+                <div class="fc-decay-tag">Electron Capture</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="cal">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Cobalt-58</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">71 days</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">811 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Dose calibrator check</span></div>
+                <div class="fc-decay-tag">EC &amp; Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fc-scene" tabindex="0" data-group="cal">
+            <div class="fc-card">
+              <div class="fc-front">
+                <div class="fc-name">Cesium-137</div>
+                <div class="fc-hint">tap to reveal</div>
+              </div>
+              <div class="fc-back">
+                <div class="fc-row"><span class="fc-key">T½</span><span class="fc-val">30 years</span></div>
+                <div class="fc-row"><span class="fc-key">Energy</span><span class="fc-val">662 keV</span></div>
+                <div class="fc-row"><span class="fc-key">Use</span><span class="fc-val">Long-term calibration source</span></div>
+                <div class="fc-decay-tag">Beta&minus;</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Section 6: Quick Reference Table ─── -->
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Quiz Reference Table</h2>
+      </div>
+      <div class="section-body">
+        <p style="margin-bottom:14px; font-size:0.9rem; color:#57606a;">All 21 radionuclides at a glance. Use this to confirm card answers or before the quiz.</p>
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+          <thead>
+            <tr>
+              <th style="background:#1a56a6;color:#fff;padding:8px 12px;text-align:left;">Radionuclide</th>
+              <th style="background:#1a56a6;color:#fff;padding:8px 12px;text-align:left;">Half-Life</th>
+              <th style="background:#1a56a6;color:#fff;padding:8px 12px;text-align:left;">Energy (keV)</th>
+              <th style="background:#1a56a6;color:#fff;padding:8px 12px;text-align:left;">Decay</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Technetium-99m</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">6 hours</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">140</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Isomeric Transition</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Iodine-131</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">8 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">284, 364, 637</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Beta&minus;</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Iodine-123</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">13.2 hours</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">159</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Molybdenum-99</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">66 hours</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">740, 780</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Beta&minus;</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Gallium-67</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">78.2 hours</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">93, 184, 300</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Indium-111</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">2.8 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">171, 245</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Xenon-133</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">5.3 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">81</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Beta&minus;</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Thallium-201</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">73 hours</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">80, 135, 167</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Iodine-125</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">60 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">35</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Cobalt-57</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">271 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">122, 136</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Electron Capture</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Cobalt-58</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">71 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">811</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">EC &amp; Beta&minus;</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Cesium-137</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">30 years</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">662</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Beta&minus;</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Carbon-11</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">20 minutes</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Nitrogen-13</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">10 minutes</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Oxygen-15</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">2 minutes</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Fluorine-18</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">110 minutes</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Gallium-68</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">67.7 minutes</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Rubidium-82</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">75 seconds</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">511</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Positron</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Radium-223</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">11.4 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">5,980</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Alpha</td></tr>
+            <tr style="background:#f9fafb;"><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Lutetium-177</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">6.7 days</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">500.5</td><td style="padding:7px 12px;border-bottom:1px solid #e5e7eb;">Beta&minus;</td></tr>
+            <tr><td style="padding:7px 12px;">Yttrium-90</td><td style="padding:7px 12px;">2.67 days</td><td style="padding:7px 12px;">927</td><td style="padding:7px 12px;">Beta&minus;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ─── Section 7: Glossary ─── -->
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Glossary</h2>
+      </div>
+      <div class="section-body">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>Half-Life (T½)</dt><dd>The time required for half of the radioactive atoms in a sample to decay. Shorter T½ = faster decay and lower patient dose retention.</dd></div>
+          <div class="glossary-card"><dt>Isomeric Transition (IT)</dt><dd>Decay from a metastable nuclear state (e.g., <sup>99m</sup>Tc) to a lower energy state by emitting a gamma photon. No change in atomic or mass number.</dd></div>
+          <div class="glossary-card"><dt>Beta&minus; Decay</dt><dd>A neutron converts to a proton with emission of a beta particle (electron) and antineutrino. Increases atomic number by 1.</dd></div>
+          <div class="glossary-card"><dt>Electron Capture (EC)</dt><dd>An orbital electron is captured by the nucleus; a proton converts to a neutron. Characteristic X-rays are emitted. Decreases atomic number by 1.</dd></div>
+          <div class="glossary-card"><dt>Positron Decay (β+)</dt><dd>A proton converts to a neutron with emission of a positron. The positron annihilates with an electron to produce two 511 keV photons traveling 180° apart — the basis of PET imaging.</dd></div>
+          <div class="glossary-card"><dt>Alpha Decay</dt><dd>Emission of an alpha particle (2 protons + 2 neutrons). High LET, short range — useful for targeted therapy (e.g., Radium-223). Decreases atomic number by 2 and mass by 4.</dd></div>
+          <div class="glossary-card"><dt>Annihilation Radiation</dt><dd>The two 511 keV photons produced when a positron meets an electron. All PET agents produce this energy regardless of which positron emitter is used.</dd></div>
+          <div class="glossary-card"><dt>SPECT</dt><dd>Single-Photon Emission Computed Tomography. Uses a gamma camera to detect single gamma photons from radionuclides like <sup>99m</sup>Tc, <sup>201</sup>Tl, and <sup>67</sup>Ga.</dd></div>
+          <div class="glossary-card"><dt>PET</dt><dd>Positron Emission Tomography. Detects the two 511 keV coincidence photons from positron annihilation. Requires positron-emitting radionuclides.</dd></div>
+          <div class="glossary-card"><dt>Calibration Source</dt><dd>A long-lived radionuclide (e.g., <sup>57</sup>Co, <sup>137</sup>Cs) used to verify the accuracy and linearity of gamma cameras and dose calibrators.</dd></div>
+          <div class="glossary-card"><dt>Metastable State</dt><dd>A nuclear isomer with excess energy that decays by isomeric transition. Denoted by a lowercase "m" after the mass number (e.g., <sup>99m</sup>Tc).</dd></div>
+          <div class="glossary-card"><dt>keV (kiloelectron volt)</dt><dd>Unit of photon energy. Optimal gamma camera imaging range is ~80–364 keV. Energies too low are attenuated; too high are difficult to collimate.</dd></div>
+        </dl>
+      </div>
+    </div>
+
+  <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+<script>
+var QUIZ_BANK = [
+  { section:"s2", q:"What is the half-life of Technetium-99m?", a:0, choices:["6 hours","13.2 hours","66 hours","2.8 days"] },
+  { section:"s2", q:"What photon energy does Technetium-99m emit?", a:1, choices:["284 keV","140 keV","511 keV","81 keV"] },
+  { section:"s2", q:"What decay mode does Technetium-99m undergo?", a:2, choices:["Beta-","Electron Capture","Isomeric Transition","Positron"] },
+  { section:"s2", q:"What is the half-life of Iodine-131?", a:3, choices:["13.2 hours","60 days","5.3 days","8 days"] },
+  { section:"s2", q:"Which radionuclide has a half-life of 13.2 hours and emits 159 keV?", a:1, choices:["Iodine-131","Iodine-123","Iodine-125","Xenon-133"] },
+  { section:"s2", q:"What is the half-life of Molybdenum-99?", a:2, choices:["8 days","13.2 hours","66 hours","78.2 hours"] },
+  { section:"s2", q:"What decay mode does Gallium-67 undergo?", a:0, choices:["Electron Capture","Beta-","Positron","Alpha"] },
+  { section:"s2", q:"Which radionuclide has photon energies of 171 and 245 keV?", a:3, choices:["Gallium-67","Thallium-201","Cobalt-57","Indium-111"] },
+  { section:"s2", q:"What is the photon energy of Xenon-133?", a:1, choices:["140 keV","81 keV","159 keV","93 keV"] },
+  { section:"s2", q:"What decay mode does Xenon-133 undergo?", a:0, choices:["Beta-","Electron Capture","Positron","Isomeric Transition"] },
+  { section:"s2", q:"Thallium-201 has a half-life of:", a:2, choices:["5.3 days","2.8 days","73 hours","78.2 hours"] },
+  { section:"s2", q:"Which radionuclide emits only 35 keV and has a 60-day half-life?", a:3, choices:["Iodine-131","Xenon-133","Cobalt-57","Iodine-125"] },
+  { section:"s3", q:"All PET agents produce which photon energy?", a:0, choices:["511 keV","140 keV","364 keV","662 keV"] },
+  { section:"s3", q:"What is the half-life of Fluorine-18?", a:1, choices:["20 minutes","110 minutes","67.7 minutes","10 minutes"] },
+  { section:"s3", q:"Which PET agent has the shortest half-life?", a:2, choices:["Carbon-11","Nitrogen-13","Oxygen-15","Fluorine-18"] },
+  { section:"s3", q:"What is the half-life of Rubidium-82?", a:3, choices:["10 minutes","2 minutes","67.7 minutes","75 seconds"] },
+  { section:"s3", q:"Gallium-68 has a half-life of:", a:0, choices:["67.7 minutes","110 minutes","75 seconds","20 minutes"] },
+  { section:"s3", q:"What is the decay mode common to all PET agents?", a:1, choices:["Electron Capture","Positron","Beta-","Isomeric Transition"] },
+  { section:"s4", q:"What decay mode does Radium-223 use?", a:2, choices:["Beta-","Electron Capture","Alpha","Positron"] },
+  { section:"s4", q:"What is the half-life of Lutetium-177?", a:0, choices:["6.7 days","2.67 days","11.4 days","8 days"] },
+  { section:"s4", q:"Which therapy agent has the highest photon energy at 5,980 keV?", a:3, choices:["Yttrium-90","Lutetium-177","Cobalt-58","Radium-223"] },
+  { section:"s4", q:"What is the half-life of Yttrium-90?", a:1, choices:["6.7 days","2.67 days","11.4 days","5.3 days"] },
+  { section:"s5", q:"What is the half-life of Cobalt-57?", a:0, choices:["271 days","71 days","30 years","60 days"] },
+  { section:"s5", q:"Which calibration source has a 30-year half-life?", a:2, choices:["Cobalt-57","Cobalt-58","Cesium-137","Iodine-125"] },
+  { section:"s5", q:"What photon energy does Cesium-137 emit?", a:3, choices:["811 keV","122 keV","140 keV","662 keV"] },
+  { section:"s5", q:"Cobalt-58 undergoes which decay mode(s)?", a:1, choices:["Beta- only","EC and Beta-","Positron only","Electron Capture only"] },
+  { section:"s2", q:"Gallium-67 emits photons at which energies?", a:0, choices:["93, 184, and 300 keV","80, 135, and 167 keV","171 and 245 keV","122 and 136 keV"] },
+  { section:"s2", q:"Which SPECT agent is used in approximately 80% of all nuclear medicine studies?", a:2, choices:["Iodine-131","Thallium-201","Technetium-99m","Gallium-67"] },
+  { section:"s3", q:"Carbon-11 has a half-life of:", a:1, choices:["10 minutes","20 minutes","2 minutes","110 minutes"] },
+  { section:"s2", q:"Molybdenum-99 is important in nuclear medicine primarily because:", a:3, choices:["It emits 511 keV photons","It has a 30-year half-life","It is used for therapy","It is the parent radionuclide of the Moly/Tech generator"] },
+];
+
+  var mainEl = document.querySelector('main');
+  var tocLinks = Array.from(document.querySelectorAll('nav#toc a'));
+  var sectionEls = tocLinks.map(function(a){return document.getElementById(a.dataset.target);}).filter(Boolean);
+  var searchInput = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('clearBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var searchCount = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var quizBtn = document.getElementById('quizBtn');
+  var quizClose = document.getElementById('quizClose');
+  var quizOverlay = document.getElementById('quizOverlay');
+  var quizBody = document.getElementById('quizBody');
+  var quizStartBtn = document.getElementById('quizStartBtn');
+  var quizAvg = document.getElementById('quizAvg');
+  var highlightToggle = document.getElementById('highlightToggle');
+  var allMatches = [], currentMatch = -1, highlightsOn = false, debounceTimer;
+
+  // ── Flashcard flip ──
+  document.querySelectorAll('.fc-scene').forEach(function(scene) {
+    scene.addEventListener('click', function() { scene.classList.toggle('flipped'); });
+    scene.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scene.classList.toggle('flipped'); }
+    });
+  });
+
+  // ── Flip All buttons ──
+  document.querySelectorAll('.flip-all-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var group = btn.dataset.group;
+      var cards = document.querySelectorAll('.fc-scene[data-group="' + group + '"]');
+      var anyUnflipped = Array.from(cards).some(function(c){ return !c.classList.contains('flipped'); });
+      cards.forEach(function(c){ c.classList.toggle('flipped', anyUnflipped); });
+    });
+  });
+
+  // ── TOC scroll ──
+  function updateTocActive() {
+    var mainRect = mainEl.getBoundingClientRect();
+    var best = null, bestTop = -Infinity;
+    sectionEls.forEach(function(s) {
+      var top = s.getBoundingClientRect().top - mainRect.top;
+      if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    if (!best && sectionEls.length) best = sectionEls[0].id;
+    tocLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === best);
+    });
+  }
+  mainEl.addEventListener('scroll', updateTocActive, {passive: true});
+  updateTocActive();
+
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var t = document.getElementById(a.dataset.target);
+      if (!t) return;
+      mainEl.scrollTop += t.getBoundingClientRect().top - mainEl.getBoundingClientRect().top;
+      updateTocActive();
+    });
+  });
+
+  // ── Search ──
+  function setNavActive(on) {
+    if (on) { prevBtn.classList.remove('inactive'); nextBtn.classList.remove('inactive'); }
+    else { prevBtn.classList.add('inactive'); nextBtn.classList.add('inactive'); searchCount.textContent = '— / —'; }
+  }
+  function clearHighlights() {
+    document.querySelectorAll('mark.hl').forEach(function(m){
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    allMatches = []; currentMatch = -1;
+  }
+  function doSearch(term) {
+    clearHighlights(); noResults.style.display = 'none';
+    if (!term) { setNavActive(false); return; }
+    var re = new RegExp('(' + term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')', 'gi');
+    var walker = document.createTreeWalker(mainEl, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        var p = node.parentNode;
+        while (p) { if (p.tagName === 'SCRIPT' || p.tagName === 'STYLE') return NodeFilter.FILTER_REJECT; p = p.parentNode; }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+    var nodes = []; var n; while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(node) {
+      if (!re.test(node.textContent)) return; re.lastIndex = 0;
+      var frag = document.createDocumentFragment(), last = 0, m;
+      while ((m = re.exec(node.textContent)) !== null) {
+        frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+        var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[1];
+        frag.appendChild(mark); allMatches.push(mark); last = m.index + m[1].length;
+      }
+      frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (allMatches.length === 0) { noResults.style.display = 'block'; setNavActive(false); searchCount.textContent = '0 found'; }
+    else { setNavActive(true); currentMatch = 0; highlightCurrent(); }
+  }
+  function highlightCurrent() {
+    allMatches.forEach(function(m){m.classList.remove('current');}); if (!allMatches.length) return;
+    allMatches[currentMatch].classList.add('current');
+    allMatches[currentMatch].scrollIntoView({behavior:'smooth',block:'center'});
+    searchCount.textContent = (currentMatch+1) + ' / ' + allMatches.length;
+  }
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer); var val = searchInput.value.trim();
+    clearBtn.style.display = val ? 'block' : 'none';
+    debounceTimer = setTimeout(function(){doSearch(val);}, 260);
+  });
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = ''; clearBtn.style.display = 'none'; clearHighlights(); noResults.style.display = 'none'; setNavActive(false);
+  });
+  prevBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch - 1 + allMatches.length) % allMatches.length; highlightCurrent();
+  });
+  nextBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch + 1) % allMatches.length; highlightCurrent();
+  });
+
+  // ── Quiz ──
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+  function loadAvg10() {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores10') || '[]');
+      if (scores.length > 0) {
+        var avg = Math.round(scores.reduce(function(s,v){return s+v;},0)/scores.length);
+        quizAvg.textContent = 'Avg: ' + avg + '%';
+      }
+    } catch(e){}
+  }
+  function saveScore10(pct) {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores10') || '[]');
+      scores.push(pct); if (scores.length > 20) scores = scores.slice(-20);
+      localStorage.setItem('radQuizScores10', JSON.stringify(scores)); loadAvg10();
+    } catch(e){}
+  }
+  function saveStats10(results) {
+    try {
+      var stats = JSON.parse(localStorage.getItem('radQuizSectionStats10') || '{}');
+      results.forEach(function(r){
+        if (!stats[r.section]) stats[r.section] = {correct:0,total:0};
+        stats[r.section].total++; if (r.correct) stats[r.section].correct++;
+      });
+      localStorage.setItem('radQuizSectionStats10', JSON.stringify(stats));
+    } catch(e){}
+  }
+
+  loadAvg10();
+  quizBtn.addEventListener('click', function(){quizOverlay.classList.add('open');});
+  quizClose.addEventListener('click', function(){quizOverlay.classList.remove('open');});
+  quizOverlay.addEventListener('click', function(e){if(e.target===quizOverlay)quizOverlay.classList.remove('open');});
+  quizStartBtn.addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+
+  function renderQuiz(questions) {
+    var html = '<div class="quiz-progress">' + questions.length + ' questions</div>';
+    html += '<div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" style="width:100%"></div></div>';
+    questions.forEach(function(q,i) {
+      var shuffled = shuffle(q.choices.map(function(c,idx){return {text:c,orig:idx};}));
+      var ci = shuffled.findIndex(function(s){return s.orig===q.a;});
+      html += '<div class="quiz-q" data-qi="'+i+'" data-correct="'+ci+'" data-section="'+q.section+'">';
+      html += '<div class="quiz-q-text">'+(i+1)+'. '+q.q+'</div><div class="quiz-choices">';
+      shuffled.forEach(function(ch,idx){
+        html += '<label class="quiz-choice"><input type="radio" name="q'+i+'" value="'+idx+'">'+ch.text+'</label>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="quizSubmitBtn">Submit Quiz</button></div>';
+    quizBody.innerHTML = html;
+    document.getElementById('quizSubmitBtn').addEventListener('click', function(){gradeQuiz(questions);});
+  }
+
+  function gradeQuiz(questions) {
+    var correct = 0, results = [];
+    quizBody.querySelectorAll('.quiz-q').forEach(function(qEl) {
+      var correctIdx = parseInt(qEl.dataset.correct), section = qEl.dataset.section;
+      var choices = qEl.querySelectorAll('.quiz-choice');
+      var selected = qEl.querySelector('input:checked');
+      var selIdx = selected ? parseInt(selected.value) : -1;
+      var ok = selIdx === correctIdx;
+      if (ok) correct++;
+      results.push({section:section,correct:ok});
+      choices.forEach(function(ch,idx){
+        ch.classList.add('locked');
+        if (idx===correctIdx) ch.classList.add('reveal-correct');
+        if (idx===selIdx && !ok) ch.classList.add('incorrect');
+        if (idx===selIdx && ok) ch.classList.add('correct');
+      });
+      var fb = document.createElement('div'); fb.className = 'quiz-feedback '+(ok?'ok':'bad');
+      fb.textContent = ok ? '✓ Correct!' : '✗ '+(selected?'Incorrect.':'Not answered.');
+      qEl.appendChild(fb);
+    });
+    var pct = Math.round((correct/questions.length)*100);
+    saveScore10(pct); saveStats10(results);
+    var msg = pct>=90?'Excellent work!':pct>=70?'Good job!':'Keep studying!';
+    quizBody.querySelector('.quiz-actions').innerHTML = '<button class="quiz-retry-btn" id="quizRetryBtn">Try Another Quiz</button>';
+    var r = document.createElement('div'); r.className = 'quiz-result';
+    r.innerHTML = '<div class="quiz-score-ring">'+correct+' / '+questions.length+'</div><p>'+pct+'% — '+msg+'</p>';
+    quizBody.insertBefore(r, quizBody.firstChild);
+    document.getElementById('quizRetryBtn').addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+  }
+
+  function applyTocHighlights(id, cls) {
+    var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+    if (link) { link.classList.remove('study-warn','study-crit'); if (cls) link.classList.add(cls); }
+  }
+
+  highlightToggle.addEventListener('click', function() {
+    highlightsOn = !highlightsOn; highlightToggle.classList.toggle('active', highlightsOn);
+    if (highlightsOn) {
+      try {
+        var stats = JSON.parse(localStorage.getItem('radQuizSectionStats10') || '{}');
+        for (var id in stats) {
+          var s = stats[id], pct = s.total > 0 ? (s.correct/s.total)*100 : 100;
+          var el = document.getElementById(id); if (!el) continue;
+          el.classList.remove('study-warn','study-crit');
+          var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+          if (cls) el.classList.add(cls);
+          applyTocHighlights(id, cls);
+        }
+      } catch(e){}
+    } else {
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('study-warn','study-crit');});
+      document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
+    }
+  });
+
+</script>
+</body>
+</html>
