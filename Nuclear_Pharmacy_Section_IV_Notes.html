@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>Nuclear Pharmacy Section IV &mdash; Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px - env(safe-area-inset-top, 0px)); height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; flex: 1; }
+    .ch-badge { display:inline-flex; align-items:center; gap:3px; font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; flex-shrink:0; letter-spacing:0.02em; }
+    .ch-badge.ch5  { background:#d97706; color:#fff; }
+    .section-body { padding: 20px 24px; }
+    .sc-content ul, .sc-content ol { padding-left: 22px; margin: 8px 0; }
+    .sc-content ul ul, .sc-content ul ol, .sc-content ol ul { margin: 2px 0; }
+    .sc-content li { margin-bottom: 3px; }
+    .sc-content p { margin-bottom: 8px; }
+    .sc-content p:last-child { margin-bottom: 0; }
+    .sc-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 10px auto; display: block; }
+    .sc-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    .sc-content th { background: #1a56a6; color: white; padding: 8px 12px; text-align: left; }
+    .sc-content td { padding: 7px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .sc-content tr:nth-child(even) td { background: #f9fafb; }
+    .sc-content h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content strong { font-weight: 700; }
+    .sc-content em { font-style: italic; }
+    .sc-content a { color: #1a56a6; text-decoration: none; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html { height: 100%; height: -webkit-fill-available; overflow: hidden; }
+    body { height: 100%; min-height: -webkit-fill-available; overflow: hidden; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+  </style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Nuclear Pharmacy Section IV</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&hellip;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Nuclear Pharmacy IV Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions drawn from the full course content.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: &mdash;</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">Intro to QC</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">Physical Properties</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">pH</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Ionic Strength &amp; Radionuclidic Purity</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Chemical Purity</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">Radiochemical Purity</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">Biologic Tests &amp; Sterility</span></a>
+      <a href="javascript:void(0)" data-target="s8"><span class="toc-num">8</span><span class="toc-label">Pyrogenicity</span></a>
+      <a href="javascript:void(0)" data-target="s9"><span class="toc-num">9</span><span class="toc-label">Toxicity</span></a>
+      <a href="javascript:void(0)" data-target="s10"><span class="toc-num">10</span><span class="toc-label">RP Kits &mdash; Chemical Bonds</span></a>
+      <a href="javascript:void(0)" data-target="s11"><span class="toc-num">11</span><span class="toc-label">RP Kits &mdash; Radiolabeling Methods</span></a>
+      <a href="javascript:void(0)" data-target="s12"><span class="toc-num">12</span><span class="toc-label">RP Kits &mdash; Factors in Labeling</span></a>
+      <a href="javascript:void(0)" data-target="s13"><span class="toc-num">13</span><span class="toc-label">Contents of an RP Kit</span></a>
+      <a href="javascript:void(0)" data-target="s14"><span class="toc-num">14</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main>
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Intro to QC</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <p><strong>Why perform RP Quality Control?</strong></p>
+        <ul>
+          <li>Assures that RPs are intended to establish their desired biological and radiopharmaceutical characteristics</li>
+        </ul>
+        <p><strong>When are RP Quality Control Tests Performed?</strong></p>
+        <ul>
+          <li>After the radionuclide is produced
+            <ul><li>Verifies the radionuclide is suitable to make a radiopharmaceutical</li></ul>
+          </li>
+          <li>After <sup>99m</sup>Tc is eluted from a generator
+            <ul><li>Verifies that <sup>99m</sup>Tc is suitable for radiopharmaceutical production</li></ul>
+          </li>
+          <li>After a radiopharmaceutical kit is made
+            <ul><li>Verifies that the RP kit is suitable for patient administration</li></ul>
+          </li>
+        </ul>
+        <p><strong>For each QC test it is important to know:</strong></p>
+        <ol>
+          <li>The nature of the test — what the test is</li>
+          <li>Why you are performing the QC test</li>
+          <li>Examples of the QC test</li>
+          <li>Who performs the QC test</li>
+          <li>How to perform the QC test</li>
+          <li>The results (and range of error if applicable)</li>
+          <li>What could happen if the results are bad</li>
+        </ol>
+        <h3>Two Basic Types of QC Tests</h3>
+        <ol>
+          <li><strong>Physiochemical</strong> — determines the purity and integrity of the RP; tests the physical and chemical properties of radiopharmaceuticals</li>
+          <li><strong>Biologic</strong> — determines the state of the radiopharmaceutical</li>
+        </ol>
+        <h3>Physiochemical QC Tests</h3>
+        <ol>
+          <li>Physical Properties</li>
+          <li>pH</li>
+          <li>Ionic Strength</li>
+          <li>Radionuclidic Purity</li>
+          <li>Chemical Purity</li>
+          <li>Radiochemical Purity</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Physical Properties</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <p><strong>Physical Properties include:</strong></p>
+        <ol>
+          <li><strong>Color and State of the RP</strong>
+            <ul>
+              <li>You need to know the color and state of your radiopharmaceutical — this makes you aware of any problems</li>
+              <li>Most RPs are clear and should not have any clumps</li>
+              <li>To determine color and state: briefly inspect the RP kit visually</li>
+              <li>If color or state is off: throw the kit away and make a new one</li>
+            </ul>
+          </li>
+          <li><strong>Size and Number of Particles</strong>
+            <ul>
+              <li>Some RPs have particles — you need to know the size and number</li>
+              <li><sup>99m</sup>Tc-MAA (Macroaggregated Albumin)
+                <ul>
+                  <li>10–90 &micro;m (no particle larger than 150 &micro;m)</li>
+                  <li>A kit contains 1–16 million particles per mg of Aggregated Albumin</li>
+                  <li>A standard dose of MAA: 200,000–400,000 particles (minimum 100,000)</li>
+                </ul>
+              </li>
+              <li><sup>99m</sup>Tc-Sulfur Colloid: 0.1–1 &micro;m</li>
+              <li>The manufacturer tests particle size and count using a <strong>Hemocytometer</strong>
+                <ul>
+                  <li>A grid (usually 50 &micro;m blocks) used for counting cells or particles under a microscope</li>
+                </ul>
+              </li>
+              <li>If particles are larger than specified: they may lodge in a small artery or vein</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>pH</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <p><strong>pH Basics:</strong></p>
+        <ul>
+          <li>pH is the acidity of an aqueous solution</li>
+          <li>Expressed numerically with no units; ranges from 0 – 14</li>
+        </ul>
+        <table>
+          <tr><td>pH &lt; 7</td><td>Solution is Acidic</td></tr>
+          <tr><td>pH = 7</td><td>Solution is Neutral</td></tr>
+          <tr><td>pH &gt; 7</td><td>Solution is Basic</td></tr>
+        </table>
+        <ul>
+          <li>Blood has a pH between 7.35 – 7.45 (slightly basic)</li>
+          <li>Since most RPs are injected IV, we must test the pH of our solution</li>
+        </ul>
+        <h3>Two Ways to Measure pH</h3>
+        <ol>
+          <li><strong>pH Paper</strong> — pH determined by color change; quick, easy, cheap</li>
+          <li><strong>pH Meter</strong> — measures pH electronically; more accurate; more expensive</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Ionic Strength &amp; Radionuclidic Purity</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Ionic Strength</h3>
+        <ul>
+          <li>The strength of the bond between the pharmaceutical and the radionuclide</li>
+          <li>If ionic strength is low, there is a good chance the bond will break
+            <ul><li>A broken bond leaves Free-<sup>99m</sup>Tc in your kit</li></ul>
+          </li>
+        </ul>
+        <h3>Radionuclidic Purity</h3>
+        <ul>
+          <li>The fraction of total radioactivity present in the form of the desired radionuclide</li>
+          <li>Common examples of radionuclidic impurities:
+            <ol>
+              <li><sup>99</sup>Mo in your <sup>99m</sup>Tc elution</li>
+              <li><sup>124</sup>I or <sup>131</sup>I in your <sup>123</sup>I solution</li>
+            </ol>
+          </li>
+          <li>The impurity can be an isotope (same element) or an entirely different radionuclide</li>
+        </ul>
+        <h3>Moly Breakthrough Test (Lead Shield Method)</h3>
+        <ul>
+          <li>Tests for <sup>99</sup>Mo in <sup>99m</sup>Tc elution — performed by a Nuc Med Tech on every elution</li>
+        </ul>
+        <ol>
+          <li>Place the <sup>99m</sup>Tc elution in a Lead Pig (thick enough to stop all <sup>99m</sup>Tc photons; only <sup>99</sup>Mo photons escape)</li>
+          <li>Place the Lead Pig in a Moly Breakthrough Tester</li>
+          <li>Place tester in a dose calibrator set to <sup>99</sup>Mo</li>
+          <li>Measure the amount of <sup>99</sup>Mo (result in &micro;Ci)</li>
+          <li>Divide &micro;Ci of <sup>99</sup>Mo by mCi of <sup>99m</sup>Tc in the elution</li>
+        </ol>
+        <p><strong>Limit:</strong> 0.15 &micro;Ci of <sup>99</sup>Mo per mCi of <sup>99m</sup>Tc <em>at time of administration</em></p>
+        <p><strong>If above the limit:</strong></p>
+        <ol>
+          <li>Throw out the elution</li>
+          <li>Elute the generator again</li>
+          <li>Test for Moly Breakthrough again</li>
+          <li>If still abnormal, the generator is probably malfunctioning</li>
+        </ol>
+        <p><strong>Effects of excess <sup>99</sup>Mo:</strong></p>
+        <ol>
+          <li>Lower target-to-nontarget ratio (less <sup>99m</sup>Tc available for the kit)</li>
+          <li>Increased radiation exposure (<sup>99</sup>Mo is a beta emitter)</li>
+        </ol>
+        <p><strong>Other fission-produced radionuclidic impurities</strong> (I-131, Zr-99, Te-132, Ru-103, Sb-124, Cs-134, Rb-86): limit is 0.5 &micro;Ci of impurity per mCi of <sup>99m</sup>Tc; tested at the manufacturer.</p>
+      </div>
+    </div>
+
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Chemical Purity</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <ul>
+          <li>Fraction of the material in the desired chemical form</li>
+          <li>For this QC test we are only concerned with <strong>non-radioactive chemicals</strong> that could cause impurities</li>
+          <li>At this point, the only chemical of concern is alumina from the generator column — this is called <strong>Alumina Breakthrough</strong></li>
+        </ul>
+        <h3>Testing for Alumina Breakthrough</h3>
+        <ol>
+          <li>Obtain an alumina strip (usually pink in color)</li>
+          <li>Place a drop of a standard (representing 10 &micro;g of alumina) on one side of the strip</li>
+          <li>Place a drop of the <sup>99m</sup>Tc-Eluate on the other side of the strip</li>
+        </ol>
+        <p><strong>Limit:</strong> 10 &micro;g of Alumina per mL of <sup>99m</sup>Tc-Eluate</p>
+        <p>This is a <strong>colorimetric technique</strong> — compare the colors of the standard vs. the eluate drop.</p>
+        <ul>
+          <li>If eluate drop is <em>lighter</em> than the standard: within limits ✓</li>
+          <li>If eluate drop is <em>darker</em> than the standard: outside limits ✗</li>
+        </ul>
+        <p><strong>Performed by:</strong> a Nuc Med Tech on every elution of Na<sup>99m</sup>TcO<sub>4</sub></p>
+        <p><strong>If outside normal limits:</strong></p>
+        <ul>
+          <li>Repeat the test to rule out errors</li>
+          <li>If still abnormal, elute the generator again</li>
+          <li>If a second elution is still abnormal, there is a problem with the generator</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Radiochemical Purity</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <ul>
+          <li>Fraction of the total radioactivity <strong>in the desired chemical form</strong></li>
+          <li>The RP kit is made up; we know we have the correct radionuclide (<sup>99m</sup>Tc)</li>
+          <li>We want to check if <sup>99m</sup>Tc is in the correct chemical form: <strong>Bound-<sup>99m</sup>Tc</strong></li>
+          <li>Examples of radiochemical impurities: Free-<sup>99m</sup>Tc, Hydrolyzed-<sup>99m</sup>Tc</li>
+          <li>Tested by the manufacturer</li>
+        </ul>
+        <h3>Methods of Testing Radiochemical Purity</h3>
+        <ol>
+          <li><strong>Precipitation</strong> — A reagent is added; the radiochemical is separated by centrifuge; impurity is counted.</li>
+          <li><strong>Paper &amp; ITLC (Chromatography)</strong> — Drop of elution placed on bottom of strip; strip suspended in solvent; different chemicals migrate to different levels; strips are cut and counted to obtain Free-to-Bound ratio. Most common technique.</li>
+          <li><strong>Gel Chromatography</strong> — Separates by molecular size; larger molecules migrate faster; Bound-<sup>99m</sup>Tc fastest, then Free-<sup>99m</sup>Tc, Hydrolyzed-<sup>99m</sup>Tc remains on column.</li>
+          <li><strong>Gel &amp; Paper Electrophoresis</strong> — Separates by chemical charge; voltage applied to sample; counted after separation.</li>
+          <li><strong>Ion Exchange</strong> — Sample passed through ionic resin; certain radiochemicals stick and can be counted.</li>
+          <li><strong>Solvent Extraction</strong> — Combined with immiscible liquid; radiochemicals separate by solubility.</li>
+          <li><strong>HPLC (High Pressure Liquid Chromatography)</strong> — Like liquid chromatography but with larger columns and high-pressure pumps; fastest and most common method for testing radiochemical impurities.</li>
+          <li><strong>Distillation</strong> — Separates by vapor pressure; different radiochemicals distill off at different temperatures.</li>
+        </ol>
+        <h3>Causes of Radiochemical Impurity</h3>
+        <ul>
+          <li>Change in temperature or pH</li>
+          <li>Light exposure</li>
+          <li>Oxidizing and reducing agents</li>
+          <li>Radiolysis</li>
+        </ul>
+        <h3>Effects of Radiochemical Impurity</h3>
+        <ul>
+          <li>Increased radiation exposure to patient</li>
+          <li>Decreased target-to-nontarget ratio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Biologic Tests &amp; Sterility</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <p><strong>Biologic QC Tests examine:</strong></p>
+        <ol>
+          <li>Sterility</li>
+          <li>Pyrogenicity</li>
+          <li>Toxicity</li>
+        </ol>
+        <ul>
+          <li>The FDA requires that all RPs be sterile and pyrogen free due to IV administration</li>
+          <li>These tests are performed by the manufacturer</li>
+        </ul>
+        <h3>Sterility</h3>
+        <p>Performed to ensure radiopharmaceuticals are free of viable microorganisms. Sterility procedures use <strong>aseptic techniques</strong> — sterile products are used throughout, so no bacteria is added during the procedure.</p>
+        <h3>Two Methods of Sterilization</h3>
+        <ol>
+          <li><strong>Autoclaving</strong> — Steam at 121°C for 15–20 minutes; kills microorganisms; <em>not suitable</em> for heat-labile or short-lived RPs; commonly used for glassware and heat-stable solid products.</li>
+          <li><strong>Filtration</strong> (most common) — Membrane filter with pores small enough to trap microorganisms; 0.45 &micro;m pores most common; 0.22 &micro;m for blood products; works for heat-labile and short-lived RPs.</li>
+        </ol>
+        <h3>Three Tests to Verify Sterility</h3>
+        <ol>
+          <li><strong>Fluid Thioglycolate Medium (FTM)</strong>
+            <ul>
+              <li>Incubate sample equal to a normal RP dose at <strong>30°C for 14 days</strong></li>
+              <li>If bacterial growth is present after 14 days: microorganisms are present → RP is asterile</li>
+            </ul>
+          </li>
+          <li><strong>Soybean Casein Digest (SCD)</strong>
+            <ul>
+              <li>Incubate sample at <strong>20°C for 14 days</strong></li>
+              <li>If bacterial growth is present: RP is asterile</li>
+            </ul>
+          </li>
+          <li><strong><sup>14</sup>C Glucose Test</strong>
+            <ul>
+              <li>Incubate sample for <strong>3–24 hours</strong> (no specific temperature)</li>
+              <li>Microorganisms present if <sup>14</sup>CO<sub>2</sub> is detected — microorganisms metabolize glucose and produce CO<sub>2</sub>, which combines with radioactive <sup>14</sup>C</li>
+              <li><sup>14</sup>CO<sub>2</sub> is counted to determine presence of microorganisms</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Pyrogenicity</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <ul>
+          <li>All RPs must be <strong>pyrogen free</strong> before human administration</li>
+          <li>Pyrogens result from metabolic byproducts (endotoxins) of microorganisms</li>
+        </ul>
+        <h3>Problems with Pyrogens</h3>
+        <ul>
+          <li>Very small (0.05–1 &micro;m) — filters that small would also filter the RP</li>
+          <li>Fairly heat stable — autoclaving is not always effective</li>
+          <li>Cause fever, chills, and sweating — usually not fatal but must be prevented</li>
+        </ul>
+        <h3>Prevention</h3>
+        <ul>
+          <li>Use sterile glassware, solutions, and equipment</li>
+          <li>Use aseptic techniques when preparing RPs</li>
+          <li>To eliminate pyrogens if present: dry heat at 175°C for several hours</li>
+        </ul>
+        <h3>Two Tests for Pyrogens</h3>
+        <ol>
+          <li><strong>Limulus Amebocyte Lysate Test (LAL)</strong>
+            <ul>
+              <li>Tests for endotoxin-type pyrogens</li>
+              <li>Uses lysates of amebocytes from the blood of the horseshoe crab</li>
+              <li>Mix the lysate with your RP; incubate 15–60 minutes at 37°C</li>
+              <li>Pyrogens are present if an <strong>opaque gel forms</strong> — thicker gel = more pyrogens</li>
+            </ul>
+          </li>
+          <li><strong>USP Rabbit Test</strong>
+            <ul>
+              <li>Based on a febrile response</li>
+              <li>3 rabbits are injected with the RP</li>
+              <li>Temperature taken after 3 hours — an increase (febrile response) indicates pyrogens</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Toxicity</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <ul>
+          <li>Before any RP is used for humans, the toxic effect and safe dosage must be established</li>
+          <li>Toxic effects are usually from the <strong>pharmaceutical</strong> — not the radionuclide</li>
+        </ul>
+        <h3>Two Ways to Test Toxicity</h3>
+        <ol>
+          <li><strong>Animal Testing</strong> — Animals are injected and studied for their responses</li>
+          <li><strong>Computer Models and Cell Culture</strong> — Simulated effects; preferred method due to difficulty in animal testing</li>
+        </ol>
+        <h3>LD<sub>50/60</sub></h3>
+        <ul>
+          <li>The lethal dose required to produce 50% mortality in 60 days</li>
+          <li>Establishes the safe dose for humans</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>RP Kits &mdash; Chemical Bonds</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <p><strong>RP Kits overview — topics covered:</strong></p>
+        <ol>
+          <li>Chemical Bonds</li>
+          <li>Methods of Radiolabeling</li>
+          <li>Factors in Labeling</li>
+          <li>Contents of an RP Kit</li>
+          <li>Proper method of preparing a RP Kit</li>
+        </ol>
+        <h3>Four Types of Chemical Bonds</h3>
+        <ol>
+          <li><strong>Ionic Bonds</strong>
+            <ul>
+              <li>Like charges repel; unlike charges attract</li>
+              <li>A positive and negative ion are attracted to each other and bond (e.g., Na<sup>+</sup> attracts Cl<sup>-</sup>)</li>
+            </ul>
+          </li>
+          <li><strong>Covalent Bonds</strong>
+            <ul>
+              <li>Two atoms share their outer shell electrons; each atom donates electrons</li>
+              <li>An atom with 8 outer shell electrons is more stable</li>
+              <li>Example: two fluorine atoms each donate one electron → both now have 8 outer shell electrons</li>
+            </ul>
+          </li>
+          <li><strong>Coordinate Covalent Bonds</strong>
+            <ul>
+              <li>Two atoms bond via outer shell electrons — similar to a covalent bond</li>
+              <li>However, only one atom (the donor atom) donates electrons</li>
+              <li>Example: O in H<sub>2</sub>O donates 2 electrons to bond with Cu</li>
+            </ul>
+          </li>
+          <li><strong>Chelation</strong>
+            <ul>
+              <li>Multiple coordinate covalent bonds are formed</li>
+              <li>The donor atom donates more than one pair of electrons</li>
+              <li>Example: DTPA forms chelation bonds with <sup>99m</sup>Tc</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>RP Kits &mdash; Radiolabeling Methods</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Four Main Methods of Radiolabeling</h3>
+        <ol>
+          <li><strong>Isotope Exchange Reaction</strong>
+            <ul>
+              <li>One or more atoms in a molecule are replaced by an isotope of the same element (same Z#, different A#)</li>
+              <li>Same biologic and chemical properties as the original molecule</li>
+              <li>Example: <sup>125</sup>I-Labeled T3 — start with non-radioactive T3 (has stable iodine); add <sup>125</sup>I; result is <sup>125</sup>I-Labeled T3</li>
+            </ul>
+          </li>
+          <li><strong>Introduction of a Foreign Label</strong>
+            <ul>
+              <li>A radionuclide is added to a molecule with a known biologic role</li>
+              <li>Bonds formed via covalent, coordinate covalent, or chelation</li>
+              <li>Examples: <sup>99m</sup>Tc-Labeled RPs; <sup>111</sup>In-Labeled WBCs</li>
+              <li>In <sup>99m</sup>Tc-DTPA: DTPA bonds to <sup>99m</sup>Tc by chelation</li>
+            </ul>
+          </li>
+          <li><strong>Labeling with Bifunctional Chelating Agents</strong>
+            <ul>
+              <li>Two chelating bonds formed: macromolecule (protein/antibody) on one side; radionuclide on the other</li>
+              <li>Example: <sup>99m</sup>Tc-DTPA-Antibody — <sup>99m</sup>Tc on one side, DTPA in the middle, antibody on the other side</li>
+            </ul>
+          </li>
+          <li><strong>Biosynthesis</strong>
+            <ul>
+              <li>A living organism is grown in a culture medium containing the radioactive tracer</li>
+              <li>Example: <sup>57</sup>Co-Cyanocobalamin (Vitamin B<sub>12</sub>) — Cyanocobalamin incubated with <sup>57</sup>Co; they grow together to form the labeled compound</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>RP Kits &mdash; Factors in Labeling</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <h3>Eight Factors in Labeling</h3>
+        <ol>
+          <li><strong>Efficiency</strong> — The amount of pharmaceuticals labeled to radionuclides; expressed as a percentage; higher is better</li>
+          <li><strong>Stability</strong> — The bond between the radionuclide and the pharmaceutical should be strong (stable); covalent and coordinate covalent bonds are strong</li>
+          <li><strong>Denaturation</strong> — The structure or biologic properties of the RP are altered; heating may alter properties</li>
+          <li><strong>Isotope Effect</strong> — Occurs when isotopes are present in a radiopharmaceutical (e.g., isotope exchange reaction); different isotope weights may change physical properties</li>
+          <li><strong>Storage Conditions</strong>
+            <ul>
+              <li>Proteins can be denatured by heat → store in refrigerator (e.g., <sup>99m</sup>Tc-MAA)</li>
+              <li>Light can break down some compounds → store in the dark</li>
+            </ul>
+          </li>
+          <li><strong>Radiolysis</strong> — Labeled compounds can be broken down by radiation from the radionuclide (e.g., <sup>99m</sup>Tc radiation may break the bond in <sup>99m</sup>Tc-HDP)</li>
+          <li><strong>Shelf Life</strong>
+            <ul>
+              <li>Factors affecting shelf life: T<sub>1/2</sub>, radiolysis, additives, solvent, chemical bonds</li>
+              <li>Maximum shelf life: 3 physical T<sub>1/2</sub> or 6 months</li>
+              <li><sup>99m</sup>Tc-RPs: maximum shelf life of 18 hours; range 0.5–18 hours; 6 hours is most common</li>
+              <li>Minimum shelf life: 1.5× the length of the study (e.g., 6 hours minimum for a 4-hour bone scan)</li>
+            </ul>
+          </li>
+          <li><strong>Purification</strong> — Radionuclides will have some impurities; it is important to remove or minimize them</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Contents of an RP Kit</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <h3>The Lyophilized (Freeze-Dried) Mixture</h3>
+        <ul>
+          <li>Everything is contained in a lyophilized mixture
+            <ul>
+              <li>Lyophilization preserves the mixture and allows it to dissolve in Na<sup>99m</sup>TcO<sub>4</sub> aqueous solution</li>
+              <li>Appears as a white disc sitting at the bottom of the kit vial</li>
+            </ul>
+          </li>
+        </ul>
+        <h3>Contents of the Lyophilized Disc</h3>
+        <ul>
+          <li>1 mg of the Pharmaceutical (DTPA, HDP, etc.)</li>
+          <li>0.5 mg of Reducing Agent (Stannous Chloride)</li>
+          <li>0.5 mg of Additives and Preservatives</li>
+          <li>pH Adjuster (Sodium Hydroxide/NaOH or HCl)</li>
+        </ul>
+        <h3>Additives and Preservatives</h3>
+        <ul>
+          <li>Function as <strong>stabilizers</strong>: maintain integrity, keep the RP in its original state (ascorbic acid, gentisic acid, citrates, acetates)</li>
+          <li>Act as <strong>bactericidal agents</strong>: prevent bacterial growth (benzyl alcohol — also prevents radiolysis)</li>
+          <li>Must not react with other ingredients of the RP kit</li>
+        </ul>
+        <h3>Proper Method for Preparing an RP Kit</h3>
+        <ol>
+          <li>Use ASEPTIC techniques</li>
+          <li>Swab the RP kit vial with alcohol</li>
+          <li>Inject the appropriate amount of radionuclide (each kit has specific activity and volume limits; e.g., 20–100 mCi in 1–6 mL)</li>
+          <li>Mix the pharmaceutical (each kit has its own method: invert, swirl, or water bath)</li>
+          <li>Assay the vial and complete the label for the kit</li>
+          <li>Incubate the vial if required</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section" id="s14">
+      <div class="section-header">
+        <div class="section-num">14</div>
+        <h2>Glossary</h2>
+        <span class="ch-badge ch5">📘 NM&amp;MI Tech · Ch. 5</span>
+      </div>
+      <div class="section-body sc-content">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>Quality Control (QC)</dt><dd>Testing to assure that radiopharmaceuticals have their desired biological and radiopharmaceutical characteristics before patient administration.</dd></div>
+          <div class="glossary-card"><dt>Physiochemical QC</dt><dd>Tests that determine the purity and integrity of the RP by examining physical and chemical properties. Includes physical properties, pH, ionic strength, radionuclidic purity, chemical purity, and radiochemical purity.</dd></div>
+          <div class="glossary-card"><dt>Biologic QC</dt><dd>Tests that examine sterility, pyrogenicity, and toxicity of RPs before human administration. Required by the FDA for all IV-administered RPs.</dd></div>
+          <div class="glossary-card"><dt>Hemocytometer</dt><dd>A grid used to count cells or particles under a microscope. Used to verify the size and number of particles in RPs such as <sup>99m</sup>Tc-MAA.</dd></div>
+          <div class="glossary-card"><dt>Radionuclidic Purity</dt><dd>The fraction of total radioactivity present in the form of the desired radionuclide. Tested to ensure there are no unwanted radionuclidic impurities (e.g., <sup>99</sup>Mo in <sup>99m</sup>Tc).</dd></div>
+          <div class="glossary-card"><dt>Moly Breakthrough</dt><dd>The presence of <sup>99</sup>Mo in a <sup>99m</sup>Tc elution. Tested using the Lead Shield Method. Limit: 0.15 &micro;Ci of <sup>99</sup>Mo per mCi of <sup>99m</sup>Tc at time of administration.</dd></div>
+          <div class="glossary-card"><dt>Chemical Purity</dt><dd>Fraction of material in the desired chemical form, specifically regarding non-radioactive chemical impurities. Alumina breakthrough is the primary concern for <sup>99m</sup>Tc elutions. Limit: 10 &micro;g/mL.</dd></div>
+          <div class="glossary-card"><dt>Alumina Breakthrough</dt><dd>Contamination of the <sup>99m</sup>Tc elution with alumina from the generator column. Tested by colorimetric comparison with a 10 &micro;g/mL standard on an alumina strip.</dd></div>
+          <div class="glossary-card"><dt>Radiochemical Purity</dt><dd>Fraction of total radioactivity in the desired chemical form. Impurities include Free-<sup>99m</sup>Tc and Hydrolyzed-<sup>99m</sup>Tc. Most commonly tested by ITLC or HPLC.</dd></div>
+          <div class="glossary-card"><dt>ITLC</dt><dd>Instant Thin Layer Chromatography — a paper/strip-based chromatographic method for separating and quantifying radiochemical species. Free-<sup>99m</sup>Tc and Bound-<sup>99m</sup>Tc migrate to different levels on the strip.</dd></div>
+          <div class="glossary-card"><dt>HPLC</dt><dd>High Pressure Liquid Chromatography — separates radiochemical species using high-pressure pumps; fastest and most common method for testing radiochemical impurities.</dd></div>
+          <div class="glossary-card"><dt>Sterility</dt><dd>The state of being free from viable microorganisms. RPs must be sterile before human administration. Common method: filtration through 0.45 &micro;m (or 0.22 &micro;m) membrane.</dd></div>
+          <div class="glossary-card"><dt>Aseptic Technique</dt><dd>Procedures performed using sterile products throughout, preventing introduction of microorganisms during RP preparation.</dd></div>
+          <div class="glossary-card"><dt>Pyrogen</dt><dd>A substance (endotoxin from microbial metabolic byproducts) that causes fever, chills, and sweating when injected. Pyrogens are heat stable, very small (0.05–1 &micro;m), and cannot be filtered out.</dd></div>
+          <div class="glossary-card"><dt>LAL Test</dt><dd>Limulus Amebocyte Lysate Test — uses lysate from horseshoe crab blood to detect endotoxin pyrogens. Positive if an opaque gel forms after 15–60 min incubation at 37°C.</dd></div>
+          <div class="glossary-card"><dt>USP Rabbit Test</dt><dd>Pyrogen test in which 3 rabbits are injected with the RP; an increase in body temperature after 3 hours indicates pyrogens.</dd></div>
+          <div class="glossary-card"><dt>LD<sub>50/60</sub></dt><dd>Lethal Dose causing 50% mortality in 60 days. Used to establish the safe dose of an RP for human administration.</dd></div>
+          <div class="glossary-card"><dt>Lyophilization</dt><dd>Freeze-drying; the process used to preserve the contents of an RP kit as a white disc that dissolves when Na<sup>99m</sup>TcO<sub>4</sub> is added.</dd></div>
+          <div class="glossary-card"><dt>Stannous Chloride (SnCl₂)</dt><dd>The reducing agent (0.5 mg) included in RP kits to reduce <sup>99m</sup>Tc from 7+ to a lower oxidation state, enabling it to bond with the pharmaceutical.</dd></div>
+          <div class="glossary-card"><dt>Chelation</dt><dd>A type of chemical bonding where a donor atom forms multiple coordinate covalent bonds. Used by DTPA to bind <sup>99m</sup>Tc in kits like <sup>99m</sup>Tc-DTPA.</dd></div>
+          <div class="glossary-card"><dt>Radiolysis</dt><dd>Breakdown of labeled compounds by radiation emitted by the radionuclide itself. A key factor limiting shelf life of RPs.</dd></div>
+          <div class="glossary-card"><dt>Shelf Life</dt><dd>The length of time a labeled RP remains usable. Maximum: 3 physical T<sub>1/2</sub> or 6 months. Minimum: 1.5× the length of the study. <sup>99m</sup>Tc-RPs: 0.5–18 hours (most commonly 6 hours).</dd></div>
+          <div class="glossary-card"><dt>Biosynthesis (Radiolabeling)</dt><dd>A radiolabeling method in which a living organism is grown in a medium containing the radioactive tracer. Example: <sup>57</sup>Co-Cyanocobalamin (Vit B<sub>12</sub>).</dd></div>
+          <div class="glossary-card"><dt>Isotope Exchange Reaction</dt><dd>A radiolabeling method in which one or more atoms in a molecule are replaced by a radioactive isotope of the same element. Example: <sup>125</sup>I-Labeled T3.</dd></div>
+        </dl>
+      </div>
+    </div>
+  <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+<script>
+var QUIZ_BANK = [
+  { section: "s1", q: "What are the two basic types of Quality Control tests performed on radiopharmaceuticals?", a: 0, choices: ["Physiochemical and Biologic", "Physical and Chemical", "Radionuclidic and Radiochemical", "Sterility and Toxicity"] },
+  { section: "s1", q: "At what point during RP preparation is QC performed?", a: 3, choices: ["Only after patient administration", "Only at the manufacturer", "Only after the kit is made", "After radionuclide production, after generator elution, and after kit preparation"] },
+  { section: "s2", q: "What is the acceptable particle size range for 99mTc-MAA?", a: 1, choices: ["0.1–1 µm", "10–90 µm (max 150 µm)", "150–500 µm", "1–10 µm"] },
+  { section: "s2", q: "What is the standard dose particle count for 99mTc-MAA?", a: 0, choices: ["200,000–400,000 particles (minimum 100,000)", "1–16 million particles", "10–90 million particles", "0.1–1 million particles"] },
+  { section: "s2", q: "What instrument is used to count particle size and number in an RP?", a: 2, choices: ["pH meter", "Dose calibrator", "Hemocytometer", "Geiger counter"] },
+  { section: "s3", q: "What is the acceptable pH range for blood (and by extension, IV-administered RPs)?", a: 1, choices: ["6.5–7.0", "7.35–7.45", "7.0–7.5", "6.8–7.2"] },
+  { section: "s3", q: "Which method of pH measurement is more accurate?", a: 0, choices: ["pH meter", "pH paper", "Colorimetric strip", "Litmus test"] },
+  { section: "s4", q: "What is the legal limit for Moly Breakthrough?", a: 2, choices: ["0.5 µCi 99Mo per mCi 99mTc", "1.0 µCi 99Mo per mCi 99mTc", "0.15 µCi 99Mo per mCi 99mTc", "0.01 µCi 99Mo per mCi 99mTc"] },
+  { section: "s4", q: "Which method is used to test for Moly Breakthrough?", a: 1, choices: ["ITLC chromatography", "Lead Shield Method", "Colorimetric technique", "Gel electrophoresis"] },
+  { section: "s4", q: "Why does placing the 99mTc elution in a lead pig allow 99Mo to be measured?", a: 0, choices: ["The lead stops all 99mTc photons; only the higher-energy 99Mo photons escape", "Lead absorbs 99Mo photons preferentially", "The lead pig amplifies 99mTc photons", "99Mo is a gamma emitter with lower energy than 99mTc"] },
+  { section: "s4", q: "What is the limit for other fission-produced radionuclidic impurities (e.g., I-131, Zr-99)?", a: 3, choices: ["0.15 µCi per mCi 99mTc", "1.0 µCi per mCi 99mTc", "0.01 µCi per mCi 99mTc", "0.5 µCi per mCi 99mTc"] },
+  { section: "s5", q: "What is the Alumina Breakthrough limit?", a: 0, choices: ["10 µg of alumina per mL of 99mTc-Eluate", "1 µg per mL", "100 µg per mL", "0.15 µg per mL"] },
+  { section: "s5", q: "In the Alumina Breakthrough test, if the eluate drop is darker than the standard, this means:", a: 1, choices: ["Within normal limits", "Outside normal limits — alumina is too high", "The test is invalid", "No alumina is present"] },
+  { section: "s5", q: "What is the technique used to compare the alumina strip results?", a: 2, choices: ["Chromatography", "Gel electrophoresis", "Colorimetric technique", "Lead Shield Method"] },
+  { section: "s6", q: "What is Radiochemical Purity testing concerned with?", a: 0, choices: ["Whether 99mTc is in the correct chemical form (Bound-99mTc)", "Whether the correct radionuclide is present", "Whether the RP is sterile", "Whether the pH is correct"] },
+  { section: "s6", q: "Which method is the most common for testing radiochemical impurities?", a: 3, choices: ["Precipitation", "Gel chromatography", "Paper electrophoresis", "HPLC"] },
+  { section: "s6", q: "In ITLC, how does Free-99mTc differ from Bound-99mTc?", a: 1, choices: ["Free-99mTc stays at the origin; Bound-99mTc migrates to the top", "Free-99mTc and Bound-99mTc migrate to different levels on the strip", "They migrate to the same level", "Bound-99mTc stays on the column; Free-99mTc migrates"] },
+  { section: "s7", q: "What is the most common method of sterilization for radiopharmaceuticals?", a: 2, choices: ["Autoclaving", "UV radiation", "Filtration through 0.45 µm membrane", "Dry heat"] },
+  { section: "s7", q: "In the FTM sterility test, at what temperature and for how long is the sample incubated?", a: 0, choices: ["30°C for 14 days", "37°C for 24 hours", "20°C for 7 days", "121°C for 20 minutes"] },
+  { section: "s7", q: "What does a positive result in the 14C Glucose test indicate?", a: 1, choices: ["The RP has the correct radiochemical purity", "Microorganisms are present (detected by 14CO2 production)", "The RP is pyrogen free", "The RP has correct pH"] },
+  { section: "s8", q: "What is the LAL test used to detect?", a: 0, choices: ["Endotoxin-type pyrogens using horseshoe crab lysate", "Sterility using a culture medium", "Toxicity using animal models", "Radiochemical impurities"] },
+  { section: "s8", q: "A positive LAL test result is indicated by:", a: 2, choices: ["A color change on a strip", "A decrease in RP activity", "Formation of an opaque gel", "A febrile response in rabbits"] },
+  { section: "s8", q: "Why can't pyrogens be removed from RPs by standard filtration?", a: 1, choices: ["Pyrogens are destroyed by filters", "Pyrogens are very small (0.05–1 µm) — filters that small would also filter the RP", "Pyrogens are too large to filter", "Filters introduce more pyrogens"] },
+  { section: "s9", q: "What does the LD50/60 value establish?", a: 3, choices: ["The purity limit for radiochemical impurities", "The half-life of the radiopharmaceutical", "The sterility method used by the manufacturer", "The safe dose of an RP for human administration"] },
+  { section: "s10", q: "Which type of chemical bond involves one atom donating electrons to form a bond with another atom?", a: 2, choices: ["Ionic Bond", "Covalent Bond", "Coordinate Covalent Bond", "Hydrogen Bond"] },
+  { section: "s10", q: "Chelation differs from a coordinate covalent bond in that:", a: 0, choices: ["Multiple coordinate covalent bonds are formed by the donor atom", "Only one pair of electrons is donated", "Like charges are involved", "Two different elements must be present"] },
+  { section: "s11", q: "In an Isotope Exchange Reaction, the labeling isotope must be:", a: 1, choices: ["A different element than the molecule", "The same element as the atom it replaces (same Z#, different A#)", "A metallic element only", "A non-radioactive isotope"] },
+  { section: "s11", q: "Which radiolabeling method uses a living organism grown in a culture medium?", a: 3, choices: ["Isotope Exchange Reaction", "Introduction of a Foreign Label", "Bifunctional Chelating Agents", "Biosynthesis"] },
+  { section: "s11", q: "In 99mTc-DTPA, what type of bond holds 99mTc to DTPA?", a: 2, choices: ["Ionic bond", "Simple covalent bond", "Chelation", "Hydrogen bond"] },
+  { section: "s12", q: "What is the maximum shelf life rule for 99mTc-RPs?", a: 0, choices: ["3 physical T1/2 or 18 hours maximum", "6 months or 24 hours maximum", "1 physical T1/2 or 6 hours maximum", "5 physical T1/2 or 72 hours maximum"] },
+  { section: "s12", q: "What is Radiolysis?", a: 1, choices: ["Freeze-drying of an RP kit", "Breakdown of a labeled compound by radiation emitted from the radionuclide", "Separation of Free-99mTc by ITLC", "Reduction of 99mTc by stannous chloride"] },
+  { section: "s12", q: "For an RP used in a 4-hour bone scan, the minimum shelf life should be:", a: 2, choices: ["4 hours", "3 hours", "6 hours (1.5× the study length)", "12 hours"] },
+  { section: "s13", q: "What is the appearance of the lyophilized contents of an RP kit?", a: 0, choices: ["A white disc at the bottom of the kit vial", "A clear liquid", "A pink colored strip", "A yellow powder"] },
+  { section: "s13", q: "What reducing agent is included in RP kits to reduce 99mTc?", a: 1, choices: ["Ascorbic acid", "Stannous Chloride (SnCl2)", "Benzyl alcohol", "Sodium hydroxide"] },
+  { section: "s13", q: "What is the primary function of benzyl alcohol in an RP kit?", a: 3, choices: ["It reduces 99mTc for labeling", "It adjusts the pH of the kit", "It increases the efficiency of radiolabeling", "It acts as a bactericidal agent and prevents radiolysis"] },
+];
+
+  var mainEl12 = document.querySelector('main');
+  var tocLinks = Array.from(document.querySelectorAll('nav#toc a'));
+  var sectionEls = tocLinks.map(function(a){return document.getElementById(a.dataset.target);}).filter(Boolean);
+  var searchInput = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('clearBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var searchCount = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var quizBtn = document.getElementById('quizBtn');
+  var quizClose = document.getElementById('quizClose');
+  var quizOverlay = document.getElementById('quizOverlay');
+  var quizBody = document.getElementById('quizBody');
+  var quizStartBtn = document.getElementById('quizStartBtn');
+  var quizAvg = document.getElementById('quizAvg');
+  var highlightToggle = document.getElementById('highlightToggle');
+  var allMatches = [], currentMatch = -1, highlightsOn = false, debounceTimer;
+
+  function setNavActive(on) {
+    if (on) { prevBtn.classList.remove('inactive'); nextBtn.classList.remove('inactive'); }
+    else { prevBtn.classList.add('inactive'); nextBtn.classList.add('inactive'); searchCount.textContent = '— / —'; }
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('mark.hl').forEach(function(m){
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    allMatches = []; currentMatch = -1;
+  }
+
+  function doSearch(term) {
+    clearHighlights(); noResults.style.display = 'none';
+    if (!term) { setNavActive(false); return; }
+    var re = new RegExp('(' + term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')', 'gi');
+    var walker = document.createTreeWalker(mainEl12, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        var p = node.parentNode;
+        while (p) { if (p.tagName === 'SCRIPT' || p.tagName === 'STYLE') return NodeFilter.FILTER_REJECT; p = p.parentNode; }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+    var nodes = []; var n; while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(node) {
+      if (!re.test(node.textContent)) return; re.lastIndex = 0;
+      var frag = document.createDocumentFragment(), last = 0, m;
+      while ((m = re.exec(node.textContent)) !== null) {
+        frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+        var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[1];
+        frag.appendChild(mark); allMatches.push(mark); last = m.index + m[1].length;
+      }
+      frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (allMatches.length === 0) { noResults.style.display = 'block'; setNavActive(false); searchCount.textContent = '0 found'; }
+    else { setNavActive(true); currentMatch = 0; highlightCurrent(); }
+  }
+
+  function highlightCurrent() {
+    allMatches.forEach(function(m){m.classList.remove('current');}); if (!allMatches.length) return;
+    allMatches[currentMatch].classList.add('current');
+    allMatches[currentMatch].scrollIntoView({behavior:'smooth',block:'center'});
+    searchCount.textContent = (currentMatch+1) + ' / ' + allMatches.length;
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer); var val = searchInput.value.trim();
+    clearBtn.style.display = val ? 'block' : 'none';
+    debounceTimer = setTimeout(function(){doSearch(val);}, 260);
+  });
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = ''; clearBtn.style.display = 'none'; clearHighlights(); noResults.style.display = 'none'; setNavActive(false);
+  });
+  prevBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch - 1 + allMatches.length) % allMatches.length; highlightCurrent();
+  });
+  nextBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch + 1) % allMatches.length; highlightCurrent();
+  });
+
+  function updateTocActive() {
+    var mainRect = mainEl12.getBoundingClientRect();
+    var best = null, bestTop = -Infinity;
+    sectionEls.forEach(function(s) {
+      var top = s.getBoundingClientRect().top - mainRect.top;
+      if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    if (!best && sectionEls.length) best = sectionEls[0].id;
+    tocLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === best);
+    });
+  }
+  mainEl12.addEventListener('scroll', updateTocActive, {passive: true});
+  updateTocActive();
+
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var t = document.getElementById(a.dataset.target);
+      if (!t) return;
+      mainEl12.scrollTop += t.getBoundingClientRect().top - mainEl12.getBoundingClientRect().top;
+      updateTocActive();
+    });
+  });
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function loadAvg12() {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores12') || '[]');
+      if (scores.length > 0) {
+        var avg = Math.round(scores.reduce(function(s,v){return s+v;},0)/scores.length);
+        quizAvg.textContent = 'Avg: ' + avg + '%';
+      }
+    } catch(e){}
+  }
+  function saveScore12(pct) {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores12') || '[]');
+      scores.push(pct); if (scores.length > 20) scores = scores.slice(-20);
+      localStorage.setItem('radQuizScores12', JSON.stringify(scores)); loadAvg12();
+    } catch(e){}
+  }
+  function saveStats12(results) {
+    try {
+      var stats = JSON.parse(localStorage.getItem('radQuizSectionStats12') || '{}');
+      results.forEach(function(r){
+        if (!stats[r.section]) stats[r.section] = {correct:0,total:0};
+        stats[r.section].total++; if (r.correct) stats[r.section].correct++;
+      });
+      localStorage.setItem('radQuizSectionStats12', JSON.stringify(stats));
+    } catch(e){}
+  }
+
+  loadAvg12();
+  quizBtn.addEventListener('click', function(){quizOverlay.classList.add('open');});
+  quizClose.addEventListener('click', function(){quizOverlay.classList.remove('open');});
+  quizOverlay.addEventListener('click', function(e){if(e.target===quizOverlay)quizOverlay.classList.remove('open');});
+  quizStartBtn.addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+
+  function renderQuiz(questions) {
+    var html = '<div class="quiz-progress">' + questions.length + ' questions</div>';
+    html += '<div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" style="width:100%"></div></div>';
+    questions.forEach(function(q,i) {
+      var shuffled = shuffle(q.choices.map(function(c,idx){return {text:c,orig:idx};}));
+      var ci = shuffled.findIndex(function(s){return s.orig===q.a;});
+      html += '<div class="quiz-q" data-qi="'+i+'" data-correct="'+ci+'" data-section="'+q.section+'">';
+      html += '<div class="quiz-q-text">'+(i+1)+'. '+q.q+'</div><div class="quiz-choices">';
+      shuffled.forEach(function(ch,idx){
+        html += '<label class="quiz-choice"><input type="radio" name="q'+i+'" value="'+idx+'">'+ch.text+'</label>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="quizSubmitBtn">Submit Quiz</button></div>';
+    quizBody.innerHTML = html;
+    document.getElementById('quizSubmitBtn').addEventListener('click', function(){gradeQuiz(questions);});
+  }
+
+  function gradeQuiz(questions) {
+    var correct = 0, results = [];
+    quizBody.querySelectorAll('.quiz-q').forEach(function(qEl) {
+      var correctIdx = parseInt(qEl.dataset.correct), section = qEl.dataset.section;
+      var choices = qEl.querySelectorAll('.quiz-choice');
+      var selected = qEl.querySelector('input:checked');
+      var selIdx = selected ? parseInt(selected.value) : -1;
+      var ok = selIdx === correctIdx;
+      if (ok) correct++;
+      results.push({section:section,correct:ok});
+      choices.forEach(function(ch,idx){
+        ch.classList.add('locked');
+        if (idx===correctIdx) ch.classList.add('reveal-correct');
+        if (idx===selIdx && !ok) ch.classList.add('incorrect');
+        if (idx===selIdx && ok) ch.classList.add('correct');
+      });
+      var fb = document.createElement('div'); fb.className = 'quiz-feedback '+(ok?'ok':'bad');
+      fb.textContent = ok ? '✓ Correct!' : '✗ '+(selected?'Incorrect.':'Not answered.');
+      qEl.appendChild(fb);
+    });
+    var pct = Math.round((correct/questions.length)*100);
+    saveScore12(pct); saveStats12(results);
+    var msg = pct>=90?'Excellent work!':pct>=70?'Good job!':'Keep studying!';
+    quizBody.querySelector('.quiz-actions').innerHTML = '<button class="quiz-retry-btn" id="quizRetryBtn">Try Another Quiz</button>';
+    var r = document.createElement('div'); r.className = 'quiz-result';
+    r.innerHTML = '<div class="quiz-score-ring">'+correct+' / '+questions.length+'</div><p>'+pct+'% — '+msg+'</p>';
+    quizBody.insertBefore(r, quizBody.firstChild);
+    document.getElementById('quizRetryBtn').addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+  }
+
+  function applyTocHighlights(id, cls) {
+    var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+    if (link) { link.classList.remove('study-warn','study-crit'); if (cls) link.classList.add(cls); }
+  }
+
+  highlightToggle.addEventListener('click', function() {
+    highlightsOn = !highlightsOn; highlightToggle.classList.toggle('active', highlightsOn);
+    if (highlightsOn) {
+      try {
+        var stats = JSON.parse(localStorage.getItem('radQuizSectionStats12') || '{}');
+        for (var id in stats) {
+          var s = stats[id], pct = s.total > 0 ? (s.correct/s.total)*100 : 100;
+          var el = document.getElementById(id); if (!el) continue;
+          el.classList.remove('study-warn','study-crit');
+          var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+          if (cls) el.classList.add(cls);
+          applyTocHighlights(id, cls);
+        }
+      } catch(e){}
+    } else {
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('study-warn','study-crit');});
+      document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
+    }
+  });
+
+</script>
+</body>
+</html>
