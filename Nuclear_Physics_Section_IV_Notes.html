@@ -1,0 +1,2622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NucMed Notes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>Nuclear Physics Section IV &mdash; Notes</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; background: #f0f2f5; color: #1f2328; }
+    header { background: #1a56a6; color: white; padding: 10px 32px; padding-top: max(10px, env(safe-area-inset-top)); position: -webkit-sticky; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 14px; min-height: 52px; }
+    header h1 { font-size: 1.35rem; font-weight: 700; flex: 1; }
+    .home-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; text-decoration: none; padding: 5px 12px; white-space: nowrap; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .home-btn:hover { background: rgba(255,255,255,0.25); }
+    .header-right { flex-shrink: 0; display: flex; flex-direction: column; align-items: flex-end; }
+    .header-bot-row { display: flex; align-items: center; gap: 6px; }
+    .search-input-wrap { position: relative; }
+    .search-input-wrap input { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35); border-radius: 6px; color: #fff; font-size: 0.88rem; padding: 6px 30px 6px 10px; width: 190px; outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input-wrap input::placeholder { color: rgba(255,255,255,0.55); }
+    .search-input-wrap input:focus { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.6); }
+    .search-input-wrap .clear-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,0.65); font-size: 1rem; cursor: pointer; line-height: 1; display: none; padding: 2px; }
+    .nav-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 5px 11px; line-height: 1; white-space: nowrap; -webkit-tap-highlight-color: transparent; transition: opacity 0.15s; }
+    .nav-btn:active { background: rgba(255,255,255,0.35); }
+    .nav-btn.inactive { opacity: 0.35; pointer-events: none; }
+    .search-count { font-size: 0.78rem; color: rgba(255,255,255,0.8); white-space: nowrap; min-width: 44px; text-align: center; }
+    mark.hl { background: #fef08a; color: #1f2328; border-radius: 2px; padding: 0 1px; }
+    mark.hl.current { background: #f97316; color: #fff; }
+    .no-results { display: none; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 0 40px 20px; font-size: 0.9rem; color: #7c2d12; }
+    .quiz-btn { background: #1a56a6; border: 1px solid #1a56a6; border-radius: 7px; color: #fff; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; letter-spacing: 0.02em; }
+    .quiz-btn:active { background: #1648a0; }
+    .quiz-avg { font-size: 0.75rem; color: #57606a; white-space: nowrap; background: #f0f2f5; border: 1px solid #c8cdd4; border-radius: 6px; padding: 5px 10px; text-align: center; display: block; }
+    .highlight-toggle { background: #f7f8fa; border: 1px solid #c8cdd4; border-radius: 7px; color: #374151; font-size: 0.82rem; font-weight: 600; cursor: pointer; padding: 7px 12px; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+    .highlight-toggle.active { background: #fefce8; border-color: #ca8a04; color: #78350f; }
+    .section.study-warn { border-color: #ca8a04; border-left-width: 4px; }
+    .section.study-warn .section-header { background: #a16207; }
+    .section.study-crit { border-color: #dc2626; border-left-width: 4px; }
+    .section.study-crit .section-header { background: #b91c1c; }
+    .section.study-warn > .section-body { background: #fefce8; }
+    .section.study-crit > .section-body { background: #fef2f2; }
+    nav#toc a.study-warn { border-left-color: #ca8a04; background: #fefce8; color: #78350f; }
+    nav#toc a.study-warn .toc-num::after { content: ' ●'; color: #ca8a04; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-crit { border-left-color: #dc2626; background: #fef2f2; color: #991b1b; }
+    nav#toc a.study-crit .toc-num::after { content: ' ●'; color: #dc2626; font-size: 0.6rem; vertical-align: middle; }
+    nav#toc a.study-warn:hover, nav#toc a.study-warn.active { background: #fef9c3; }
+    nav#toc a.study-crit:hover, nav#toc a.study-crit.active { background: #fee2e2; }
+    .quiz-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 24px 16px 40px; }
+    .quiz-overlay.open { display: flex; }
+    .quiz-modal { background: #fff; border-radius: 12px; width: 100%; max-width: 680px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.25); }
+    .quiz-modal-header { background: #1a56a6; color: #fff; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .quiz-modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .quiz-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0 4px; }
+    .quiz-body { padding: 24px; }
+    .quiz-intro { text-align: center; padding: 12px 0 24px; }
+    .quiz-intro p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    .quiz-start-btn, .quiz-submit-btn, .quiz-retry-btn { display: inline-block; background: #1a56a6; color: #fff; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; padding: 12px 32px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .quiz-start-btn:active, .quiz-submit-btn:active, .quiz-retry-btn:active { background: #1648a0; }
+    .quiz-progress { font-size: 0.82rem; color: #57606a; margin-bottom: 20px; }
+    .quiz-progress-bar { height: 6px; background: #e5e7eb; border-radius: 3px; margin-bottom: 18px; }
+    .quiz-progress-bar-fill { height: 6px; background: #1a56a6; border-radius: 3px; transition: width 0.3s; }
+    .quiz-q { margin-bottom: 28px; }
+    .quiz-q-text { font-weight: 600; font-size: 0.98rem; color: #1f2328; margin-bottom: 14px; line-height: 1.55; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; }
+    .quiz-choice { display: flex; align-items: flex-start; gap: 12px; background: #f7f8fa; border: 2px solid #e5e7eb; border-radius: 8px; padding: 12px 14px; cursor: pointer; font-size: 0.92rem; color: #1f2328; line-height: 1.45; -webkit-tap-highlight-color: transparent; }
+    .quiz-choice input[type=radio] { margin-top: 3px; flex-shrink: 0; width: 18px; height: 18px; accent-color: #1a56a6; cursor: pointer; }
+    .quiz-choice:has(input:checked) { border-color: #1a56a6; background: #eff6ff; }
+    .quiz-choice.correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.incorrect { border-color: #dc2626; background: #fef2f2; }
+    .quiz-choice.reveal-correct { border-color: #16a34a; background: #f0fdf4; }
+    .quiz-choice.locked { pointer-events: none; }
+    .quiz-feedback { font-size: 0.85rem; margin-top: 8px; padding: 8px 12px; border-radius: 6px; }
+    .quiz-feedback.ok { background: #f0fdf4; color: #15803d; border-left: 3px solid #16a34a; }
+    .quiz-feedback.bad { background: #fef2f2; color: #b91c1c; border-left: 3px solid #dc2626; }
+    .quiz-actions { margin-top: 24px; display: flex; justify-content: center; }
+    .quiz-result { text-align: center; padding: 16px 0; }
+    .quiz-score-ring { font-size: 3rem; font-weight: 800; color: #1a56a6; margin-bottom: 8px; }
+    .quiz-result p { color: #57606a; margin-bottom: 20px; font-size: 0.95rem; }
+    @media (max-width: 600px) {
+      header { padding: 10px 14px; gap: 10px; min-height: 0; flex-wrap: wrap; }
+      header h1 { font-size: 1.05rem; flex: 1 1 100%; }
+      .header-right { width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px; }
+      .header-bot-row { width: 100%; justify-content: space-between; }
+      .search-input-wrap input { width: 130px; }
+    }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; height: calc(100vh - 52px - env(safe-area-inset-top, 0px)); height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); overflow: hidden; }
+    .sidebar { width: 210px; flex-shrink: 0; height: 100%; display: flex; flex-direction: column; overflow: hidden; border-right: 1px solid #dde1e7; }
+    .toc-heading { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0; }
+    .toc-heading h2 { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; margin: 0; }
+    nav#toc { flex: 1 1 0; min-height: 0; background: #fff; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 4px 0 40px; }
+    nav#toc a { display: flex; align-items: baseline; gap: 0; padding: 7px 14px 7px 16px; font-size: 0.82rem; color: #374151; text-decoration: none; border-left: 3px solid transparent; -webkit-tap-highlight-color: rgba(26,86,166,0.15); }
+    nav#toc a:hover, nav#toc a.active { background: #eff6ff; border-left-color: #1a56a6; color: #1a56a6; }
+    nav#toc .toc-num { display: inline-block; min-width: 22px; color: #9ca3af; font-size: 0.75rem; flex-shrink: 0; }
+    nav#toc .toc-label { flex: 1; }
+    .tools-panel { background: #e6e9ed; border-bottom: 1px solid #d0d4da; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .tools-panel-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280; padding-bottom: 8px; border-bottom: 1px solid #c8cdd4; margin-bottom: 2px; }
+    .tools-panel .quiz-btn { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .tools-panel .highlight-toggle { width: 100%; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    main { flex: 1; padding: 32px 40px; min-width: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; height: 100%; }
+    .section { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 28px; overflow: hidden; }
+    .section-header { background: #1a56a6; color: white; padding: 14px 24px; display: flex; align-items: center; gap: 12px; }
+    .section-num { background: rgba(255,255,255,0.25); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .section-header h2 { font-size: 1.05rem; font-weight: 600; flex: 1; }
+    .section-body { padding: 20px 24px; }
+    .sc-content ul, .sc-content ol { padding-left: 22px; margin: 8px 0; }
+    .sc-content ul ul, .sc-content ul ol, .sc-content ol ul { margin: 2px 0; }
+    .sc-content li { margin-bottom: 3px; }
+    .sc-content p { margin-bottom: 8px; }
+    .sc-content p:last-child { margin-bottom: 0; }
+    .sc-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 10px auto; display: block; }
+    .sc-content img[width] { display: inline; margin: 2px 2px; vertical-align: middle; border-radius: 2px; }
+    .sc-content table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.88rem; }
+    .sc-content th { background: #1a56a6; color: white; padding: 8px 12px; text-align: left; }
+    .sc-content td { padding: 7px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .sc-content tr:nth-child(even) td { background: #f9fafb; }
+    .sc-content h3 { font-size: 0.95rem; font-weight: 700; color: #1f2328; margin: 16px 0 6px; }
+    .sc-content strong { font-weight: 700; }
+    .sc-content em { font-style: italic; }
+    .sc-content a { color: #1a56a6; text-decoration: none; }
+    .sc-content caption { font-weight: 700; color: #1f2328; margin-bottom: 6px; caption-side: top; padding: 4px 0; }
+    .sc-table-responsive { overflow-x: auto; }
+    .sc-content .bannerstyletable td { padding: 4px 8px; font-size: 0.85rem; }
+    .sc-content .nonstyledtable td { padding: 6px 10px; font-size: 0.88rem; background: #f7f8fa; }
+    @media (max-width: 600px) { .sidebar { display: none; } main { padding: 20px 16px; } }
+    @media (min-width: 601px) and (max-width: 900px) { .sidebar { width: 170px; } nav#toc a { font-size: 0.76rem; padding: 6px 10px 6px 12px; } .tools-panel { padding: 8px 10px; } main { padding: 20px 18px; } }
+    html { height: 100%; height: -webkit-fill-available; overflow: hidden; }
+    body { height: 100%; min-height: -webkit-fill-available; overflow: hidden; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+    .glossary-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 14px; }
+    .glossary-card dt { font-weight: 700; font-size: 0.9rem; color: #1a56a6; margin-bottom: 4px; }
+    .glossary-card dd { font-size: 0.88rem; color: #374151; line-height: 1.55; margin: 0; }
+    .sc-content p > u > sup,
+    .sc-content p > sup { display: inline; font-size: inherit; vertical-align: baseline; }
+    .sc-content p > u > span[style*="font-size: 140%"],
+    .sc-content p > u > sup > span[style*="font-size: 140%"],
+    .sc-content p > sup > span[style*="font-size: 140%"] {
+      font-size: 0.95rem; font-weight: 700; color: #1f2328; line-height: 1.4;
+    }
+    .sc-content p > u:only-child {
+      font-size: 0.95rem; font-weight: 700; color: #1f2328;
+      text-decoration: none; display: block; margin: 14px 0 4px; line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <a class="home-btn" href="index.html" title="Back to main menu">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2L2 9h3v9h4v-5h2v5h4V9h3L10 2z"/></svg>
+    Menu
+  </a>
+  <h1>Nuclear Physics Section IV</h1>
+  <div class="header-right">
+    <div class="header-bot-row">
+      <div class="search-input-wrap">
+        <input type="search" id="searchInput" placeholder="Search terms&hellip;" autocomplete="off" spellcheck="false">
+        <button class="clear-btn" id="clearBtn" title="Clear search">&#x2715;</button>
+      </div>
+      <button class="nav-btn inactive" id="prevBtn" title="Previous match">&#8592; Prev</button>
+      <span class="search-count" id="searchCount">&#x2014; / &#x2014;</span>
+      <button class="nav-btn inactive" id="nextBtn" title="Next match">Next &#8594;</button>
+    </div>
+  </div>
+</header>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <div class="quiz-modal-header">
+      <h2>Nuclear Physics IV Quiz</h2>
+      <button class="quiz-close" id="quizClose">&#215;</button>
+    </div>
+    <div class="quiz-body" id="quizBody">
+      <div class="quiz-intro" id="quizIntro">
+        <p>10 random multiple-choice questions drawn from the full course content.<br>Select your answer for each question, then tap <strong>Submit Quiz</strong> to see your grade.</p>
+        <button class="quiz-start-btn" id="quizStartBtn">Start Quiz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="tools-panel">
+      <div class="tools-panel-title">Study Tools</div>
+      <button class="quiz-btn" id="quizBtn">&#9998; Quiz</button>
+      <span class="quiz-avg" id="quizAvg">Avg: &mdash;</span>
+      <button class="highlight-toggle" id="highlightToggle">&#128269; Study Highlights</button>
+    </div>
+    <div class="toc-heading"><h2>Contents</h2></div>
+    <nav id="toc">
+      <a href="javascript:void(0)" data-target="s1"><span class="toc-num">1</span><span class="toc-label">Introduction</span></a>
+      <a href="javascript:void(0)" data-target="s2"><span class="toc-num">2</span><span class="toc-label">Statistics</span></a>
+      <a href="javascript:void(0)" data-target="s3"><span class="toc-num">3</span><span class="toc-label">Mean</span></a>
+      <a href="javascript:void(0)" data-target="s4"><span class="toc-num">4</span><span class="toc-label">Mode</span></a>
+      <a href="javascript:void(0)" data-target="s5"><span class="toc-num">5</span><span class="toc-label">Median</span></a>
+      <a href="javascript:void(0)" data-target="s6"><span class="toc-num">6</span><span class="toc-label">Graphing Mean, Mode, and Median</span></a>
+      <a href="javascript:void(0)" data-target="s7"><span class="toc-num">7</span><span class="toc-label">Accuracy & Precision</span></a>
+      <a href="javascript:void(0)" data-target="s8"><span class="toc-num">8</span><span class="toc-label">Poisson Distribution</span></a>
+      <a href="javascript:void(0)" data-target="s9"><span class="toc-num">9</span><span class="toc-label">Gaussian Distribution</span></a>
+      <a href="javascript:void(0)" data-target="s10"><span class="toc-num">10</span><span class="toc-label">Standard Deviation</span></a>
+      <a href="javascript:void(0)" data-target="s11"><span class="toc-num">11</span><span class="toc-label">Precision</span></a>
+      <a href="javascript:void(0)" data-target="s12"><span class="toc-num">12</span><span class="toc-label">Standard Deviation Calculation</span></a>
+      <a href="javascript:void(0)" data-target="s13"><span class="toc-num">13</span><span class="toc-label">Decay Calculations Overview</span></a>
+      <a href="javascript:void(0)" data-target="s14"><span class="toc-num">14</span><span class="toc-label">Nuclei</span></a>
+      <a href="javascript:void(0)" data-target="s15"><span class="toc-num">15</span><span class="toc-label">Decay Rate</span></a>
+      <a href="javascript:void(0)" data-target="s16"><span class="toc-num">16</span><span class="toc-label">Lambda</span></a>
+      <a href="javascript:void(0)" data-target="s17"><span class="toc-num">17</span><span class="toc-label">Decaying Nuclei</span></a>
+      <a href="javascript:void(0)" data-target="s18"><span class="toc-num">18</span><span class="toc-label">Known Decay Factor</span></a>
+      <a href="javascript:void(0)" data-target="s19"><span class="toc-num">19</span><span class="toc-label">Decay Equation</span></a>
+      <a href="javascript:void(0)" data-target="s20"><span class="toc-num">20</span><span class="toc-label">Common Sense Problems</span></a>
+      <a href="javascript:void(0)" data-target="s21"><span class="toc-num">21</span><span class="toc-label">Post Decay vs. Pre Decay</span></a>
+      <a href="javascript:void(0)" data-target="s22"><span class="toc-num">22</span><span class="toc-label">Decay Chart</span></a>
+      <a href="javascript:void(0)" data-target="s23"><span class="toc-num">23</span><span class="toc-label">Concentration</span></a>
+      <a href="javascript:void(0)" data-target="s24"><span class="toc-num">24</span><span class="toc-label">Volume Calculations</span></a>
+      <a href="javascript:void(0)" data-target="s25"><span class="toc-num">25</span><span class="toc-label">Total Activity for Multiple Doses</span></a>
+      <a href="javascript:void(0)" data-target="s26"><span class="toc-num">26</span><span class="toc-label">Glossary</span></a>
+      <div style="height:120px;flex-shrink:0;"></div>
+    </nav>
+  </div>
+  <main>
+  <div class="no-results" id="noResults">No matches found for your search.</div>
+
+    <div class="section" id="s1">
+      <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>Introduction</h2>
+      </div>
+      <div class="section-body sc-content">
+<p><u>Nuclear Physics Section IV</u></p>
+<p>This last section of Nuclear Physics will deal mainly with Nuclear Math:</p>
+<ul>
+<li>Statistics</li>
+<li>Decay calculations</li>
+<li>Concentration</li>
+<li>Volume Calculations</li>
+<li>Dilution</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s2">
+      <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>Statistics</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Statistics are important in Nuclear Medicine:</p>
+<ul>
+<li>Decay is a random process</li>
+<li>Therefore measuring radioactivity can be difficult</li>
+<li>Statistics give us an accurate way to represent radioactivity</li>
+</ul>
+<p>We will deal with statistics related to the counting of radioactivity</p>
+
+<p>So, decay is a random process:</p>
+<ul>
+<li>We can't predict exactly how many radioactive atoms will decay from a RN</li>
+<ul>
+<li>The amount will fluctuate slightly</li>
+</ul>
+
+<li>We also can't predict which radioactive atom will decay and at what time</li>
+<li>We come up with an average value for the amount of radioactive atoms that decay per time</li>
+<li>We need to determine how the fluctuations in the decay of radioactive atoms affect the result that we come up with</li>
+<li>The difference between the actual (True Value) and the theoretical (Value we come up with) is our error in measurement</li>
+</ul>
+
+<p>Error in Measurement:</p>
+<ul>
+<li>There are 2 types of errors in measurement</li>
+<ol>
+<li>Systematic Errors</li>
+<ul>
+<li>Come from malfunctioning or miscalibrated machines</li>
+<li>The machines can Overestimate counting or Underestimate counting</li>
+<li>These errors can be solved by fixing the machine</li>
+</ul>
+
+<li>Random Errors</li>
+<ul>
+<li>Caused by uncontrollable factors</li>
+<ul>
+<li>High Voltage Fluctuations, extraneous radiation sources etc...</li>
+</ul>
+
+<li>These errors may be a one-time deal and may correct themselves or you may have to fix the situation</li>
+</ul>
+
+</ol>
+
+</ul>
+<p>Lets now look at Mean, mode, and median in Radiation Counting</p>
+      </div>
+    </div>
+
+    <div class="section" id="s3">
+      <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>Mean</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Radiation counting can have a mean (<img src="data:image/gif;base64,R0lGODdhDgAVAPAAAP///wAAACwAAAAADgAVAAACI4SPacHdCqOctNq38AmJK79IHghxZHmilDmN4hadMuakVlUAADsAAAAAAAAAAAA=">):</p>
+<ul>
+<li>Radionuclides decay randomly</li>
+<li>Therefore, it's good to have a mean count when counting radiation</li>
+<ul>
+<li>Mean is an average value</li>
+</ul>
+
+<li>Calculating mean is simple -<img src="data:image/gif;base64,R0lGODdhDgAVAPAAAP///wAAACwAAAAADgAVAAACI4SPacHdCqOctNq38AmJK79IHghxZHmilDmN4hadMuakVlUAADsAAAAAAAAAAAA=">= x / N</li>
+<ul>
+<li>Take a series of counts (usually around 10)</li>
+<ul>
+<li># of times you counted your sample = N</li>
+</ul>
+
+<li>Add the values of all the measurements (x)</li>
+<li>Divide x by N</li>
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s4">
+      <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>Mode</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Radiation counting can also have a mode:</p>
+<ul>
+<li>The value occurring most often</li>
+<ul>
+<li>Rather than the average</li>
+</ul>
+
+<li>Consider the following 1 second counts from a radioactive source</li>
+<ul>
+<li>25, 20, 25, 26, 19, 29, 25, 24, 28</li>
+</ul>
+
+<li>What is the mode for the above counts?</li>
+<ul>
+<li>Remember it's the count occurring most often</li>
+<ul>
+<li>That would be 25</li>
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s5">
+      <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>Median</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Radiation counting can also have a median:</p>
+<ul>
+<li>The middle value of the several readings</li>
+<ul>
+<li>Rather than the average</li>
+</ul>
+
+<li>Consider the following 1 second counts from a radioactive source</li>
+<ul>
+<li>25, 20, 18, 30, 19, 29, 35, 24, 28</li>
+</ul>
+
+<li>What is the median for the above counts?</li>
+<ul>
+<li>First; you need to rank the counts in order</li>
+<ul>
+<li>18, 19, 20, 24, 25, 28, 29, 30, 35</li>
+</ul>
+
+<li>The middle value is 25</li>
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s6">
+      <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>Graphing Mean, Mode, and Median</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Graphing mean, mode and median</p>
+<ul>
+<li>If we graphed the previous problem it would look as follows:</li>
+<li>This is a standard &quot;Bell Curve&quot;</li>
+</ul>
+<p><img src="data:image/gif;base64,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" width="529" height="259" alt="Standard belle curve with centerline of 150"></p>
+<ul>
+<li>Mean = Mode = Median</li>
+<li>You have a middle value and an equal amount above and below</li>
+</ul>
+<p>Your mean, mode and median are not always equal</p>
+<ul>
+<li>If this graph were your test scores, what does it tell you about Mean, mode and median?</li>
+</ul>
+<p><img src="data:image/gif;base64,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" width="541" height="235" alt="Bell Curve"></p>
+<ul>
+<li>Mean - The average score in the class was lower than the most common and middle score</li>
+<li>Mode - The most common score was high overall</li>
+<li>Median - The middle score in the class is just above the average and below the most common score</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s7">
+      <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>Accuracy & Precision</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Accuracy and Precision are related to Radiation Counting:</p>
+<ul>
+<li>Accuracy - Indicates how close your measurements are to a true value</li>
+<ul>
+<li>If there are 12,000 true actual counts</li>
+<ul>
+<li>11,995 counts is pretty accurate</li>
+<li>8,500 counts is not very accurate</li>
+</ul>
+
+<li>Used in describing systematic errors</li>
+</ul>
+
+</ul>
+<ul>
+<li>Precision - Indicates the reproducibility of your measurements</li>
+<ul>
+<li>If a 1 mCi 99mTc source is counted for 1 minute and produces 1,000 actual counts</li>
+<li>Remember radiation decays randomly</li>
+<ul>
+<li>It won't always be 1,000 counts</li>
+<li>1,000 counts should be your average</li>
+</ul>
+
+<li>If the 1 mCi 99mTc source is counted 5 times</li>
+<li>Measurements that has high precision (is precise) is:</li>
+<ul>
+<li>1005, 995, 1000, 994, 1004</li>
+<ul>
+<li>The range of the counts was low</li>
+</ul>
+
+</ul>
+
+<li>Measurements that has low precision (not precise) is:</li>
+<ul>
+<li>1205, 1305, 1300, 1000, 705</li>
+<ul>
+<li>The range of the counts was high</li>
+</ul>
+
+</ul>
+
+<li>Used in describing random errors</li>
+</ul>
+
+</ul>
+<p>Can measurements be both accurate and precise???</p>
+<ul>
+<li>You can be <em>Precise but not Accurate</em></li>
+<ul>
+<li>If a 99mTc source produces 20,000 actual counts</li>
+<li>You count that source 5 times</li>
+<ul>
+<li>You get: 17,140, 17,005, 17,250, 17,190, &amp; 17,090</li>
+<ul>
+<li>That is precise - all counts are similar</li>
+</ul>
+
+<li>However you are not accurate because your average is 17,135</li>
+<ul>
+<li>That is far from the 20,000 actual counts</li>
+</ul>
+
+</ul>
+
+</ul>
+
+</ul>
+<ul>
+<li>You can be <em>Accurate but not Precise</em></li>
+<ul>
+<li>If a 99mTc source produces 20,000 actual counts</li>
+<li>You count that source 5 times</li>
+<ul>
+<li>You get: 25000, 20,005, 15250, 20,190, &amp; 20,090</li>
+<ul>
+<li>That is not precise - all counts are not similar</li>
+</ul>
+
+<li>However you are accurate because your average is 20107</li>
+<ul>
+<li>That is close from the 20,000 actual counts</li>
+</ul>
+
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s8">
+      <div class="section-header">
+        <div class="section-num">8</div>
+        <h2>Poisson Distribution</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Poisson Distribution in radiation counting:</p>
+<ul>
+<li>Used as a model for the number of random events (such as the number radioactive disintegrations)</li>
+<ul>
+<li>Radioactive decay follows Poisson Distribution</li>
+</ul>
+
+<li>Poisson Distribution follows the &quot;Bell Curve&quot; when plotted</li>
+</ul>
+
+<p>Poisson Distribution in Radioactive Decay:</p>
+<ul>
+<li>1 mCi of 99mTc is counted for 1 minute 25 times</li>
+<li>It's Poisson Distribution would look as follows:</li>
+</ul>
+<p><img src="data:image/gif;base64,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" width="517" height="259" alt="Standard bell curve"></p>
+<ul>
+<li>10,000 cpm is the most common occurring count</li>
+<li>Therefore the Poisson Distribution can help us predict that 99mTc counted for 1 minute will produce 10,000 counts</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s9">
+      <div class="section-header">
+        <div class="section-num">9</div>
+        <h2>Gaussian Distribution</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Gaussian Distribution is very similar to the Poisson Distribution:</p>
+<ul>
+<li>Also called the Normal Distribution</li>
+<li>Gives a plot to represent the distribution of events</li>
+<ul>
+<li>Radioactive decay</li>
+</ul>
+
+<li>Below is a gaussian distribution which looks very similar to the Poisson Distribution:</li>
+</ul>
+<p><img src="data:image/gif;base64,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" width="327" height="225" alt="Bell Curve"></p>
+<ul>
+<li>Gaussian is commonly used for large numbers of events</li>
+<li>The Gaussian Distribution uses Standard Deviations which we will look at next</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s10">
+      <div class="section-header">
+        <div class="section-num">10</div>
+        <h2>Standard Deviation</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Standard Deviation (&#963;):</p>
+<ul>
+<li>Tells you how tightly the events are clustered around the mean in a set of data</li>
+<li>In a set of data how close is the data to the mean</li>
+</ul>
+<p>How is Standard Deviation (&#963;) represented :</p>
+<ul>
+<li>When the Data is closely packed around the mean the standard deviation is said to be small</li>
+<ul>
+<li>ex. 50, 52, 51, 50, 49, 52, 48</li>
+</ul>
+
+<li>When the Data is varied and spread out the s is large</li>
+<ul>
+<li>ex. 50, 75, 25, 29, 30, 81, 85</li>
+</ul>
+
+<li>We want our gamma camera's to have a low Standard Deviation</li>
+</ul>
+
+<p>Standard Deviation can tell us how close we are to a true value</p>
+<ul>
+<li>The graph below shows &#963; from a true value:</li>
+</ul>
+<p><img src="data:image/gif;base64,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" width="412" height="220" alt="Bell Curve"></p>
+<ul>
+<li>One standard deviation (1&#963;) away from the mean in either direction on the horizontal axis (the red area on the above graph)</li>
+<ul>
+<li>Accounts for somewhere around 68 percent of the events in this group</li>
+</ul>
+
+<li>Two standard deviations away from the mean (the red and green areas)</li>
+<ul>
+<li>Account for roughly 95 percent of the events</li>
+</ul>
+
+<li>Three standard deviations (the red, green and blue areas)</li>
+<ul>
+<li>Account for about 99 percent of the events</li>
+</ul>
+
+</ul>
+<p>How does this relate to Radiation Counting?</p>
+<ul>
+<li>When counting (n) a radioactive source:</li>
+<ul>
+<li>n &#177; 1&#963;</li>
+<ul>
+<li>There is a 68% chance that your value will be within the range of the mean</li>
+<li>This is a confidence interval of 68%</li>
+</ul>
+
+<li>n &#177; 2&#963;</li>
+<ul>
+<li>There is a 95% chance that your value will be within the range of the mean</li>
+<li>This is a confidence interval of 95%</li>
+</ul>
+
+<li>n &#177; 3&#963;</li>
+<ul>
+<li>There is a 99% chance that your value will be within the range of the mean</li>
+<li>This is a confidence interval of 99%</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>So, what is percent Standard Deviation?</p>
+<ul>
+<li>Percent standard deviation (%&#963;):</li>
+<ul>
+<li>Helps to analyze counting data</li>
+<ul>
+<li>Determines the statistical error</li>
+</ul>
+
+<li>The formula:</li>
+<ul>
+<li>%&#963; = 100 / <img src="data:image/gif;base64,R0lGODdhFwAZAPAAAP///wAAACwAAAAAFwAZAAACQ4SPocuLDwKcNNZrJL560+5BYJiQonmipXqMSva23ZhZNtyemjuL/fNb1YC71DAhoYGSxFtO5nOSXrQQkxXDVq3bSgEAOwAAAAAAAAAAAA=="></li>
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s11">
+      <div class="section-header">
+        <div class="section-num">11</div>
+        <h2>Precision</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Now we can compare Count Rate vs. Precision</p>
+<ul>
+<li>Count rate vs. precision:</li>
+<ul>
+<li>Hmmm; so when the count rate went up we had more errors</li>
+<li>Gamma cameras can't handle a lot of counts at once</li>
+<ul>
+<li>It has to process a count before it can take another one</li>
+<ul>
+<li>This is called Dead Time</li>
+</ul>
+
+</ul>
+
+<li>We'll talk about dead time more in Instrumentation</li>
+</ul>
+
+</ul>
+<p>So, what do we know about precision:</p>
+<ul>
+<li>If we are doing a Spot Bone Scan of the foot:</li>
+<ul>
+<li>If we increase the counts from 500,000 to 1,000,000</li>
+<ul>
+<li>The precision goes up</li>
+<ul>
+<li>You are taking more counts</li>
+</ul>
+
+<li>This is done by a camera adjustment</li>
+</ul>
+
+<li>If we increase the count rate from 20,000 cpm to 40,000 cpm</li>
+<ul>
+<li>The precision goes down</li>
+<ul>
+<li>The camera can't handle the increased rate and misses some counts</li>
+</ul>
+
+<li>This is done by increasing activity or bringing the source closer to the camera</li>
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s12">
+      <div class="section-header">
+        <div class="section-num">12</div>
+        <h2>Standard Deviation Calculation</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Lets calculate Standard Deviation from multiple readings...</p>
+<ul>
+<li>Let's say that you want to verify the precision your gamma camera</li>
+<li>Radiation decays randomly so you don't want to just take one count</li>
+<li>You want to take at least 10 counts and calculate the Standard Deviation</li>
+</ul>
+
+<p>To Calculate Standard Deviation:</p>
+<ul>
+<li>Step #1. Compute the mean of the data set</li>
+<li>Step #2. Find the deviation from the mean</li>
+<ul>
+<li>Deviation from the mean = data value - mean value</li>
+</ul>
+
+<li>Step #3. Find the square of each deviation from the mean</li>
+<li>Step #4. Add the squares of the deviation from the mean</li>
+<li>Step #5. Divide this sum by the total number of data values minus 1</li>
+<li>Step #6. The Standard Deviation is the square root of this quotient (Step #5)</li>
+<li>The formula looks like:</li>
+</ul>
+<p><img src="data:image/gif;base64,R0lGODdhVgAxAPEAAP///wAAAFRUVAAAACwAAAAAVgAxAAAC/4SPocvtD6OcElkQrt68+w9yWUiW5pmg6soeYwvH3SvX23LS9m68+vfjCYMzoekBPBqXmBzTSCw+d1Gpqgr7jbCXKCTlUvRwQDEGR2soRRZfFxxKw1dcYnDrbM6vIO1Nr3TXwtXTdkOoYfbGgqhjh9hlN9i3aPgjgJmJafnHmORSaAhIgpc4aRXqCFriZuopgpSKRubBcKYY+ooCecraSjfFG7aqO3T1O5WcgKysrCjcnMV8S1FtfV0tOhqdbAbNzVgK3i0+/iT2zZZVg85enB65DUynKi3PV3yfkwE/h46LKhc9fWtA8YtTaWA/Yk3KBSRI6uC6YYA0adoDkVRGhCPEIPmRtjCXm0YJB8oQBxCWnBgp57ljGRKjS3s2YsakaI5JAQA7AAAAAAAAAAAA"></p>
+<p>Where:</p>
+<ul>
+<li>x = each score</li>
+<li><img src="data:image/gif;base64,R0lGODdhCQAQAPAAAP///wAAACwAAAAACQAQAAACF4R/obvoD+NTKSBrHYV58p4YmFhJplEAADsAAAAAAAAAAAA="> = the mean or average</li>
+<li>n = the number of values</li>
+<li>&#931; means we sum across the values</li>
+</ul>
+<p>Standard Deviation Problem</p>
+<ul>
+<li>10 counts were taken on a gamma camera with 1 mCi of Tc-99m. Calculate the standard deviation if the counts were:</li>
+</ul>
+<table class="nonstyledtable" border="1" style="width: 50%">
+<tr>
+<td>
+<p>10010</p>
+</td>
+<td>
+<p>9990</p>
+</td>
+<td>
+<p>10100</p>
+</td>
+<td>
+<p>9950</p>
+</td>
+<td>
+<p>10000</p>
+</td>
+<td>
+<p>10500</p>
+</td>
+<td>
+<p>9995</p>
+</td>
+<td>
+<p>10005</p>
+</td>
+<td>
+<p>9900</p>
+</td>
+<td>
+<p>10001</p>
+</td>
+</tr>
+</table>
+<p><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Click For Answer</span></p>
+<p>Let's move on now to Decay Calculations</p>
+      </div>
+    </div>
+
+    <div class="section" id="s13">
+      <div class="section-header">
+        <div class="section-num">13</div>
+        <h2>Decay Calculations Overview</h2>
+      </div>
+      <div class="section-body sc-content">
+<p><u>Decay Calculations:</u></p>
+<ul>
+<li>One of the most important concepts in nuclear math is decay equations:</li>
+<ul>
+<li>Ultimately we want to work our way up to dose calculations</li>
+<li>Our topics for decay equations will cover:</li>
+<ul>
+<li>Nuclei</li>
+<ul>
+<li>Decay rate, activity and decay constant</li>
+</ul>
+
+<li>Decay Factor</li>
+<li>Dose Calculations</li>
+<ul>
+<li>Pre and Post decay</li>
+</ul>
+
+<li>Time to Decay</li>
+<li>What's the Half-life</li>
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s14">
+      <div class="section-header">
+        <div class="section-num">14</div>
+        <h2>Nuclei</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Nuclei</p>
+<ul>
+<li>OK; just a quick review:</li>
+<ul>
+<li>Basically the amount of radioactive atoms in a radionuclide</li>
+<li>When the nuclei decay they are disintegrations</li>
+<li>The number of nuclei affects:</li>
+<ul>
+<li>Decay Constant (&#955;) - Disintegration Constant</li>
+<ul>
+<li>Fraction of the atoms that decay per unit time</li>
+</ul>
+
+<li>Decay Rate</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Lets define some variables and look at a formula related to Nuclei:</p>
+<ul>
+<li>N = # of RA nuclei</li>
+<li>n = # of RA nuclei that decay over time (t)</li>
+<li>Therefore: Decay Rate (DR) = N / t = n</li>
+<li>Now let's compare the 3 variables:</li>
+<ul>
+<li><img src="data:image/gif;base64,R0lGODdhtAAVAPMAAP///wAAAMPDw6Kiol9fX7Ozs05OTi0tLRwcHAAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAtAAVAAAE/xDISau9ON+gu/8YB47kKJZoap1qq7Fu7MFyHdo4QOf4ztu+HykobBEzx1eAtlzeikZoc7qaOjeoa3T1gm6lFO2EtUtWOGakjqv2ptJfCWyOHa6j9K476y2Hz3UgIidUgnJ/ens6g2KIRX5jjoAmh3eWM5WZTyoDAnaDmymdiZJWbR+EmWlkkaQpBJSgoa+nk5ZEq6aaqIhJRALAwcLBBQcFqKmzFcPMwMXHbLa3rrWslH++Gs3MBQgDvK2BF9vD3d/RpeHitWvJ4JHZLgbXu5Ip88p59er50+9h8Th5+odGGYlR6xrpQ1dFi5UmyCDaMyiETBA4Qx42JNRonyI+HyrphXwz0gXGjydL8lOJ6U7KH7Je7onJ0lDBmoBu4uyic6cSmY86+myYIQIAOwAAAAAAAAAAAA=="></li>
+<ul>
+<li>As we get more nuclei the number of nuclei that decay increase</li>
+<li>If the number of nuclei that decay increase the Decay Rate increases</li>
+</ul>
+
+</ul>
+
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s15">
+      <div class="section-header">
+        <div class="section-num">15</div>
+        <h2>Decay Rate</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>So, what is the Decay Rate:</p>
+<ul>
+<li>Decay Rate = &#955;N</li>
+<ul>
+<li>DR = Decay Constant <img src="data:image/gif;base64,R0lGODdhEQAJAPMAAP///19fX6KiotTU1BwcHC0tLYGBgcPDwwAAAE5OTgAAAAAAAAAAAAAAAAAAAAAAACwAAAAAEQAJAAAEJRBIEOYcxlpR7CCDtnXAF4rjAaKigRys9hlkXK6cbU45u24JSwQAOwAAAAAAAAAAAA=="> Number of Nuclei</li>
+<li>DR = Fraction of nuclei that decay per unit time TIMES the number of nuclei</li>
+<li>DR = 1/t <img src="data:image/gif;base64,R0lGODdhEQAJAPMAAP///19fX6KiotTU1BwcHC0tLYGBgcPDwwAAAE5OTgAAAAAAAAAAAAAAAAAAAAAAACwAAAAAEQAJAAAEJRBIEOYcxlpR7CCDtnXAF4rjAaKigRys9hlkXK6cbU45u24JSwQAOwAAAAAAAAAAAA=="> N = N/t = Nt-1</li>
+<ul>
+<li>Therefore t-1 = per time</li>
+<li>Nuclei per time</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Lets look at the decay constant (&#955;)a little closer...</p>
+<ul>
+<li>&#955; = Fraction of nuclei that decay per unit time</li>
+<ul>
+<li>- hr-1, min-1 , sec-1</li>
+<ul>
+<li>per hour, per minute, per second</li>
+</ul>
+
+</ul>
+
+<li>If &#955; = 0.01 per minute</li>
+<ul>
+<li>= 0.01 / minute</li>
+<li>= 0.01 min-1</li>
+<li>= 1%</li>
+</ul>
+
+</ul>
+
+<p>Lets compare a couple of decay constants...</p>
+<ul>
+<li>&#955; = 0.01 hr-1</li>
+<ul>
+<li>= 1% of the nuclei decay per hour</li>
+<ul>
+<li>Therefore if you have 10,000 nuclei, after 1 hour you have 9,900 nuclei</li>
+<ul>
+<li>Q 1% of 10,000 is 100</li>
+</ul>
+
+</ul>
+
+</ul>
+
+<li>&#955; = 0.1 hr-1</li>
+<ul>
+<li>= 10% of the nuclei decay per hour</li>
+<ul>
+<li>Therefore if you have 10,000 nuclei, after 1 hour you have 9,000 nuclei</li>
+<ul>
+<li>10% of 10,000 is 1000</li>
+</ul>
+
+</ul>
+
+</ul>
+
+<li>&#955;B decays faster and has a shorter half-life than &#955;A</li>
+</ul>
+      </div>
+    </div>
+
+    <div class="section" id="s16">
+      <div class="section-header">
+        <div class="section-num">16</div>
+        <h2>Lambda</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Lambda (&#955;):</p>
+<ul>
+<li>You usually don't know what l is but you usually know the radionuclide</li>
+<li>&#955; = 0.693 / T1/2</li>
+<ul>
+<li>T1/2 is the Half-Life of the radionuclide you are dealing with</li>
+</ul>
+
+<li>Therefore DR = &#955;N</li>
+<ul>
+<li>= (0.693 / T1/2)(N)</li>
+</ul>
+
+</ul>
+<p>Let's work a Decay Rate problem but this time we don't know what the Decay Rate is</p>
+<ul>
+<li>A source of Tc-99m contain 2.5 X 10<sup>12</sup> Nuclei. Find the Decay Rate (dpm) and activity (mCi).</li>
+<ul>
+<li>DR = &#955;N</li>
+<ul>
+<li>&#955; = 0.693 / (6 hr)(60 min/hr) = 1.925 X 10<sup>-3</sup> min<sup>-1</sup></li>
+<ul>
+<li>You must multiply 6 hr by 60 minutes to convert hours to minutes</li>
+</ul>
+
+</ul>
+
+<li>DR = (1.925 X 10<sup>-3</sup> min<sup>-1</sup>)(2.5 X 10<sup>12</sup> Nuclei)</li>
+<ul>
+<li>= 4.8 X 10<sup>9</sup> dpm</li>
+</ul>
+
+<li>Activity =</li>
+<ul>
+<li><img src="data:image/gif;base64,R0lGODdh1QArAPQAAP///wAAAF9fX6KiotTU1BwcHC0tLYGBgcPDw05OTmhoaOnp6UxMTPDw8FpaWtbW1tvb21hYWHR0dLq6unFxcUpKSp2dnZGRkXl5ebW1tW5ubgAAAAAAAAAAAAAAAAAAACwAAAAA1QArAAAF/yAgjmRpnmiqrmzrvnAsz3Rt33iu73zv/8CgcEgUBo7FpHLJdAVGz6YUEIUdo9WpllTNbonIV5iK9H6b3bPSnDKz1cw0HAx9lrPu63x6fe93eHZ2UCp+f3QnY4c0XYIicolLiiV9N5OPl4+FizZyWFxtkm9jhoV6lI6UK6Wcm5pUr7GEsEmnqFysbW6zmKutNZ+0g7zCtEOpt3UlAiYEB4lepLnEOswlzrVlr5eVvYiZZN4kAwYkBAUE0Mnhq9p1go3el+Tm6L984ia2JvQA5+nqcCkzJWugsUEIT/T7d09KPBTdFBpAYA9itIcQQa0rltAPOYoAG0oSGClfiQMBEP8QJMkuIzVj27AEQ4FSJbQ+OHPq3Mmzp8+fQHWSyakv0IlzB8rpWgcOJjeNB1+OQKpUpJZMii4x7BcQqiE8JWNBerO1qlU0GEk1qwiA68ZeTQ8OEzeWkBmGItyeXYNxKBu2eROgioiJlZ5J8LwaJAG4reC9kM9Mi+wkLuVal3NAyhyHM47NnosQDm1FKunTh0CjXv1nNOvXc0ZNhv1rH65A0y5Gc0U7s2pPpllGbemyd+iv+lqALRjKOGnkqlgsh6nuIrs7xJ1L5s1LQYMRD54RU62RWzDss7Uf4x5rAQMIACY4iC62OfWWjsKkVw8EOtQREVAgQXK8jPKfLMPMxN9OVezdB4AEFVhAYH1hPbXNhQsyyBxwsTgwAQAXYEDfcARaWAxHGfLRTSOn4CQCAw+MkIEG79ymS2LvcGhZijwW1+OPmgEp5Gc7DmlkECEAADsAAAAAAAAAAAA="></li>
+<li>= 2.17 mCi</li>
+</ul>
+
+<li>This radionuclide is decaying at a rate of 4.8 X 10<sup>9</sup> Nuclei every minute and it contains 2.17 mCi</li>
+</ul>
+
+</ul>
+
+<p>Let's try a couple Decay Rate problems on your own</p>
+<ol>
+<li>Source of Mo-99 contains 8.9 X 10<sup>14</sup> nuclei. Find DR (in min<sup>-1</sup>) and activity(Ci).</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>Source of Cs-137 contains 8.9 X 10<sup>14</sup> nuclei. Find decay rate (dpm) and activity (uCi).</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+</ol>
+<p>What do these Decay Rate problems tell you...</p>
+<ul>
+<li>2 RN can have the same amount of nuclei</li>
+<li>That does not mean that their DR or Activity will be the same</li>
+<li>A lot depends on the Half-Life:</li>
+<ul>
+<li>A RN with a quicker Half-Life:</li>
+<ul>
+<li>Has a quicker Decay Rate</li>
+<li>Has more activity</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>We can also find the number of Nuclei from activity</p>
+<p>&nbsp;&nbsp;</p>
+      </div>
+    </div>
+
+    <div class="section" id="s17">
+      <div class="section-header">
+        <div class="section-num">17</div>
+        <h2>Decaying Nuclei</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>&nbsp;Decaying Nuclei</p>
+<ul>
+<li>So we know that:</li>
+<ul>
+<li>All radionuclides have a certain number of nuclei</li>
+<li>Those nuclei decay</li>
+<li>We need to find out how many nuclei we have after a certain amount of time</li>
+</ul>
+
+<li>Lets define a couple of variables:</li>
+<ul>
+<li>No - total number of nuclei at starting time (t=0)</li>
+<li>N - number of nuclei remaining at any time (t)</li>
+</ul>
+
+<li>Fraction remaining of the number of nuclei:</li>
+<ul>
+<li>N / No</li>
+</ul>
+
+</ul>
+<p>Formula to decay nuclei (decay equation):</p>
+<ul>
+<li>N = No e-&#955;t</li>
+<ul>
+<li>N - number of nuclei remaining at any time (t)</li>
+<ul>
+<li>This what we are looking for</li>
+</ul>
+
+<li>No - total number of nuclei at starting time (t=0)</li>
+<li>e - Euler's Constant (2.718)</li>
+<li>&#955; = 0.693 / T<sub>1/2</sub></li>
+<li>t - time that the nuclei decayed</li>
+</ul>
+
+<li>This formula gives the number of nuclei remaining after time 0</li>
+<ul>
+<li>e<sup>-&#955;t</sup> is the post decay factor</li>
+<ul>
+<li>Decay Factors have no units</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Decay Factor (DF) Problems:</p>
+<ul>
+<li>Find the Decay Factor for I-125 at t = 10 days.</li>
+<li>Post Decay Factor = e<sup>-&#955;t</sup></li>
+<li>&#955; = 0.693 / 60 days = 0.01155 dy<sup>-1</sup></li>
+<li>DF = e<sup>-(0.01155 dy-1)(10days)</sup> = 0.88</li>
+<li>Therefore there is about 88% of I-125 remaining after 10 days</li>
+<li>Note to Remember:</li>
+<ul>
+<li>Always make sure your units match up</li>
+<ul>
+<li>In the above problem dy<sup>-1</sup>cancelled out days</li>
+<li>DF has no units, they should always cancel out</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Decay Factor (DF) Problems:</p>
+<ol>
+<li>Find the DF for I-123 for t = 3 days.</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>Find the DF for Tc-99m after 24 hours of decaying. Answer</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+</ol>
+<p>Now, what if you know the decay factor for a radionuclide...</p>
+      </div>
+    </div>
+
+    <div class="section" id="s18">
+      <div class="section-header">
+        <div class="section-num">18</div>
+        <h2>Known Decay Factor</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>When performing a Decay Factor Problem it is common to know the Decay Factor</p>
+<ul>
+<li>The 1 hour decay factor of <sup>99m</sup>Tc is 0.8909</li>
+<li>If you have 20 mCi of <sup>99m</sup>Tc, how much remains after 1 hr?</li>
+<ul>
+<li>20 mCi * 0.8909 = 17.8mCi</li>
+</ul>
+
+<li>How much remains after 2 hours?</li>
+<ul>
+<li>You can do 1 of 2 things:</li>
+<ul>
+<li>You can decay 20 mCi twice</li>
+<ul>
+<li>20 * 0.8909 = 17.8 mCi * 0.8909 = 15.8 mCi</li>
+</ul>
+
+<li>You can raise the DF to the number of hours that have elapsed</li>
+<ul>
+<li>.8909<sup>2</sup> = .793 * 20 mCi = 15.8 mCi</li>
+</ul>
+
+</ul>
+
+</ul>
+
+</ul>
+<p>&nbsp;If you have 25 mCi of 99mTc. Calculate the amount of activity left after:</p>
+<ul>
+<li>A) 3 hours</li>
+<li>B) 6 hours</li>
+<li>C) 30 minutes</li>
+<li>D) 12 hours</li>
+</ul>
+<p><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answers</span></p>
+<p>So, what is this decay equation...</p>
+<p style="text-align:center"></p>
+      </div>
+    </div>
+
+    <div class="section" id="s19">
+      <div class="section-header">
+        <div class="section-num">19</div>
+        <h2>Decay Equation</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Decay equation:</p>
+<ul>
+<li>You may not always know the DF</li>
+<li>You may have to use the Decay Equation to decay activity</li>
+<li>Decay Equation: A = Ao e<sup>-&#955;t</sup></li>
+<ul>
+<li>A - Activity remaining at any time (t)</li>
+<li>Ao - Activity at starting time (t=0)</li>
+<li>e<sup>-&#955;t</sup> - Decay Factor</li>
+</ul>
+
+</ul>
+<p>How you decay activity using the decay equation?</p>
+<ul>
+<li>~ A = Ao e<sup>-&#955;t</sup></li>
+<ol>
+<li>Calculate your Decay Constant - &#955; = 0.693 / T<sub>1/2</sub></li>
+<li>Calculate your Decay Factor e<sup>-&#955;t</sup></li>
+<li>Multiply your decay factor by the original activity</li>
+<li>Your answer is your new activity that has decayed after time t</li>
+</ol>
+
+</ul>
+<p>Decay equation Problems:</p>
+<ul>
+<li>Determine the activity remaining after 8 hours if you started with 25 mCi of <sup>99m</sup>Tc.</li>
+<li>A = Ao e<sup>-&#955;t</sup></li>
+<ol>
+<li>&#955; = 0.693 / 6 hr = 0.1155 hr<sup>-1</sup></li>
+<li>Calculate your Decay Factor e<sup>-&#955;t</sup> = e<sup>-(0.1155hr-1)(8 hrs)</sup> = 0.40</li>
+<li>Multiply your decay factor by the original activity - 25 mCi * 0.4 = 10 mCi</li>
+<li>Your answer is your new activity that has decayed after time t</li>
+</ol>
+
+</ul>
+<p>10 mCi</p>
+<p>Decay equation Problems:</p>
+<ol>
+<li>If you have 5 mCi of Xe-133. How much do you have left after 27 hours?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>If you have a vial of Ga-67 that contains 10 mCi. How much activity do you have left after 24 hours?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>Your 99Mo/99mTc contains 2 Ci of 99Mo on arrival Saturday. How much activity remains when you elute the generator 48 hours later on Monday Morning?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s20">
+      <div class="section-header">
+        <div class="section-num">20</div>
+        <h2>Common Sense Problems</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>When working with decay equation problems use common sense:</p>
+<ul>
+<li>You've got to think about the problem</li>
+<li>If you use 'Common Sense' and come close to the actual answer then your actual answer is probably correct</li>
+<li>Lets look at the Mo-99 problem</li>
+<ul>
+<li>You are decaying 2 Ci's of Mo-66 for 48 hours</li>
+<li>Moly's T<sub>1/2</sub> is 67 hours</li>
+<li>After 67 hrs you can expect to have 1 Ci</li>
+<li>We aren't quite decaying quite to 1 T<sub>1/2</sub></li>
+<li>You can expect to have a little more than 1/2 of the activity remaining</li>
+<li>We ended up with 1.2 Ci remaining</li>
+</ul>
+
+</ul>
+<p>Lets work a couple of &quot;Common Sense&quot; Problems:</p>
+<ul>
+<li>You have 10 mCi of <sup>99m</sup>Tc at 8 am. How much do you have at 12 noon</li>
+<li>You set this problem up as 4 hours of decay</li>
+<li>Common sense tells me we will have a little more than half remaining</li>
+<ul>
+<li>Since we aren't quite going to 1 T<sub>1/2</sub></li>
+<li>At exactly 6 hours of decay (1 T<sub>1/2</sub>) we would have 5mCi left</li>
+</ul>
+
+<li>I would guess 6 mCi remain at 12 noon</li>
+<li>A = Ao e<sup>-&#955;t</sup></li>
+<ul>
+<li>= 10 mCi e<sup>-(.693/6hr)(4 hrs)</sup> = 6.3 mCi</li>
+</ul>
+
+<li>Common Sense got us pretty close</li>
+</ul>
+
+<p>Work the problems below by first using 'Common Sense' then compare that answer to the answer when you worked it out:</p>
+<ol>
+<li>You have a unit dose of <sup>99m</sup>Tc-HDP which contains 30 mCi at 8am. How much activity will you have left for a 10:00am injection?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>60 mCi of Tl-201 arrived in your department Friday at 1800. How much activity is left at 0600 Monday morning?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>You are using a 200 mCi Cs-137 source that was assayed in 1999 to Calibrate your Dose Calibrator. How much activity is left in 2003?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+</ol>
+<p>Decay can occur before time 0 or after time 0</p>
+      </div>
+    </div>
+
+    <div class="section" id="s21">
+      <div class="section-header">
+        <div class="section-num">21</div>
+        <h2>Post Decay vs. Pre Decay</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Post Decay vs. Pre Decay...</p>
+<ul>
+<li>So far we have figured out how to decay activity and determine what it remaining after time=0</li>
+<ul>
+<li>This is our Post Decay</li>
+</ul>
+
+<li>We can also figure out how much activity you had before time=0</li>
+<ul>
+<li>This is our Pre Decay</li>
+</ul>
+
+<li>Regardless of which one we use you have to use a Decay Factor</li>
+</ul>
+
+<p>Lets go from Pre to Post and Post to Pre Decay....</p>
+<ul>
+<li>You can easily go from Post to Pre Decay Factor:</li>
+<ul>
+<li>1/Post DF = Pre-Decay Factor</li>
+<li>A Post DF of 0.8909 = 1.122 Pre-Decay Factor</li>
+<ul>
+<li>1/0.8909 = 1.122</li>
+<li>The 1 hr post DF for <sup>99m</sup>Tc is 0.8909</li>
+<li>The 1 hr pre DF for <sup>99m</sup>Tc is 1.122</li>
+</ul>
+
+</ul>
+
+<li>You can easily go from Pre to Post Decay Factor:</li>
+<ul>
+<li>1/Pre DF = Post-Decay Factor</li>
+<li>A Pre DF of 1.01 = 0.989</li>
+<ul>
+<li>1/1.01 = 0.989</li>
+<li>The 1 hr pre DF for <sup>99</sup>Mo is 1.01</li>
+<li>The 1 hr post DF for <sup>99</sup>Mo is 0.989</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Lets compare the Decay Factors of Post Decay, Pre Decay, and time=0......</p>
+<p><img src="data:image/gif;base64,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" width="755" height="342" alt="Pre and Post Decay graphic"></p>
+<p>Why are the decay factors like this:</p>
+<ul>
+<li>Remember you are multiplying the DF by the activity:</li>
+<ul>
+<li>Post Decay - Will be &lt; 1 b/c the activity is decreasing</li>
+<li>Time = 0 - Will be = 1 b/c the activity hasn't decayed</li>
+<li>Pre Decay - Will be &gt; 1 b/c the activity is greater than time = 0</li>
+</ul>
+
+</ul>
+
+<p>So, what is the Pre-decay factor...</p>
+<ul>
+<li>First look at the Post DF again - e<sup>-&#955;t</sup></li>
+<li>Now look at the Pre DF - e<sup>&#955;t</sup></li>
+<li>What's different b/w the 2 DF</li>
+<ul>
+<li>Pre Decay is + and Post Decay is -</li>
+</ul>
+
+<li>So then the Pre Decay Equation is</li>
+<ul>
+<li>Ao = A e<sup>&#955;t</sup></li>
+</ul>
+
+</ul>
+
+<p>Let's look at a Pre-decay factor problem</p>
+<ul>
+<li>A vial of <sup>131</sup>I arrives at noon on Monday. It's calibrated (assayed) at 5 mCi noon on Tuesday (assay date). What is the activity on arrival?</li>
+<ul>
+<li>Pre Decay Equation is - Ao = A e<sup>&#955;t</sup></li>
+<li>What can we say about this problem</li>
+<ul>
+<li>We have 5 mCi at noon on Tuesday</li>
+<li>We want to know how much we had at noon on Monday</li>
+<ul>
+<li>24 hrs earlier (1 day earlier)</li>
+<li>I used 1 day to keep the units equal with the 8 day Half Life of <sup>131</sup>I</li>
+</ul>
+
+</ul>
+
+<li>Ao = 5 mCi e<sup>(.693/8dy)(1 day)</sup></li>
+<ul>
+<li>= (5 mCi) (1.09)</li>
+<li>= 5.45 mCi</li>
+</ul>
+
+</ul>
+
+</ul>
+
+<p>There's more common sense stuff with Pre-Decay Factor....</p>
+<ul>
+<li>How can you check yourself with Pre-Decay</li>
+<ul>
+<li>Look at the problem below and pretend you are working on it</li>
+<ul>
+<li>Make sure your pre-DF is &gt;1</li>
+<ul>
+<li>It is at 1.09</li>
+</ul>
+
+<li>Your end result should be greater than what you started with</li>
+<ul>
+<li>It is at 5.45 mCi</li>
+</ul>
+
+<li>Don't forget to think about the problem</li>
+<ul>
+<li>If you were Pre-Decaying for 8 days your original activity would double</li>
+<ul>
+<li>Your answer would be 10 mCi</li>
+</ul>
+
+<li>You are Pre-Decaying for 1 day so your answer would increase just a little</li>
+</ul>
+
+</ul>
+
+<li>Ao = 5 mCi e<sup>(.693/8dy)(1 day)</sup></li>
+<ul>
+<li>= (5 mCi) (1.09)</li>
+<li>= 5.45 mCi</li>
+</ul>
+
+</ul>
+
+</ul>
+
+<p>Try a couple more Pre-Decay problems....</p>
+<ol>
+<li>A <sup>99</sup>Mo/<sup>99m</sup>Tc arrives at 1500 on Saturday. It's calibrated at 400 mCi at noon the following Monday. What's the activity on Arrival?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li>A 20 mCi unit dose of <sup>99m</sup>Tc-HDP is needed at 1100 hours for a bone dose injection. The dose is being prepared at 0700. How many mCi must be placed in the syringe?</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+<li><sup>123</sup>I capsules are prepared 24 hours prior to the calibration time. How many mCi are required to provide 200 mCi at calibration time.</li>
+<ul>
+<li><span class="problem-answer-btn">', BELOW, RIGHT, BORDER, 1, BGCOLOR, '#2C71FF', FGCOLOR, '#ffffff', WIDTH, 200, TEXTSIZE, 2, TEXTCOLOR, '#000000', CAPCOLOR, '#FFFFFF');" onmouseout="nd(0);" onblur="nd(0);">Answer</span></li>
+</ul>
+
+</ol>
+<p>You can also Decay RN by Decay Charts...</p>
+      </div>
+    </div>
+
+    <div class="section" id="s22">
+      <div class="section-header">
+        <div class="section-num">22</div>
+        <h2>Decay Chart</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Decay Factor Chart:</p>
+<ul>
+<li>Gives you the DF of a particular Radionuclide</li>
+<li>The steps to find a DF can be applied to the chart on the next slide</li>
+<ol>
+<li>Calculate t / T<sub>1/2</sub></li>
+<ul>
+<li>t = time elapsed</li>
+<li>T<sub>1/2</sub> = Half-Life of the radionuclide</li>
+</ul>
+
+<li>Calculate your answer to 3 significant figures (ex. 0.012)</li>
+<li>Take the first 2 significant figures (0.01) and find them on the left side</li>
+<li>Take the third significant figure (0.2) and find it on the top of the chart</li>
+<li>Come across from the left figure and down from the top figure</li>
+<li>This is your DF</li>
+</ol>
+
+</ul>
+<table class="bannerstyletable" border="1" style="width: 50%">
+<caption>Decay Factor Chart</caption>
+<tr>
+<td style="width: 36px">
+
+</td>
+<td style="width: 52px">
+<p><strong>0.000</strong></p>
+</td>
+<td style="width: 94px">
+<p><strong>0.001</strong></p>
+</td>
+<td style="width: 10px">
+<p><strong><span style="background-color: #0aa0f7">0.002</span></strong></p>
+</td>
+<td style="width: 48px">
+<p><strong>0.003</strong></p>
+</td>
+<td style="width: 48px">
+<p><strong>0.004</strong></p>
+</td>
+<td style="width: 48px">
+<p><strong>0.005</strong></p>
+</td>
+<td style="width: 48px">
+<p><strong>0.006</strong></p>
+</td>
+<td style="width: 48px">
+<p><strong>0.007</strong></p>
+</td>
+<td style="width: 92px">
+<p><strong>0.008</strong></p>
+</td>
+<td style="width: 52px">
+<p><strong>0.009</strong></p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+
+</td>
+<td style="width: 52px">
+<p>1.0000</p>
+</td>
+<td style="width: 94px">
+<p>.99931</p>
+</td>
+<td style="width: 10px">
+<p>.99861</p>
+</td>
+<td style="width: 48px">
+<p>.99792</p>
+</td>
+<td style="width: 48px">
+<p>.99723</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.99654</p>
+</td>
+<td style="width: 48px">
+<p>.99585</p>
+</td>
+<td style="width: 48px">
+<p>.99516</p>
+</td>
+<td style="width: 92px">
+<p>.99447</p>
+</td>
+<td style="width: 52px">
+<p>.99378</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong><span style="background-color: #ff0000">0.01</span></strong></p>
+</td>
+<td style="width: 52px">
+<p>.99309</p>
+</td>
+<td style="width: 94px">
+<p>.99240</p>
+</td>
+<td style="width: 10px">
+<p><span style="background-color: #ffff66">.99172</span></p>
+</td>
+<td style="width: 48px">
+<p>.99103</p>
+</td>
+<td style="width: 48px">
+<p>.99034</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.98966</p>
+</td>
+<td style="width: 48px">
+<p>.98897</p>
+</td>
+<td style="width: 48px">
+<p>.98829</p>
+</td>
+<td style="width: 92px">
+<p>.98760</p>
+</td>
+<td style="width: 52px">
+<p>.98692</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.02</strong></p>
+</td>
+<td style="width: 52px">
+<p>.98263</p>
+</td>
+<td style="width: 94px">
+<p>.98555</p>
+</td>
+<td style="width: 10px">
+<p>.98487</p>
+</td>
+<td style="width: 48px">
+<p>.98481</p>
+</td>
+<td style="width: 48px">
+<p>.98350</p>
+</td>
+<td style="width: 48px">
+<p>.98282&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.98214</p>
+</td>
+<td style="width: 48px">
+<p>.98146</p>
+</td>
+<td style="width: 92px">
+<p>.98078</p>
+</td>
+<td style="width: 52px">
+<p>.98010</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.03</strong></p>
+</td>
+<td style="width: 52px">
+<p>.97942</p>
+</td>
+<td style="width: 94px">
+<p>.97874</p>
+</td>
+<td style="width: 10px">
+<p>.97806</p>
+</td>
+<td style="width: 48px">
+<p>.97739</p>
+</td>
+<td style="width: 48px">
+<p>.97671</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.97603</p>
+</td>
+<td style="width: 48px">
+<p>.97536</p>
+</td>
+<td style="width: 48px">
+<p>.97468</p>
+</td>
+<td style="width: 92px">
+<p>.97400</p>
+</td>
+<td style="width: 52px">
+<p>.97333</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.04</strong></p>
+</td>
+<td style="width: 52px">
+<p>&nbsp;.97265</p>
+</td>
+<td style="width: 94px">
+<p>&nbsp;.97198</p>
+</td>
+<td style="width: 10px">
+<p>&nbsp;.97131</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.97063</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.96996</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.96929</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.96862</p>
+</td>
+<td style="width: 48px">
+<p>.96795&nbsp;</p>
+</td>
+<td style="width: 92px">
+
+<p>&nbsp;.96728</p>
+
+</td>
+<td style="width: 52px">
+<p>&nbsp;.96661</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.05</strong></p>
+</td>
+<td style="width: 52px">
+<p>.96594</p>
+</td>
+<td style="width: 94px">
+<p>&nbsp;.96527</p>
+</td>
+<td style="width: 10px">
+<p>.96460&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.96393&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.96326&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.96259</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.96193</p>
+</td>
+<td style="width: 48px">
+<p>.96126&nbsp;</p>
+</td>
+<td style="width: 92px">
+<p>.96059&nbsp;</p>
+</td>
+<td style="width: 52px">
+<p>&nbsp;.95993</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.06</strong></p>
+</td>
+<td style="width: 52px">
+<p>.95926</p>
+</td>
+<td style="width: 94px">
+<p>&nbsp;.95860</p>
+</td>
+<td style="width: 10px">
+<p>&nbsp;.95794</p>
+</td>
+<td style="width: 48px">
+<p>.95727&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.95661&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.95595</p>
+</td>
+<td style="width: 48px">
+<p>.95528&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.95462&nbsp;</p>
+</td>
+<td style="width: 92px">
+<p>.95396&nbsp;</p>
+</td>
+<td style="width: 52px">
+<p>&nbsp;.95330</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.07</strong></p>
+</td>
+<td style="width: 52px">
+<p>.95254</p>
+</td>
+<td style="width: 94px">
+<p>&nbsp;.95198</p>
+</td>
+<td style="width: 10px">
+<p>&nbsp;.95132</p>
+</td>
+<td style="width: 48px">
+<p>.95066&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.9500&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.94934</p>
+</td>
+<td style="width: 48px">
+<p>.94868&nbsp;</p>
+</td>
+<td style="width: 48px">
+<p>.94803&nbsp;</p>
+</td>
+<td style="width: 92px">
+<p>.94737&nbsp;</p>
+</td>
+<td style="width: 52px">
+<p>&nbsp;.94671</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.08</strong></p>
+</td>
+<td style="width: 52px">
+<p>.94606</p>
+</td>
+<td style="width: 94px">
+<p>.94540</p>
+</td>
+<td style="width: 10px">
+<p>.94475</p>
+</td>
+<td style="width: 48px">
+<p>.94409</p>
+</td>
+<td style="width: 48px">
+<p>.94344</p>
+</td>
+<td style="width: 48px">
+<p>.94278</p>
+</td>
+<td style="width: 48px">
+<p>.94213</p>
+</td>
+<td style="width: 48px">
+<p>.94145</p>
+</td>
+<td style="width: 92px">
+<p>.94083</p>
+</td>
+<td style="width: 52px">
+<p>.94017</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.09</strong></p>
+</td>
+<td style="width: 52px">
+<p>.93952</p>
+</td>
+<td style="width: 94px">
+<p>.93887</p>
+</td>
+<td style="width: 10px">
+<p>.93822</p>
+</td>
+<td style="width: 48px">
+<p>.93787</p>
+</td>
+<td style="width: 48px">
+<p>.93692</p>
+</td>
+<td style="width: 48px">
+<p>.93627</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.93562</p>
+</td>
+<td style="width: 48px">
+<p>&nbsp;.93498</p>
+</td>
+<td style="width: 92px">
+<p>&nbsp;.93433</p>
+</td>
+<td style="width: 52px">
+<p>.93368</p>
+</td>
+</tr>
+<tr>
+<td style="width: 36px">
+<p><strong>0.10</strong></p>
+</td>
+<td style="width: 52px">
+<p>.93303</p>
+</td>
+<td style="width: 94px">
+<p>.93239</p>
+</td>
+<td style="width: 10px">
+<p>.93174</p>
+</td>
+<td style="width: 48px">
+<p>.93109</p>
+</td>
+<td style="width: 48px">
+<p>.93045</p>
+</td>
+<td style="width: 48px">
+<p>.92980</p>
+</td>
+<td style="width: 48px">
+<p>.91916</p>
+</td>
+<td style="width: 48px">
+<p>.92852</p>
+</td>
+<td style="width: 92px">
+<p>.92787</p>
+</td>
+</tr>
+</table>
+<ol>
+<li>Calculate t / T<sub>1/2</sub></li>
+<li>Calculate your answer to 3 significant figures (ex. 0.012)</li>
+<li>Take the first 2 significant figures (0.01 - in red) and find them on the left side</li>
+<li>Take the third significant figure (0. 2 - in blue) and find it on the top of the chart</li>
+<li>Come across from the left figure and down from the top figure</li>
+<li>This is your DF (in yellow)</li>
+</ol>
+
+<p>Decay Factor Chart Problem:</p>
+<ul>
+<li>Calculate the Decay Factor for 3 hours of decay of <sup>99</sup>Mo.</li>
+<ol>
+<li>t / T<sub>1/2</sub> = 3 / 66 = 0.045</li>
+<li>0.045</li>
+<li>0.04</li>
+<li>0.5</li>
+<li>Come across from the left figure and down from the top figure</li>
+<li>0.96929</li>
+</ol>
+
+</ul>
+<p>Let's move on to how long it takes to decay</p>
+      </div>
+    </div>
+
+    <div class="section" id="s23">
+      <div class="section-header">
+        <div class="section-num">23</div>
+        <h2>Concentration</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Concentration</p>
+<ul>
+<li>We've talked a little about concentration already but let's review and see what else can be done:</li>
+<ul>
+<li>Specific Concentration of a radiopharmaceutical is the activity per unit volume</li>
+<ul>
+<li>mCi / ml - most common</li>
+<li>Ci / l</li>
+<li>uCi / ml</li>
+</ul>
+
+</ul>
+
+<li>Why do you need to know the concentration?</li>
+<ul>
+<li>When you have a RP kit it will be in a vial</li>
+<ul>
+<li>The vial could have 10ml of volume</li>
+</ul>
+
+<li>You need to know how much volume to draw out of the vial</li>
+</ul>
+
+</ul>
+
+<p>Specific Concentration:</p>
+<ul>
+<li>A 10 ml vial contains 100 mCi of <sup>99m</sup>Tc. What is its specific concentration?</li>
+<ul>
+<li>100 mCi / 10 ml = 10 mCi / ml</li>
+<ul>
+<li>You have 10 mCi of <sup>99m</sup>Tc for every 1 ml in the vial</li>
+</ul>
+
+</ul>
+
+<li>A unit dose of <sup>201</sup>Tl contains 5 mCi in 3 ml syringe. What is the concentration of the unit dose?</li>
+<ul>
+<li>5 mCi / 3 ml = 1.67 mCi / ml</li>
+</ul>
+
+</ul>
+
+<p>You may have to decay a concentration...</p>
+<ul>
+<li>If you have to decay a concentration you can decay it before or after you calculate the concentration</li>
+<li>A 10 ml vial contains 100 mCi of <sup>99m</sup>Tc-HDP at 0700. What is it's specific concentration at 1100?</li>
+<ul>
+<li>100 mCi / 10 ml = 10 mCi / ml</li>
+<ul>
+<li>10 mCi / ml <img src="data:image/gif;base64,R0lGODdhHgAWAPQAAP///wAAAFRUVEFBQVNTU9vb23FxcdPT03Nzc93d3bq6uh4eHjk5Oaenp5aWlt7e3rW1tUdHRw8PD01NTd/f3+Dg4Hl5eRsbGzo6Orm5uaysrC4uLgAAAAAAAAAAAAAAACwAAAAAHgAWAAAFViAgjmRpnmiqrmzrvnBpKGUQl8dS3yUDjYEgb9SIkGzDkaQiQq4E0Ch05JhYmkkR4kG5YJOEhAijsTljg8IosxFmW8FzFikfOus3Oj7vfn/9QIGAcYAhADsAAAAAAAAAAAA=">
+</li>
+<li>10 mCi / ml e<sup>-(.693/6hr)(4 hrs)</sup> = 6.3 mCi / ml</li>
+</ul>
+
+<li>100 mCi <img src="data:image/gif;base64,R0lGODdhHgAWAPQAAP///wAAAFRUVEFBQVNTU9vb23FxcdPT03Nzc93d3bq6uh4eHjk5Oaenp5aWlt7e3rW1tUdHRw8PD01NTd/f3+Dg4Hl5eRsbGzo6Orm5uaysrC4uLgAAAAAAAAAAAAAAACwAAAAAHgAWAAAFViAgjmRpnmiqrmzrvnBpKGUQl8dS3yUDjYEgb9SIkGzDkaQiQq4E0Ch05JhYmkkR4kG5YJOEhAijsTljg8IosxFmW8FzFikfOus3Oj7vfn/9QIGAcYAhADsAAAAAAAAAAAA=">
+</li>
+<ul>
+<li>100 mCi e<sup>-(.693/6hr)(4 hrs)</sup> = 63.0 mCi</li>
+<li>= 63.0 mCi / 10 ml = 6.3 mCi / ml</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Specific Concentration Problems:</p>
+<p>1. Your Monday elution from a <sup>99</sup>Mo/<sup>99m</sup>Tc generator produced 1354 mCi in a 20 ml vial. What is the concentration of your elution?</p>
+<ul>
+<li></li>
+</ul>
+<p>2. A unit dose of <sup>99m</sup>Tc-HDP contains 35 mCi at 0600 when it is assayed in your department. Will you still have enough activity at 1100 to do a bone scan injection?</p>
+<ul>
+<li></li>
+</ul>
+<p>3. A vial of <sup>18</sup>F-FDG is delivered to your department at 0620. What is your concentration at 0810 if it was assayed at 85 mCi on delivery in 5 ml?</p>
+<ul>
+<li></li>
+</ul>
+
+<p>Now we can move on to Volume....</p>
+      </div>
+    </div>
+
+    <div class="section" id="s24">
+      <div class="section-header">
+        <div class="section-num">24</div>
+        <h2>Volume Calculations</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>Volume</p>
+<p>We've talked a little about volume already but let's review and see what else can be done:</p>
+<ul>
+<li>Specific Concentration of a radiopharmaceutical is the activity per unit volume</li>
+<li>mCi / ml - most common</li>
+<li>Conc = Act / volume</li>
+<li>Let's rework this equation to find volume:</li>
+<li>Volume = Act / conc</li>
+<li>Vol =<img src="data:image/gif;base64,R0lGODdhPAAgAPAAAP///wAAACwAAAAAPAAgAAACooSPqcvtD6OctNqLT9gm5N9wHeeBJlAi6QmRntgpG8yG76s5ay3f8b/Y8RKloio0RKKASyIzmWvior8pNFoUzlK0q/cLDte25LL5jE6jxey2+w1nC92zp51RZ8Hqq7nypBU04YfnQ6OVV2W4Q1iIYtXIpWLoNOjThClzNPLI1CgotQkKZJRp2lIliiVaykilZNS3OSUZWntXmdWzd9vKVbZQAAA7AAAAAAAAAAAA">
+</li>
+</ul>
+
+<ul>
+<li>= ml</li>
+<li>This helps us find what volume of activity we need when we know the concentration</li>
+<li>Volume you need =</li>
+<ul>
+<li><img src="data:image/gif;base64,R0lGODdheAAnAPAAAP///wAAACwAAAAAeAAnAAAC/4SPqcvtD6OctNqLs968+w+G4rgEh9mggEq2q8hKsQtTgcneqK6vKr+7+U4xocF4RCoRyCQT5+z5Zoyg83U8XbE/ojaxHGahWXC5K36RsRA0+/vuus/VctxO3dHxXPsj5wcH2BeoV7L3NaclZIjXSHV4lQenJmgGWemH1uRF9uOmmLK1Wfm5mLlVMihmNcO4CVoa0aNUm5pjxfSnIJWEMxn36phKY7NbjFyDuZbc3MEJhuk8TV1tfY2drW0B1O39DR4uPk5ebv69na6+zt7u/g4fvwEt3y5dr32Pn63P39T7ClcRU0QIvjmDS43BXiCM5GIDJZcrWKdCRUz08FcgD1WudGVqVAeiR4uE5sihxJGXGVYbVRJKhJLlHZgPG7rkg0iUSYw3HwEK0g8DKUkVY97ywoXZyZppQnH89w/pFFHRBKYZNjXqk6D29nXl6rUZvbBk3RUAADsAAAAAAAAAAAA=">
+</li>
+</ul>
+
+</ul>
+
+<p>Lets calculate Volume....</p>
+<p>Volume:</p>
+<ul>
+<li>You need 200 mCi of <sup>99m</sup>Tc to make up a HDP kit. What volume is needed to be drawn up if you have 1200 mCi in 8 ml?</li>
+<ul>
+<li>First calculate the concentration</li>
+<ul>
+<li>1200 mCi / 8 ml = 150 mCi/ml</li>
+</ul>
+
+<li>Now Calculate the volume needed</li>
+<ul>
+<li><img src="data:image/gif;base64,R0lGODdhUQAgAPAAAP///wAAACwAAAAAUQAgAAAC3oSPqcvtD6OctNqLs3ahox58HgUa4UYe5wmsqjS2HotOronnD63X1d3ShWZDGk8W80FYTKGpGOwpjkpGM9ckOq3ViPEVDd6+3C4ncc1iP1Opmb2Oy9Zk+nsBipVUM+wxz3cnOEhYaHh4kae4yNjo+AgZyYhIWWl5iZmpSUml9KeX5DVC1TkVusOTCrbE1LfqZaEKF3aGhmeTKFIHpfX6lLTCK/tzu6V1VUZ7bBtblgUVVroLXUdcrBZVzWwsVbrj/DI2C7YrtwVTHC1e7QK0/uqNBprqGmwKujrWqrhQAAA7AAAAAAAAAAAA">
+</li>
+<ul>
+<li>1.3 ml of <sup>99m</sup>Tc are needed to be drawn up to give you 200 mCi</li>
+<li>That makes sense - If your concentration is about 150 mCi/ml then you would need a little more than 1 ml's drawn up</li>
+</ul>
+
+</ul>
+
+</ul>
+
+</ul>
+<p>Volume can be decayed as well...</p>
+<ul>
+<li>Volume = Act / conc</li>
+<li>If you know how much activity you want and its concentration at time = 0 you can find the volume. But, you want to know how much volume you need a certain time later.</li>
+<ul>
+<li>First calculate the concentration</li>
+<li>Then decay that concentration</li>
+<li>Now find the volume</li>
+</ul>
+
+</ul>
+<p>Volume Calculation Problem</p>
+<ul>
+<li>You have a vial with 500 uCi of <sup>131</sup>I in a volume of 5 ml. You need a 100 mCi of <sup>131</sup>I seven days later. How many ml's do you need to draw up?</li>
+<ul>
+<li>Conc = 500 mCi / 5 ml = 100 mCi/ml</li>
+<li>Conc 7 days later = 100 mCi/ml e-<sup>(.693/8 days)(7 days)</sup> = 54.5 mCi/ml</li>
+<li>Volume needed to be drawn -</li>
+<ul>
+<li><img src="data:image/gif;base64,R0lGODdhUwAgAPAAAP///wAAACwAAAAAUwAgAAAC34SPqcvtD6OctNqLs74hhY98nSQa44aBxzmykAqUJ1rNbrw+s0lrdo7jxW7BUKlXCwFdndvOg0wCg87pcxolKYVVYVFxzTZ+3KWJaBZrrd7muUh2q3WwoU0l24lY4bn/DxgoOMixZ3iImKi4yNiYSAgZKTlJWWl5iSV2lGnU54G34NlJcVW3FQEjc4oqpRQmylk6Afup97VSlxq7SdXkC8WRxtAC5xWKBZIMHIx2XGy8DPf7RTtmxwvWxomcZpvhbd0ba9wFXj0e3iJHzUNchoNWja19xjeNm0rknm+4UAAAOwAAAAAAAAAAAA==">
+</li>
+<li>= 1.82 ml</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Try some volume problems now...</p>
+<ol>
+<li>A 20 mCi dose of Na<sup>99m</sup>TcO<sub>4</sub> is needed for a Thyroid Scan. Your elution contains 854 mCi in a volume of 20 ml.What volume is needed to be drawn up?</li>
+<ul>
+<li></li>
+</ul>
+
+<li>A <sup>67</sup>Ga-Citrate vial contains 20 mCi in 10 ml on July 22, 2003. What volume needs to be drawn on July 24, 2003 to give you 2 mCi?</li>
+<ul>
+<li></li>
+</ul>
+
+<li>You elute your generator at 0615 on Monday morning. Filling a 20 cc vial you get 1745 mCi. You get called back in for a Lung Scan. You are making up a DTPA kit at 1845. What volume needs to be drawn up to give you 30 mCi?</li>
+<ul>
+<li></li>
+</ul>
+
+</ol>
+      </div>
+    </div>
+
+    <div class="section" id="s25">
+      <div class="section-header">
+        <div class="section-num">25</div>
+        <h2>Total Activity for Multiple Doses</h2>
+      </div>
+      <div class="section-body sc-content">
+<p>You have to calculate total activity needed to provide specific number of kits or doses....</p>
+<ul>
+<li>When you make your kits up in the morning it is common to make them for multiple doses</li>
+<li>You need to be able to calculate the total amount of Na99mTcO4 that you put in your kit for multiple doses</li>
+<ul>
+<li>You must account for decay</li>
+</ul>
+
+<li>How is this done:</li>
+<ul>
+<li>Determine what dose you need</li>
+<li>Each dose is multiplied by a precalibration factor</li>
+<li>Add up the new dose amounts to get a total</li>
+</ul>
+
+<li>In reality, we use a little more than the total activity needed</li>
+<ul>
+<li>We have to factor in:</li>
+<ul>
+<li>Activity and volume errors</li>
+<li>Time adjustments</li>
+<li>Not all the activity can be gotten out of the vial</li>
+</ul>
+
+</ul>
+
+</ul>
+<p>Total Activity for kits Problem</p>
+<ul>
+<li>A <sup>99m</sup>Tc-HDP kit is being made up at 0700. A bone scan injection is required at 0800, 0900, 1000, and 1100. If each dose requires 20 mCi, How much activity should you make up the kit with?</li>
+</ul>
+<div class="sc-table-responsive"><table class="bannerstyletable" border="1" style="width: 50%">
+<tr>
+<td>
+<p style="text-align:center">Injection Time</p>
+</td>
+<td>
+<p style="text-align:center">Elapsed Time</p>
+</td>
+<td>
+<p style="text-align:center">Dose X Pre-Decay Factor</p>
+</td>
+<td>
+<p style="text-align:center">Activity Required</p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align:center">0800</p>
+</td>
+<td>
+<p style="text-align:center">1hr</p>
+</td>
+<td>
+<p style="text-align:center">20mCi x 1.12</p>
+</td>
+<td>
+<p style="text-align:center">22.4mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align:center">0900</p>
+</td>
+<td>
+<p style="text-align:center">2hr</p>
+</td>
+<td>
+<p style="text-align:center">20mCi x 1.25</p>
+<p style="text-align:center"></p>
+</td>
+<td>
+<p style="text-align:center">25.0mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align:center">1000</p>
+</td>
+<td>
+<p style="text-align:center">3hr</p>
+</td>
+<td>
+<p style="text-align:center">20mCi x 1.40</p>
+</td>
+<td>
+<p style="text-align:center">28mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align:center">1100</p>
+</td>
+<td>
+<p style="text-align:center">4hr</p>
+</td>
+<td>
+<p style="text-align:center">20mCi x 1.57</p>
+</td>
+<td>
+<p style="text-align:center">31.5mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p style="text-align:center"></p>
+</td>
+<td>
+<p style="text-align:center"></p>
+</td>
+<td>
+<p style="text-align:center">Total Activity Required</p>
+</td>
+<td>
+<p style="text-align:center">106.9mCi</p>
+</td>
+</tr>
+</table></div>
+<ul>
+<li>A 99mTc-DTPA kit is being made up at 0600. DTPA can be reconstituted from 3 - 160 mCi. Will the kit be able to handle the following doses? 1. 35 mCi for a V/Q scan at 0930 2. 35 mCi for a V/Q scan at 1030 3. 20 mCi for a Renal Scan at 1100 4. 25 mCi for a Brain Scan at 1300.</li>
+</ul>
+<div class="sc-table-responsive"><table class="bannerstyletable" border="1" style="width: 50%">
+<tr>
+<td>
+<p>Injection Time</p>
+</td>
+<td>
+<p>Elapsed Time</p>
+</td>
+<td>
+<p>Dose X Pre-Decay Factor</p>
+</td>
+<td>
+<p style="text-align:center">Activity Required</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>0930</p>
+</td>
+<td>
+<p>3.5hr</p>
+</td>
+<td>
+<p>35 mCi x 1.5</p>
+</td>
+<td>
+<p>52mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>1030</p>
+</td>
+<td>
+<p>4.5hr</p>
+</td>
+<td>
+<p>35mCi x 1.68</p>
+</td>
+<td>
+<p>59mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>1100</p>
+</td>
+<td>
+<p>5hr</p>
+</td>
+<td>
+<p>20mCi x 1.76</p>
+</td>
+<td>
+<p>35mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>1300</p>
+</td>
+<td>
+<p>7hr</p>
+</td>
+<td>
+<p>25mCi x 2.21</p>
+</td>
+<td>
+<p>55mCi</p>
+</td>
+</tr>
+<tr>
+<td>
+
+</td>
+<td>
+
+</td>
+<td>
+<p>Total Activity Required</p>
+</td>
+<td>
+<p>&nbsp;201mCi</p>
+</td>
+</tr>
+</table></div>
+
+<ul>
+<li>I've had enough so I know you have too!!! That's a lot of math but it will be well worth it!</li>
+</ul>
+      </div>
+    </div>
+    <div class="section" id="s26">
+      <div class="section-header">
+        <div class="section-num">26</div>
+        <h2>Glossary of Terms</h2>
+      </div>
+      <div class="section-body sc-content">
+        <dl class="glossary-grid">
+          <div class="glossary-card"><dt>Statistics (Nuclear Medicine)</dt><dd>The mathematical study of random processes such as radioactive decay. Used to describe and predict the behavior of radionuclide counting data.</dd></div>
+          <div class="glossary-card"><dt>Mean (x&#773;)</dt><dd>The arithmetic average of a set of values. Calculated by dividing the sum of all values by the number of values (x&#773; = &#931;x / N).</dd></div>
+          <div class="glossary-card"><dt>Mode</dt><dd>The value that occurs most often in a data set. In a perfectly symmetrical Bell Curve, mode = mean = median.</dd></div>
+          <div class="glossary-card"><dt>Median</dt><dd>The middle value in a ranked data set. When values are arranged in order, the median is the central value.</dd></div>
+          <div class="glossary-card"><dt>Bell Curve (Normal Distribution)</dt><dd>A symmetrical, bell-shaped curve where mean = mode = median. Radiation counting data, when plotted, approximates a Bell Curve.</dd></div>
+          <div class="glossary-card"><dt>Accuracy</dt><dd>How close a measurement is to the true value. Describes systematic errors. Example: 11,995 counts vs. 12,000 true counts is highly accurate.</dd></div>
+          <div class="glossary-card"><dt>Precision</dt><dd>The reproducibility or consistency of repeated measurements. A set of counts with low scatter around the mean is precise. Precision increases with more counts.</dd></div>
+          <div class="glossary-card"><dt>Poisson Distribution</dt><dd>A statistical model for random discrete events (like radioactive disintegrations). Radioactive decay follows Poisson distribution. Approximates a Bell Curve when plotted.</dd></div>
+          <div class="glossary-card"><dt>Gaussian Distribution</dt><dd>Also called the Normal Distribution. Similar to Poisson distribution; used for large numbers of counts. The familiar symmetric Bell Curve shape.</dd></div>
+          <div class="glossary-card"><dt>Standard Deviation (&#963;)</dt><dd>A measure of how tightly data clusters around the mean. For a single count n of radioactive source, &#963; = &#8730;n. 1&#963; &#8776; 68% confidence, 2&#963; &#8776; 95%, 3&#963; &#8776; 99%.</dd></div>
+          <div class="glossary-card"><dt>Percent Standard Deviation (%&#963;)</dt><dd>Expresses statistical error as a percentage: %&#963; = 100/&#8730;n. As count rate increases, %&#963; decreases &mdash; more counts = better precision.</dd></div>
+          <div class="glossary-card"><dt>Dead Time</dt><dd>The time required by a gamma camera to process one count before accepting another. At very high count rates, the camera &ldquo;misses&rdquo; counts, reducing precision.</dd></div>
+          <div class="glossary-card"><dt>Nuclei (N)</dt><dd>The number of radioactive atoms in a radionuclide sample. As nuclei decay (disintegrate), the number decreases over time.</dd></div>
+          <div class="glossary-card"><dt>Decay Constant (&#955;)</dt><dd>The fraction of radioactive nuclei that decay per unit time. &#955; = 0.693 / T&frac12;. Units: per time (hr&sup1;, min&sup1;, etc.).</dd></div>
+          <div class="glossary-card"><dt>Decay Rate (DR)</dt><dd>The number of nuclei decaying per unit time. DR = &#955;N = (0.693/T&frac12;) &times; N. Equivalent to the activity of the source.</dd></div>
+          <div class="glossary-card"><dt>Decay Factor (DF)</dt><dd>The fraction of original activity remaining after a given time. Post-decay DF = e<sup>&minus;&#955;t</sup> (always &lt; 1). Pre-decay DF = e<sup>&#955;t</sup> (always &gt; 1). DF at t=0 = 1.</dd></div>
+          <div class="glossary-card"><dt>Post Decay</dt><dd>Calculating the activity remaining after a known elapsed time. Uses the equation A = A<sub>0</sub> &times; e<sup>&minus;&#955;t</sup>. The post decay factor is always &lt; 1.</dd></div>
+          <div class="glossary-card"><dt>Pre Decay</dt><dd>Calculating the activity that existed before time = 0. Uses the equation A<sub>0</sub> = A &times; e<sup>&#955;t</sup>. The pre decay factor is always &gt; 1.</dd></div>
+          <div class="glossary-card"><dt>Decay Equation</dt><dd>A = A<sub>0</sub> e<sup>&minus;&#955;t</sup> for post-decay; A<sub>0</sub> = A e<sup>&#955;t</sup> for pre-decay. Where A<sub>0</sub> = initial activity, A = activity at time t, &#955; = decay constant, t = elapsed time.</dd></div>
+          <div class="glossary-card"><dt>Euler&rsquo;s Number (e)</dt><dd>The mathematical constant &asymp; 2.718. The base of the natural logarithm. Used in the decay equation because radioactive decay is an exponential process.</dd></div>
+          <div class="glossary-card"><dt>Decay Factor Chart</dt><dd>A reference table providing pre-calculated DFs for various values of t/T&frac12;. Steps: (1) calculate t/T&frac12;, (2) round to 3 sig figs, (3) find row (first 2 digits) and column (3rd digit).</dd></div>
+          <div class="glossary-card"><dt>Specific Concentration</dt><dd>The activity per unit volume of a radiopharmaceutical. Most commonly expressed as mCi/mL. Formula: Conc = Activity / Volume.</dd></div>
+          <div class="glossary-card"><dt>Volume Calculation</dt><dd>Finding the volume needed from a known concentration. Formula: Volume = Activity needed / Concentration. Can incorporate decay if concentration is at a different time.</dd></div>
+          <div class="glossary-card"><dt>Precalibration Factor</dt><dd>The pre-decay factor applied to each dose when preparing kits for future injections. Accounts for decay between kit preparation time and injection time.</dd></div>
+          <div class="glossary-card"><dt>Total Activity (Kit Prep)</dt><dd>The sum of all pre-calibrated individual dose amounts needed for a full day&rsquo;s injections. Each dose &times; its precalibration factor = adjusted activity required at preparation time.</dd></div>
+        </dl>
+      </div>
+    </div>
+  <div style="height:120px;flex-shrink:0;"></div>
+  </main>
+</div>
+<script>
+var QUIZ_BANK = [
+  { section: "s2", q: "Why are statistics important in nuclear medicine counting?", a: 0, choices: ["Radioactive decay is a random process, making statistical analysis necessary", "Statistics are required by federal law", "Gamma cameras require statistical software", "Statistics are used to calibrate dose calibrators"] },
+  { section: "s3", q: "What is the formula for calculating the mean?", a: 2, choices: ["Mean = N &times; x", "Mean = x &minus; N", "Mean = &Sigma;x / N", "Mean = x / (N&minus;1)"] },
+  { section: "s4", q: "In a data set [25, 20, 25, 26, 19, 29, 25], what is the mode?", a: 1, choices: ["20", "25", "26", "24.1"] },
+  { section: "s5", q: "To find the median, the first step is to:", a: 0, choices: ["Rank the values in numerical order", "Calculate the mean first", "Remove the highest and lowest values", "Square each value"] },
+  { section: "s6", q: "In a perfect Bell Curve, which statement is true?", a: 3, choices: ["Mean is greater than median", "Mode is less than mean", "Mean, mode, and median are different", "Mean = Mode = Median"] },
+  { section: "s7", q: "Accuracy in radiation counting refers to:", a: 1, choices: ["How reproducible counts are", "How close measurements are to the true value", "The count rate of the sample", "The percent standard deviation"] },
+  { section: "s7", q: "Precision in radiation counting refers to:", a: 2, choices: ["How close counts are to the true value", "Whether there are systematic errors", "The reproducibility of repeated measurements", "The dead time of the camera"] },
+  { section: "s8", q: "Radioactive decay follows which statistical distribution?", a: 0, choices: ["Poisson Distribution", "Binomial Distribution", "Chi-squared Distribution", "Student&rsquo;s t-distribution"] },
+  { section: "s9", q: "The Gaussian Distribution is also called:", a: 2, choices: ["Poisson Distribution", "Chi-square Distribution", "Normal Distribution", "Decay Distribution"] },
+  { section: "s10", q: "For a radioactive source counted n times, the standard deviation &sigma; equals:", a: 1, choices: ["&sigma; = n&sup2;", "&sigma; = &radic;n", "&sigma; = n/2", "&sigma; = 100/n"] },
+  { section: "s10", q: "If a source is counted and gives n = 10,000 counts, what is the 95% confidence interval?", a: 0, choices: ["10,000 &plusmn; 200 (n &plusmn; 2&sigma;)", "10,000 &plusmn; 100", "10,000 &plusmn; 300", "10,000 &plusmn; 50"] },
+  { section: "s10", q: "What is the formula for percent standard deviation?", a: 3, choices: ["%&sigma; = &sigma; &times; 100", "%&sigma; = n / 100", "%&sigma; = &radic;n / 100", "%&sigma; = 100 / &radic;n"] },
+  { section: "s11", q: "Increasing the count RATE from 20,000 cpm to 40,000 cpm will:", a: 1, choices: ["Increase precision", "Decrease precision due to dead time effects", "Have no effect on precision", "Double the standard deviation only"] },
+  { section: "s11", q: "Dead time refers to:", a: 2, choices: ["The time between radioactive disintegrations", "The half-life of the radionuclide", "The time a camera needs to process one count before accepting another", "The delay between injection and imaging"] },
+  { section: "s12", q: "In the Standard Deviation Calculation, Step 2 is:", a: 0, choices: ["Find the deviation from the mean (data value &minus; mean)", "Square each data value", "Calculate the mean", "Find the square root of the variance"] },
+  { section: "s14", q: "The decay constant (&lambda;) represents:", a: 1, choices: ["The number of nuclei remaining", "The fraction of radioactive nuclei that decay per unit time", "The number of nuclei at t=0", "The activity in mCi"] },
+  { section: "s15", q: "What is the formula for Decay Rate?", a: 0, choices: ["DR = &lambda;N", "DR = N / &lambda;", "DR = &lambda; / N", "DR = N &times; T&frac12;"] },
+  { section: "s16", q: "What is the formula for the decay constant (&lambda;)?", a: 2, choices: ["&lambda; = T&frac12; / 0.693", "&lambda; = N / 0.693", "&lambda; = 0.693 / T&frac12;", "&lambda; = e / T&frac12;"] },
+  { section: "s17", q: "The post-decay factor e<sup>&minus;&lambda;t</sup> is always:", a: 1, choices: ["Greater than 1", "Less than 1", "Equal to 1", "Equal to 0"] },
+  { section: "s17", q: "To find the Decay Factor for I-125 at t=10 days (T&frac12;=60 days), you calculate:", a: 0, choices: ["DF = e<sup>&minus;(0.693/60 &times; 10)</sup> &asymp; 0.88", "DF = e<sup>&minus;(0.693/10 &times; 60)</sup> &asymp; 0.02", "DF = 10/60 = 0.167", "DF = 0.693 &times; 10/60 = 0.116"] },
+  { section: "s18", q: "The 1-hour decay factor for <sup>99m</sup>Tc is 0.8909. How much of 20 mCi remains after 2 hours?", a: 2, choices: ["17.8 mCi", "17.0 mCi", "15.8 mCi (0.8909<sup>2</sup> &times; 20)", "14.1 mCi"] },
+  { section: "s19", q: "In the Decay Equation A = A<sub>0</sub> e<sup>&minus;&lambda;t</sup>, what does e<sup>&minus;&lambda;t</sup> represent?", a: 3, choices: ["The initial activity", "Euler&rsquo;s number", "The decay constant", "The Decay Factor"] },
+  { section: "s20", q: "Common sense check: 10 mCi of <sup>99m</sup>Tc (T&frac12;=6hr) decaying for 4 hours should leave approximately:", a: 1, choices: ["5 mCi exactly", "A little more than 5 mCi (since 4 hr &lt; 1 T&frac12;)", "About 7.5 mCi", "Less than 2.5 mCi"] },
+  { section: "s21", q: "What is the Pre-Decay Equation?", a: 0, choices: ["A<sub>0</sub> = A &times; e<sup>&lambda;t</sup>", "A<sub>0</sub> = A &times; e<sup>&minus;&lambda;t</sup>", "A<sub>0</sub> = A / e<sup>&lambda;t</sup>", "A<sub>0</sub> = A + &lambda;t"] },
+  { section: "s21", q: "If the Post Decay Factor for <sup>99m</sup>Tc (1 hr) is 0.8909, what is the 1-hr Pre Decay Factor?", a: 2, choices: ["0.8909", "0.5000", "1.122 (1/0.8909)", "2.000"] },
+  { section: "s21", q: "Pre-decay factors are always:", a: 1, choices: ["Less than 1", "Greater than 1", "Equal to 1", "Equal to 0.693"] },
+  { section: "s22", q: "Using the Decay Factor Chart, the first step is to calculate:", a: 0, choices: ["t / T&frac12;", "T&frac12; / t", "&lambda; &times; t", "0.693 / t"] },
+  { section: "s23", q: "A 10 mL vial contains 150 mCi of <sup>99m</sup>Tc. What is the specific concentration?", a: 1, choices: ["1.5 mCi/mL", "15 mCi/mL", "150 mCi/mL", "10 mCi/mL"] },
+  { section: "s24", q: "If you need 300 mCi and your concentration is 50 mCi/mL, what volume do you draw up?", a: 2, choices: ["3 mL", "5 mL", "6 mL", "15 mL"] },
+  { section: "s25", q: "When preparing a kit for multiple doses, each dose is multiplied by a:", a: 0, choices: ["Precalibration factor (pre-decay factor)", "Post-decay factor", "Decay constant", "Standard deviation factor"] },
+];
+  var mainEl13 = document.querySelector('main');
+  var tocLinks = Array.from(document.querySelectorAll('nav#toc a'));
+  var sectionEls = tocLinks.map(function(a){return document.getElementById(a.dataset.target);}).filter(Boolean);
+  var searchInput = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('clearBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var searchCount = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var quizBtn = document.getElementById('quizBtn');
+  var quizClose = document.getElementById('quizClose');
+  var quizOverlay = document.getElementById('quizOverlay');
+  var quizBody = document.getElementById('quizBody');
+  var quizStartBtn = document.getElementById('quizStartBtn');
+  var quizAvg = document.getElementById('quizAvg');
+  var highlightToggle = document.getElementById('highlightToggle');
+  var allMatches = [], currentMatch = -1, highlightsOn = false, debounceTimer;
+
+  function setNavActive(on) {
+    if (on) { prevBtn.classList.remove('inactive'); nextBtn.classList.remove('inactive'); }
+    else { prevBtn.classList.add('inactive'); nextBtn.classList.add('inactive'); searchCount.textContent = '\u2014 / \u2014'; }
+  }
+
+  function clearHighlights() {
+    document.querySelectorAll('mark.hl').forEach(function(m){
+      var p = m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m); p.normalize();
+    });
+    allMatches = []; currentMatch = -1;
+  }
+
+  function doSearch(term) {
+    clearHighlights(); noResults.style.display = 'none';
+    if (!term) { setNavActive(false); return; }
+    var re = new RegExp('(' + term.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + ')', 'gi');
+    var walker = document.createTreeWalker(mainEl13, NodeFilter.SHOW_TEXT, {
+      acceptNode: function(node) {
+        var p = node.parentNode;
+        while (p) { if (p.tagName === 'SCRIPT' || p.tagName === 'STYLE') return NodeFilter.FILTER_REJECT; p = p.parentNode; }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }, false);
+    var nodes = []; var n; while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function(node) {
+      if (!re.test(node.textContent)) return; re.lastIndex = 0;
+      var frag = document.createDocumentFragment(), last = 0, m;
+      while ((m = re.exec(node.textContent)) !== null) {
+        frag.appendChild(document.createTextNode(node.textContent.slice(last, m.index)));
+        var mark = document.createElement('mark'); mark.className = 'hl'; mark.textContent = m[1];
+        frag.appendChild(mark); allMatches.push(mark); last = m.index + m[1].length;
+      }
+      frag.appendChild(document.createTextNode(node.textContent.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+    if (allMatches.length === 0) { noResults.style.display = 'block'; setNavActive(false); searchCount.textContent = '0 found'; }
+    else { setNavActive(true); currentMatch = 0; highlightCurrent(); }
+  }
+
+  function highlightCurrent() {
+    allMatches.forEach(function(m){m.classList.remove('current');}); if (!allMatches.length) return;
+    allMatches[currentMatch].classList.add('current');
+    allMatches[currentMatch].scrollIntoView({behavior:'smooth',block:'center'});
+    searchCount.textContent = (currentMatch+1) + ' / ' + allMatches.length;
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer); var val = searchInput.value.trim();
+    clearBtn.style.display = val ? 'block' : 'none';
+    debounceTimer = setTimeout(function(){doSearch(val);}, 260);
+  });
+  clearBtn.addEventListener('click', function() {
+    searchInput.value = ''; clearBtn.style.display = 'none'; clearHighlights(); noResults.style.display = 'none'; setNavActive(false);
+  });
+  prevBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch - 1 + allMatches.length) % allMatches.length; highlightCurrent();
+  });
+  nextBtn.addEventListener('click', function() {
+    if (!allMatches.length) return; currentMatch = (currentMatch + 1) % allMatches.length; highlightCurrent();
+  });
+
+  function updateTocActive() {
+    var mainRect = mainEl13.getBoundingClientRect();
+    var best = null, bestTop = -Infinity;
+    sectionEls.forEach(function(s) {
+      var top = s.getBoundingClientRect().top - mainRect.top;
+      if (top <= 40 && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    if (!best && sectionEls.length) best = sectionEls[0].id;
+    tocLinks.forEach(function(a) {
+      a.classList.toggle('active', a.dataset.target === best);
+    });
+  }
+  mainEl13.addEventListener('scroll', updateTocActive, {passive: true});
+  updateTocActive();
+
+  tocLinks.forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      e.preventDefault();
+      var t = document.getElementById(a.dataset.target);
+      if (!t) return;
+      mainEl13.scrollTop += t.getBoundingClientRect().top - mainEl13.getBoundingClientRect().top;
+      updateTocActive();
+    });
+  });
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length-1; i > 0; i--) { var j = Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+    return a;
+  }
+
+  function loadAvg13() {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores13') || '[]');
+      if (scores.length > 0) {
+        var avg = Math.round(scores.reduce(function(s,v){return s+v;},0)/scores.length);
+        quizAvg.textContent = 'Avg: ' + avg + '%';
+      }
+    } catch(e){}
+  }
+  function saveScore13(pct) {
+    try {
+      var scores = JSON.parse(localStorage.getItem('radQuizScores13') || '[]');
+      scores.push(pct); if (scores.length > 20) scores = scores.slice(-20);
+      localStorage.setItem('radQuizScores13', JSON.stringify(scores)); loadAvg13();
+    } catch(e){}
+  }
+  function saveStats13(results) {
+    try {
+      var stats = JSON.parse(localStorage.getItem('radQuizSectionStats13') || '{}');
+      results.forEach(function(r){
+        if (!stats[r.section]) stats[r.section] = {correct:0,total:0};
+        stats[r.section].total++; if (r.correct) stats[r.section].correct++;
+      });
+      localStorage.setItem('radQuizSectionStats13', JSON.stringify(stats));
+    } catch(e){}
+  }
+
+  loadAvg13();
+  quizBtn.addEventListener('click', function(){quizOverlay.classList.add('open');});
+  quizClose.addEventListener('click', function(){quizOverlay.classList.remove('open');});
+  quizOverlay.addEventListener('click', function(e){if(e.target===quizOverlay)quizOverlay.classList.remove('open');});
+  quizStartBtn.addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+
+  function renderQuiz(questions) {
+    var html = '<div class="quiz-progress">' + questions.length + ' questions</div>';
+    html += '<div class="quiz-progress-bar"><div class="quiz-progress-bar-fill" style="width:100%"></div></div>';
+    questions.forEach(function(q,i) {
+      var shuffled = shuffle(q.choices.map(function(c,idx){return {text:c,orig:idx};}));
+      var ci = shuffled.findIndex(function(s){return s.orig===q.a;});
+      html += '<div class="quiz-q" data-qi="'+i+'" data-correct="'+ci+'" data-section="'+q.section+'">';
+      html += '<div class="quiz-q-text">'+(i+1)+'. '+q.q+'</div><div class="quiz-choices">';
+      shuffled.forEach(function(ch,idx){
+        html += '<label class="quiz-choice"><input type="radio" name="q'+i+'" value="'+idx+'">'+ch.text+'</label>';
+      });
+      html += '</div></div>';
+    });
+    html += '<div class="quiz-actions"><button class="quiz-submit-btn" id="quizSubmitBtn">Submit Quiz</button></div>';
+    quizBody.innerHTML = html;
+    document.getElementById('quizSubmitBtn').addEventListener('click', function(){gradeQuiz(questions);});
+  }
+
+  function gradeQuiz(questions) {
+    var correct = 0, results = [];
+    quizBody.querySelectorAll('.quiz-q').forEach(function(qEl) {
+      var correctIdx = parseInt(qEl.dataset.correct), section = qEl.dataset.section;
+      var choices = qEl.querySelectorAll('.quiz-choice');
+      var selected = qEl.querySelector('input:checked');
+      var selIdx = selected ? parseInt(selected.value) : -1;
+      var ok = selIdx === correctIdx;
+      if (ok) correct++;
+      results.push({section:section,correct:ok});
+      choices.forEach(function(ch,idx){
+        ch.classList.add('locked');
+        if (idx===correctIdx) ch.classList.add('reveal-correct');
+        if (idx===selIdx && !ok) ch.classList.add('incorrect');
+        if (idx===selIdx && ok) ch.classList.add('correct');
+      });
+      var fb = document.createElement('div'); fb.className = 'quiz-feedback '+(ok?'ok':'bad');
+      fb.textContent = ok ? '\u2713 Correct!' : '\u2717 '+(selected?'Incorrect.':'Not answered.');
+      qEl.appendChild(fb);
+    });
+    var pct = Math.round((correct/questions.length)*100);
+    saveScore13(pct); saveStats13(results);
+    var msg = pct>=90?'Excellent work!':pct>=70?'Good job!':'Keep studying!';
+    quizBody.querySelector('.quiz-actions').innerHTML = '<button class="quiz-retry-btn" id="quizRetryBtn">Try Another Quiz</button>';
+    var r = document.createElement('div'); r.className = 'quiz-result';
+    r.innerHTML = '<div class="quiz-score-ring">'+correct+' / '+questions.length+'</div><p>'+pct+'% \u2014 '+msg+'</p>';
+    quizBody.insertBefore(r, quizBody.firstChild);
+    document.getElementById('quizRetryBtn').addEventListener('click', function(){ renderQuiz(shuffle(QUIZ_BANK).slice(0,10)); });
+  }
+
+  function applyTocHighlights(id, cls) {
+    var link = document.querySelector('nav#toc a[data-target="' + id + '"]');
+    if (link) { link.classList.remove('study-warn','study-crit'); if (cls) link.classList.add(cls); }
+  }
+
+  highlightToggle.addEventListener('click', function() {
+    highlightsOn = !highlightsOn; highlightToggle.classList.toggle('active', highlightsOn);
+    if (highlightsOn) {
+      try {
+        var stats = JSON.parse(localStorage.getItem('radQuizSectionStats13') || '{}');
+        for (var id in stats) {
+          var s = stats[id], pct = s.total > 0 ? (s.correct/s.total)*100 : 100;
+          var el = document.getElementById(id); if (!el) continue;
+          el.classList.remove('study-warn','study-crit');
+          var cls = pct < 50 ? 'study-crit' : pct <= 85 ? 'study-warn' : null;
+          if (cls) el.classList.add(cls);
+          applyTocHighlights(id, cls);
+        }
+      } catch(e){}
+    } else {
+      document.querySelectorAll('.section').forEach(function(s){s.classList.remove('study-warn','study-crit');});
+      document.querySelectorAll('nav#toc a').forEach(function(a){a.classList.remove('study-warn','study-crit');});
+    }
+  });
+
+</script>
+</body>
+</html>
